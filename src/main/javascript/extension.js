@@ -292,15 +292,19 @@ class GithubNotifications {
     }
 }
 
-function init() {
-}
+export default {
 
-function enable() {
-    githubNotifications = new GithubNotifications();
-    githubNotifications.start();
-}
+    init: function () {
+    },
 
-function disable() {
-    githubNotifications.stop();
-    githubNotifications = null;
+    enable: function () {
+        githubNotifications = new GithubNotifications();
+        githubNotifications.start();
+    },
+
+    disable: function () {
+        githubNotifications.stop();
+        githubNotifications = null;
+    }
+
 }

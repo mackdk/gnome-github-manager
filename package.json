@@ -1,0 +1,18 @@
+{
+  "name": "gnome-github-notifications",
+  "version": "1.0.0",
+  "main": "extension.js",
+  "repository": "git@github.com:mackdk/gnome-github-notifications.git",
+  "author": "Thomas Florio <mackdk@hotmail.com>",
+  "license": "GPL-2.0-only",
+  "scripts": {
+    "clean": "rm -rf build",
+    "build": "rollup -c",
+    "deploy": "yarn build && rsync -a ./build/* ~/.local/share/gnome-shell/extensions/$(cat src/main/resources/metadata.json | jq -r .uuid)"
+  },
+  "devDependencies": {
+    "rollup": "2.79.1",
+    "rollup-plugin-copy": "^3.4.0",
+    "rollup-plugin-shell": "^1.0.8"
+  }
+}
