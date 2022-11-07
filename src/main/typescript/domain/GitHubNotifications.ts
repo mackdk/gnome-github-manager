@@ -5,12 +5,12 @@ import { URI, Session, AuthManager, AuthBasic, Message } from '@gi-types/soup2';
 import { icon_new_for_string, Settings } from '@gi-types/gio2';
 import { show_uri } from '@gi-types/gtk4';
 
-const Main = imports.ui.main;
-const Mainloop = imports.mainloop;
+const Main: Main = imports.ui.main;
+const Mainloop: MainLoop = imports.mainloop;
+const MessageTray : MessageTray = imports.ui.messageTray;
 
-const ExtensionUtils = imports.misc.extensionUtils;
+const ExtensionUtils: ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
-const MessageTray = imports.ui.messageTray;
 
 function info(message: string) {
     log(`[GITHUB NOTIFICATIONS EXTENSION][INFO] ${message}`);
@@ -42,7 +42,7 @@ export class GitHubNotifications {
     showAlertNotification: boolean;
     showParticipatingOnly: boolean;
 
-    source?: any;
+    source?: MessageTray.SystemNotificationSource;
     settings?: Settings;
 
     readonly box: BoxLayout;
@@ -305,12 +305,11 @@ export class GitHubNotifications {
             Main.messageTray.add(this.source);
         }
 
-        let notification : any;
+        let notification : MessageTray.Notification;
         if (this.source.notifications.length == 0) {
             notification = new MessageTray.Notification(this.source, title, message, { gicon: this.icon.gicon });
 
             notification.setTransient(false);
-            notification.setResident(false);
             notification.connect('activated', this.showBrowserUri.bind(this)); // Open on click
         } else {
             notification = this.source.notifications[0];
