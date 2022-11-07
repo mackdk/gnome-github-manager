@@ -1,7 +1,6 @@
 const { Gtk, Gio } = imports.gi;
 
 const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
 
 const GITHUB_SETTINGS_SCHEMA = 'org.gnome.shell.extensions.github.notifications';
 
@@ -110,8 +109,9 @@ export default {
         }
 
         return mainBox;
-    }, 
+    },
 
     init: function() {
+        // Nothing to initialize
     }
-}
+};

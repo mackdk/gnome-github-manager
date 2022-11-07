@@ -4,17 +4,14 @@ const Mainloop = imports.mainloop;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
-const Util = imports.misc.util;
 const MessageTray = imports.ui.messageTray;
 
-let githubNotifications : any;
-
 function info(message: string) {
-    log('[GITHUB NOTIFICATIONS EXTENSION][INFO] ' + message);
+    log(`[GITHUB NOTIFICATIONS EXTENSION][INFO] ${message}`);
 }
 
 function error(message: string) {
-    log('[GITHUB NOTIFICATIONS EXTENSION][ERROR] ' + message);
+    log(`[GITHUB NOTIFICATIONS EXTENSION][ERROR] ${message}`);
 }
 
 export class GitHubNotifications {
@@ -69,7 +66,7 @@ export class GitHubNotifications {
     }
 
     interval() {
-        let i = this.refreshInterval
+        let i = this.refreshInterval;
         if (this.retryAttempts > 0) {
             i = this.retryIntervals[this.retryAttempts] || 3600;
         }
@@ -139,7 +136,7 @@ export class GitHubNotifications {
             track_hover: true
         });
         this.label = new St.Label({
-            text: '' + this.notifications.length,
+            text: `${this.notifications.length}`,
             style_class: 'system-status-icon notifications-length',
             y_align: Clutter.ActorAlign.CENTER,
             y_expand: true,
@@ -156,7 +153,7 @@ export class GitHubNotifications {
         this.box.add_actor(this.label);
 
         this.box.connect('button-press-event', (_: any, event: any) => {
-            let button = event.get_button();
+            const button = event.get_button();
 
             if (button == 1) {
                 this.showBrowserUri();
@@ -166,24 +163,23 @@ export class GitHubNotifications {
         });
     }
 
-
     showBrowserUri() {
         try {
-            let url = 'https://' + this.domain + '/notifications';
+            let url = `https://${this.domain}/notifications`;
             if (this.showParticipatingOnly) {
-                url = 'https://' + this.domain + '/notifications/participating';
+                url = `https://${this.domain}/notifications/participating`;
             }
 
             Gtk.show_uri(null, url, Gtk.get_current_event_time());
         } catch (e) {
-            error("Cannot open uri " + e)
+            error(`Cannot open uri ${e}`);
         }
     }
 
     initHttp() {
-        let url = 'https://api.' + this.domain + '/notifications';
+        let url = `https://api.${this.domain}/notifications`;
         if (this.showParticipatingOnly) {
-            url = 'https://api.' + this.domain + '/notifications?participating=1';
+            url = `https://api.${this.domain}/notifications?participating=1`;
         }
         this.authUri = new Soup.URI(url);
         this.authUri.set_user(this.handle);
@@ -196,7 +192,7 @@ export class GitHubNotifications {
             this.httpSession.user_agent = 'gnome-shell-extension github notification via libsoup';
 
             this.authManager = new Soup.AuthManager();
-            this.auth = new Soup.AuthBasic({ host: 'api.' + this.domain, realm: 'Github Api' });
+            this.auth = new Soup.AuthBasic({ host: `api.${this.domain}`, realm: 'Github Api' });
 
             this.authManager.use_auth(this.authUri, this.auth);
             Soup.Session.prototype.add_feature.call(this.httpSession, this.authManager);
@@ -217,7 +213,7 @@ export class GitHubNotifications {
     }
 
     fetchNotifications() {
-        let message = new Soup.Message({ method: 'GET', uri: this.authUri });
+        const message = new Soup.Message({ method: 'GET', uri: this.authUri });
         if (this.lastModified) {
             // github's API is currently broken: marking a notification as read won't modify the "last-modified" header
             // so this is useless for now
@@ -235,7 +231,7 @@ export class GitHubNotifications {
                     }
                     this.planFetch(this.interval(), false);
                     if (response.status_code == 200) {
-                        let data = JSON.parse(response.response_body.data);
+                        const data = JSON.parse(response.response_body.data);
                         this.updateNotifications(data);
                     }
                     return;
@@ -247,44 +243,44 @@ export class GitHubNotifications {
                     return;
                 }
                 if (!response.response_body.data && response.status_code > 400) {
-                    error('HTTP error:' + response.status_code);
+                    error(`HTTP error:${response.status_code}`);
                     this.planFetch(this.interval(), true);
                     return;
                 }
                 // if we reach this point, none of the cases above have been triggered
                 // which likely means there was an error locally or on the network
                 // therefore we should try again in a while
-                error('HTTP error:' + response.status_code);
-                error('response error: ' + JSON.stringify(response));
+                error(`HTTP error:${response.status_code}`);
+                error(`response error: ${JSON.stringify(response)}`);
                 this.planFetch(this.interval(), true);
                 this.label.set_text('!');
                 return;
             } catch (e) {
-                error('HTTP exception:' + e);
+                error(`HTTP exception:${e}`);
                 return;
             }
         });
     }
 
     updateNotifications(data: any) {
-        let lastNotificationsCount = this.notifications.length;
+        const lastNotificationsCount = this.notifications.length;
 
         this.notifications = data;
-        this.label && this.label.set_text('' + data.length);
+        this.label && this.label.set_text(`${data.length}`);
         this.checkVisibility();
         this.alertWithNotifications(lastNotificationsCount);
     }
 
     alertWithNotifications(lastCount: number) {
-        let newCount = this.notifications.length;
+        const newCount = this.notifications.length;
 
         if (newCount && newCount > lastCount && this.showAlertNotification) {
             try {
-                let message = 'You have ' + newCount + ' new notifications';
+                const message = `You have ${newCount} new notifications`;
 
                 this.notify('Github Notifications', message);
             } catch (e) {
-                error("Cannot notify " + e)
+                error(`Cannot notify ${e}`);
             }
         }
     }

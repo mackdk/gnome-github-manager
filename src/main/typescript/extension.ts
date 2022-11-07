@@ -1,7 +1,7 @@
 import { GitHubNotifications } from '@github-manager/domain/GitHubNotifications';
 
 /**
- * Main Extension class. 
+ * Main Extension class.
  */
 class GitHubNotificationsExtension {
     readonly gitHubNotifications: GitHubNotifications;

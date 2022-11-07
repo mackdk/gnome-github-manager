@@ -1,0 +1,54 @@
+{
+    "env": {
+        "commonjs": true,
+        "es2022": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "overrides": [
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 2022
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "indent": [
+            "error",
+            4,
+            {
+                "SwitchCase": 1
+            }
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        "prefer-template": "error",
+        "no-trailing-spaces": "error",
+        "eol-last": [
+            "error",
+            "always"
+        ],
+        "no-multiple-empty-lines": [ 
+            "error",
+            { 
+                "max": 1,
+                "maxEOF": 1
+            }
+        ],
+        "no-duplicate-imports": "error"
+    }
+}
