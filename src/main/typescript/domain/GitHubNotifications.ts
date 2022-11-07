@@ -5,6 +5,8 @@ import { URI, Session, AuthManager, AuthBasic, Message } from '@gi-types/soup2';
 import { icon_new_for_string, Settings } from '@gi-types/gio2';
 import { show_uri } from '@gi-types/gtk4';
 
+import { Logger } from '@github-manager/utils/Logger';
+
 const Main: Main = imports.ui.main;
 const Mainloop: MainLoop = imports.mainloop;
 const MessageTray : MessageTray = imports.ui.messageTray;
@@ -12,15 +14,9 @@ const MessageTray : MessageTray = imports.ui.messageTray;
 const ExtensionUtils: ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 
-function info(message: string) {
-    log(`[GITHUB NOTIFICATIONS EXTENSION][INFO] ${message}`);
-}
-
-function error(message: string) {
-    log(`[GITHUB NOTIFICATIONS EXTENSION][ERROR] ${message}`);
-}
-
 export class GitHubNotifications {
+    static readonly LOGGER: Logger = new Logger('github-manager.domain.GitHubNotifications');
+
     domain: string;
     token: string;
     handle: string;
@@ -95,7 +91,7 @@ export class GitHubNotifications {
 
     lazyInit() {
         if (!this.settings) {
-            info('Unable to peform lazy init: extension settings are not initialized');
+            GitHubNotifications.LOGGER.warn('Unable to peform lazy init: extension settings are not initialized');
             return;
         }
 
@@ -137,7 +133,7 @@ export class GitHubNotifications {
             this.showAlertNotification = this.settings.get_boolean('show-alert');
             this.showParticipatingOnly = this.settings.get_boolean('show-participating-only');
         } else {
-            error('Unable to reload settings: Extension settings object is not initialized');
+            GitHubNotifications.LOGGER.error('Unable to reload settings: Extension settings object is not initialized');
         }
 
         this.checkVisibility();
@@ -187,7 +183,7 @@ export class GitHubNotifications {
 
             show_uri(null, url, CURRENT_TIME);
         } catch (e) {
-            error(`Cannot open uri ${e}`);
+            GitHubNotifications.LOGGER.error(`Cannot open uri ${e}`);
         }
     }
 
@@ -247,26 +243,25 @@ export class GitHubNotifications {
                     return;
                 }
                 if (response.status_code == 401) {
-                    error('Unauthorized. Check your github handle and token in the settings');
+                    GitHubNotifications.LOGGER.error('Unauthorized. Check your github handle and token in the settings');
                     this.planFetch(this.interval(), true);
                     this.label.set_text('!');
                     return;
                 }
                 if (!response.response_body.data && response.status_code > 400) {
-                    error(`HTTP error:${response.status_code}`);
+                    GitHubNotifications.LOGGER.error(`HTTP error:${response.status_code}`);
                     this.planFetch(this.interval(), true);
                     return;
                 }
                 // if we reach this point, none of the cases above have been triggered
                 // which likely means there was an error locally or on the network
                 // therefore we should try again in a while
-                error(`HTTP error:${response.status_code}`);
-                error(`response error: ${JSON.stringify(response)}`);
+                GitHubNotifications.LOGGER.error(`Response error. Status: ${response.status_code}, Response: ${JSON.stringify(response)}`);
                 this.planFetch(this.interval(), true);
                 this.label.set_text('!');
                 return;
             } catch (e) {
-                error(`HTTP exception:${e}`);
+                GitHubNotifications.LOGGER.error(`HTTP exception:${e}`);
                 return;
             }
         });
@@ -290,7 +285,7 @@ export class GitHubNotifications {
 
                 this.notify('Github Notifications', message);
             } catch (e) {
-                error(`Cannot notify ${e}`);
+                GitHubNotifications.LOGGER.error(`Cannot notify ${e}`);
             }
         }
     }
