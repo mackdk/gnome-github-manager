@@ -7,18 +7,47 @@ const Me = ExtensionUtils.getCurrentExtension();
 const Util = imports.misc.util;
 const MessageTray = imports.ui.messageTray;
 
-let githubNotifications;
+let githubNotifications : any;
 
-function info(message) {
-    global.log('[GITHUB NOTIFICATIONS EXTENSION][INFO] ' + message);
+function info(message: string) {
+    log('[GITHUB NOTIFICATIONS EXTENSION][INFO] ' + message);
 }
 
-function error(message) {
-    global.log('[GITHUB NOTIFICATIONS EXTENSION][ERROR] ' + message);
+function error(message: string) {
+    log('[GITHUB NOTIFICATIONS EXTENSION][ERROR] ' + message);
 }
 
 class GithubNotifications {
+    domain: string;
+    token: string;
+    handle: string;
+    hideWidget: boolean;
+    hideCount: boolean;
+    refreshInterval: number;
+    githubInterval: number;
+    timeout: number | null;
+    httpSession: any;
+
+    authUri: any;
+    authManager: any;
+    auth: any;
+
+    notifications = [];
+    lastModified: string | null;
+    retryAttempts: number;
+    retryIntervals: Array<number>;
+    hasLazilyInit: boolean;
+    showAlertNotification: boolean;
+    showParticipatingOnly: boolean;
+    _source: any;
+    settings: any;
+
+    box: any;
+    label: any;
+    icon: any;
+
     constructor() {
+        this.domain = 'github.com';
         this.token = '';
         this.handle = '';
         this.hideWidget = false;
@@ -126,7 +155,7 @@ class GithubNotifications {
         this.box.add_actor(this.icon);
         this.box.add_actor(this.label);
 
-        this.box.connect('button-press-event', (_, event) => {
+        this.box.connect('button-press-event', (_: any, event: any) => {
             let button = event.get_button();
 
             if (button == 1) {
@@ -174,7 +203,7 @@ class GithubNotifications {
         }
     }
 
-    planFetch(delay, retry) {
+    planFetch(delay: number, retry: boolean) {
         if (retry) {
             this.retryAttempts++;
         } else {
@@ -195,7 +224,7 @@ class GithubNotifications {
             //message.request_headers.append('If-Modified-Since', this.lastModified);
         }
 
-        this.httpSession.queue_message(message, (_, response) => {
+        this.httpSession.queue_message(message, (_: any, response: any) => {
             try {
                 if (response.status_code == 200 || response.status_code == 304) {
                     if (response.response_headers.get('Last-Modified')) {
@@ -237,7 +266,7 @@ class GithubNotifications {
         });
     }
 
-    updateNotifications(data) {
+    updateNotifications(data: any) {
         let lastNotificationsCount = this.notifications.length;
 
         this.notifications = data;
@@ -246,7 +275,7 @@ class GithubNotifications {
         this.alertWithNotifications(lastNotificationsCount);
     }
 
-    alertWithNotifications(lastCount) {
+    alertWithNotifications(lastCount: number) {
         let newCount = this.notifications.length;
 
         if (newCount && newCount > lastCount && this.showAlertNotification) {
@@ -260,7 +289,7 @@ class GithubNotifications {
         }
     }
 
-    notify(title, message) {
+    notify(title: string, message: string) {
         let notification;
 
         this.addNotificationSource();

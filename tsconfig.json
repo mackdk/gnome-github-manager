@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "strictPropertyInitialization": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "Node",
+    "sourceMap": false,
+    "outDir": "build",
+    "baseUrl": "./src/main/typescript/",
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "@github-manager/*": ["*"],
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "build/**/*"
+  ],
+}
+

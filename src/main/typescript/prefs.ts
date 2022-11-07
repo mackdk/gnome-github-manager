@@ -18,7 +18,7 @@ It should not include "http[s]://" or path params.
 * This refresh interval will be ignored if smaller than Github's policy.
 See <a href="https://developer.github.com/v3/activity/notifications/">https://developer.github.com/v3/activity/notifications</a>`;
 
-function makeLabeledOptionBox(labelText) {
+function makeLabeledOptionBox(labelText: string) {
     const box = new Gtk.Box({
         orientation: Gtk.Orientation.HORIZONTAL,
         spacing: 10,
@@ -31,11 +31,11 @@ function makeLabeledOptionBox(labelText) {
     return box;
 }
 
-function bindSettingToGtkWidget(boundSettingName, widget, property) {
+function bindSettingToGtkWidget(boundSettingName: string, widget: any, property: string) {
     _settings.bind(boundSettingName, widget, property, Gio.SettingsBindFlags.DEFAULT);
 }
 
-function makeLabeledSwitchOptionBox(label, boundSettingName) {
+function makeLabeledSwitchOptionBox(label: string, boundSettingName: string) {
     const box = makeLabeledOptionBox(label);
 
     const switch_ = new Gtk.Switch();
@@ -45,7 +45,7 @@ function makeLabeledSwitchOptionBox(label, boundSettingName) {
     return box;
 }
 
-function makeLabeledEntryOptionBox(label, boundSettingName) {
+function makeLabeledEntryOptionBox(label: string, boundSettingName: string) {
     const box = makeLabeledOptionBox(label);
 
     const entry = new Gtk.Entry();
@@ -55,7 +55,7 @@ function makeLabeledEntryOptionBox(label, boundSettingName) {
     return box;
 }
 
-function makeLabeledSpinButtonOptionBox(label, boundSettingName, min, max, step) {
+function makeLabeledSpinButtonOptionBox(label: string, boundSettingName: string, min: number, max: number, step: number) {
     const box = makeLabeledOptionBox(label);
 
     const spinButton = Gtk.SpinButton.new_with_range(min, max, step);
