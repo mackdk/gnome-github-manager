@@ -4,8 +4,8 @@ import { Logger } from '@github-manager/utils/Logger';
 /**
  * Main Extension class.
  */
-class GitHubNotificationsExtension {
-    static readonly LOGGER: Logger = new Logger('github-manager.GitHubNotificationsExtension');
+class GitHubManagerExtension {
+    static readonly LOGGER: Logger = new Logger('github-manager.GitHubManagerExtension');
 
     readonly gitHubNotifications: GitHubNotifications;
 
@@ -14,16 +14,16 @@ class GitHubNotificationsExtension {
     }
 
     enable(): void {
-        GitHubNotificationsExtension.LOGGER.debug('Enabling extension');
+        GitHubManagerExtension.LOGGER.debug('Enabling extension');
         this.gitHubNotifications.start();
     }
 
     disable(): void {
-        GitHubNotificationsExtension.LOGGER.debug('Disabling extension');
+        GitHubManagerExtension.LOGGER.debug('Disabling extension');
         this.gitHubNotifications.stop();
     }
 }
 
-export default function (): GitHubNotificationsExtension {
-    return new GitHubNotificationsExtension();
+export default function (): GitHubManagerExtension {
+    return new GitHubManagerExtension();
 }

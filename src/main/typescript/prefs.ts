@@ -3,7 +3,7 @@ import { SettingsBindFlags } from '@gi-types/gio2';
 
 const ExtensionUtils: ExtensionUtils = imports.misc.extensionUtils;
 
-const GITHUB_SETTINGS_SCHEMA = 'org.gnome.shell.extensions.github.notifications';
+const GITHUB_SETTINGS_SCHEMA = 'org.gnome.shell.extensions.github.manager';
 
 const settings = ExtensionUtils.getSettings(GITHUB_SETTINGS_SCHEMA);
 

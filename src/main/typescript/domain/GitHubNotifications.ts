@@ -109,7 +109,7 @@ export class GitHubNotifications {
     }
 
     start() {
-        this.settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.github.notifications');
+        this.settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.github.manager');
         if (!this.hasLazilyInit) {
             this.lazyInit();
         }

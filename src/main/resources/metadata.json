@@ -1,6 +1,7 @@
 {
-	"description": "Integrate Github's notifications within the gnome desktop environment\nSource code is available here: https://github.com/alexduf/gnome-github-notifications",
-	"uuid": "github.notifications@alexandre.dufournet.gmail.com",
-	"name": "Github Notifications",
-	"shell-version": ["40", "41", "42"]
+	"description": "Integrate Github within the Gnome desktop environment\nSource code is available here: https://github.com/mackdk/gnome-github-manager",
+	"uuid": "github.manager@mackdk.hotmail.com",
+	"name": "Github Manager",
+	"shell-version": ["40", "41", "42"],
+	"version": 1
 }

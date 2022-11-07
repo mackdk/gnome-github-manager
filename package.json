@@ -1,5 +1,5 @@
 {
-  "name": "gnome-github-notifications",
+  "name": "gnome-github-manager",
   "version": "1.0.0",
   "main": "extension.js",
   "repository": "git@github.com:mackdk/gnome-github-notifications.git",
