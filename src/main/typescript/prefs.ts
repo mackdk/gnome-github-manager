@@ -1,4 +1,5 @@
-const { Gtk, Gio } = imports.gi;
+import { Box, Orientation, Label, Switch, Entry, SpinButton, Widget } from '@gi-types/gtk4';
+import { SettingsBindFlags } from '@gi-types/gio2';
 
 const ExtensionUtils = imports.misc.extensionUtils;
 
@@ -18,11 +19,11 @@ It should not include "http[s]://" or path params.
 See <a href="https://developer.github.com/v3/activity/notifications/">https://developer.github.com/v3/activity/notifications</a>`;
 
 function makeLabeledOptionBox(labelText: string) {
-    const box = new Gtk.Box({
-        orientation: Gtk.Orientation.HORIZONTAL,
+    const box = new Box({
+        orientation: Orientation.HORIZONTAL,
         spacing: 10,
     });
-    const label = new Gtk.Label({
+    const label = new Label({
         label: labelText
     });
 
@@ -30,14 +31,14 @@ function makeLabeledOptionBox(labelText: string) {
     return box;
 }
 
-function bindSettingToGtkWidget(boundSettingName: string, widget: any, property: string) {
-    _settings.bind(boundSettingName, widget, property, Gio.SettingsBindFlags.DEFAULT);
+function bindSettingToGtkWidget(boundSettingName: string, widget: Widget, property: string) {
+    _settings.bind(boundSettingName, widget, property, SettingsBindFlags.DEFAULT);
 }
 
 function makeLabeledSwitchOptionBox(label: string, boundSettingName: string) {
     const box = makeLabeledOptionBox(label);
 
-    const switch_ = new Gtk.Switch();
+    const switch_ = new Switch();
     bindSettingToGtkWidget(boundSettingName, switch_, 'state');
 
     box.append(switch_);
@@ -47,7 +48,7 @@ function makeLabeledSwitchOptionBox(label: string, boundSettingName: string) {
 function makeLabeledEntryOptionBox(label: string, boundSettingName: string) {
     const box = makeLabeledOptionBox(label);
 
-    const entry = new Gtk.Entry();
+    const entry = new Entry();
     bindSettingToGtkWidget(boundSettingName, entry, 'text');
 
     box.append(entry);
@@ -57,7 +58,7 @@ function makeLabeledEntryOptionBox(label: string, boundSettingName: string) {
 function makeLabeledSpinButtonOptionBox(label: string, boundSettingName: string, min: number, max: number, step: number) {
     const box = makeLabeledOptionBox(label);
 
-    const spinButton = Gtk.SpinButton.new_with_range(min, max, step);
+    const spinButton = SpinButton.new_with_range(min, max, step);
     bindSettingToGtkWidget(boundSettingName, spinButton, 'value');
 
     box.append(spinButton);
@@ -65,10 +66,13 @@ function makeLabeledSpinButtonOptionBox(label: string, boundSettingName: string,
 }
 
 export default {
+    init: function () {
+        // Nothing to initialize
+    },
 
     buildPrefsWidget: function () {
-        const mainBox = new Gtk.Box({
-            orientation: Gtk.Orientation.VERTICAL,
+        const mainBox = new Box({
+            orientation: Orientation.VERTICAL,
             'margin-top': 20,
             'margin-bottom': 20,
             'margin-start': 20,
@@ -97,7 +101,7 @@ export default {
                 'Hide widget when there are no notifications',
                 'hide-widget'
             ),
-            new Gtk.Label({
+            new Label({
                 label: TOKEN_EXPLAINER,
                 selectable: true,
                 'use-markup': true
@@ -110,8 +114,4 @@ export default {
 
         return mainBox;
     },
-
-    init: function() {
-        // Nothing to initialize
-    }
 };

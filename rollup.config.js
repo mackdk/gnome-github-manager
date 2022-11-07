@@ -6,6 +6,18 @@ import execute from 'rollup-plugin-shell';
 
 const buildPath = 'build';
 
+const globals = {
+    '@gi-types/clutter10': 'imports.gi.Clutter',
+    '@gi-types/gdk4': 'imports.gi.Gdk',
+    '@gi-types/gio2': 'imports.gi.Gio',
+    '@gi-types/glib2': 'imports.gi.GLib',
+    '@gi-types/gtk4': 'imports.gi.Gtk',
+    '@gi-types/soup2': 'imports.gi.Soup',
+    '@gi-types/st1': 'imports.gi.St',
+};
+
+const external = Object.keys(globals);
+
 export default [
     {
         input: 'src/main/typescript/extension.ts',
@@ -18,8 +30,10 @@ export default [
             format: 'iife',
             name: 'init',
             exports: 'default',
+            globals,
             assetFileNames: '[name][extname]',
         },
+        external,
         plugins: [
             commonjs(),
             nodeResolve({
@@ -47,6 +61,7 @@ export default [
             format: 'iife',
             exports: 'default',
             name: 'prefs',
+            globals,
             banner: ['imports.gi.versions.Gtk = \'4.0\';'].join('\n'),
             footer: [
                 'var init = prefs.init;',
@@ -56,6 +71,7 @@ export default [
         treeshake: {
             moduleSideEffects: 'no-external',
         },
+        external,
         plugins: [
             commonjs(),
             nodeResolve({

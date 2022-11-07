@@ -1,4 +1,10 @@
-const { St, Gio, Gtk, Soup, Clutter } = imports.gi;
+import { BoxLayout, Label, Icon } from '@gi-types/st1';
+import { ActorAlign, CURRENT_TIME } from '@gi-types/clutter10';
+import { URI, Session, AuthManager, AuthBasic, Message } from '@gi-types/soup2';
+
+import { icon_new_for_string, Settings } from '@gi-types/gio2';
+import { show_uri } from '@gi-types/gtk4';
+
 const Main = imports.ui.main;
 const Mainloop = imports.mainloop;
 
@@ -22,12 +28,12 @@ export class GitHubNotifications {
     hideCount: boolean;
     refreshInterval: number;
     githubInterval: number;
-    timeout: number | null;
-    httpSession: any;
+    timeout?: number;
+    httpSession: Session | null;
 
-    authUri: any;
-    authManager: any;
-    auth: any;
+    authUri?: URI;
+    authManager?: AuthManager;
+    auth?: AuthBasic;
 
     notifications = [];
     lastModified: string | null;
@@ -37,32 +43,50 @@ export class GitHubNotifications {
     showAlertNotification: boolean;
     showParticipatingOnly: boolean;
     _source: any;
-    settings: any;
+    settings?: Settings;
 
-    box: any;
-    label: any;
-    icon: any;
+    readonly box: BoxLayout;
+    readonly label: Label;
+    readonly icon: Icon;
 
     constructor() {
         this.domain = 'github.com';
         this.token = '';
         this.handle = '';
+
         this.hideWidget = false;
         this.hideCount = false;
+
         this.refreshInterval = 60;
         this.githubInterval = 60;
-        this.timeout = null;
+
         this.httpSession = null;
-        this.notifications = [];
         this.lastModified = null;
+
+        this.notifications = [];
+
         this.retryAttempts = 0;
         this.retryIntervals = [60, 120, 240, 480, 960, 1920, 3600];
         this.hasLazilyInit = false;
-        this.showAlertNotification = false;
+        this.showAlertNotification = true;
         this.showParticipatingOnly = false;
         this._source = null;
-        this.settings = null;
-        this.icon = null;
+
+        this.box = new BoxLayout({
+            style_class: 'panel-button',
+            reactive: true,
+            can_focus: true,
+            track_hover: true
+        });
+        this.label = new Label({
+            text: `${this.notifications.length}`,
+            style_class: 'system-status-icon notifications-length',
+            y_align: ActorAlign.CENTER,
+            y_expand: true,
+        });
+        this.icon = new Icon({
+            style_class: 'system-status-icon'
+        });
     }
 
     interval() {
@@ -74,6 +98,11 @@ export class GitHubNotifications {
     }
 
     lazyInit() {
+        if (!this.settings) {
+            info('Unable to peform lazy init: extension settings are not initialized');
+            return;
+        }
+
         this.hasLazilyInit = true;
         this.reloadSettings();
         this.initHttp();
@@ -83,6 +112,7 @@ export class GitHubNotifications {
             this.stopLoop();
             this.planFetch(5, false);
         });
+
         this.initUI();
     }
 
@@ -101,14 +131,19 @@ export class GitHubNotifications {
     }
 
     reloadSettings() {
-        this.domain = this.settings.get_string('domain');
-        this.token = this.settings.get_string('token');
-        this.handle = this.settings.get_string('handle');
-        this.hideWidget = this.settings.get_boolean('hide-widget');
-        this.hideCount = this.settings.get_boolean('hide-notification-count');
-        this.refreshInterval = this.settings.get_int('refresh-interval');
-        this.showAlertNotification = this.settings.get_boolean('show-alert');
-        this.showParticipatingOnly = this.settings.get_boolean('show-participating-only');
+        if (this.settings) {
+            this.domain = this.settings.get_string('domain');
+            this.token = this.settings.get_string('token');
+            this.handle = this.settings.get_string('handle');
+            this.hideWidget = this.settings.get_boolean('hide-widget');
+            this.hideCount = this.settings.get_boolean('hide-notification-count');
+            this.refreshInterval = this.settings.get_int('refresh-interval');
+            this.showAlertNotification = this.settings.get_boolean('show-alert');
+            this.showParticipatingOnly = this.settings.get_boolean('show-participating-only');
+        } else {
+            error('Unable to reload settings: Extension settings object is not initialized');
+        }
+
         this.checkVisibility();
     }
 
@@ -124,36 +159,20 @@ export class GitHubNotifications {
     stopLoop() {
         if (this.timeout) {
             Mainloop.source_remove(this.timeout);
-            this.timeout = null;
+            this.timeout = undefined;
         }
     }
 
     initUI() {
-        this.box = new St.BoxLayout({
-            style_class: 'panel-button',
-            reactive: true,
-            can_focus: true,
-            track_hover: true
-        });
-        this.label = new St.Label({
-            text: `${this.notifications.length}`,
-            style_class: 'system-status-icon notifications-length',
-            y_align: Clutter.ActorAlign.CENTER,
-            y_expand: true,
-        });
-
         this.checkVisibility();
 
-        this.icon = new St.Icon({
-            style_class: 'system-status-icon'
-        });
-        this.icon.gicon = Gio.icon_new_for_string(`${Me.path}/github.svg`);
+        this.icon.gicon = icon_new_for_string(`${Me.path}/github.svg`);
 
         this.box.add_actor(this.icon);
         this.box.add_actor(this.label);
 
-        this.box.connect('button-press-event', (_: any, event: any) => {
-            const button = event.get_button();
+        this.box.connect('button-press-event', (_, event) => {
+            const button: number = event.get_button();
 
             if (button == 1) {
                 this.showBrowserUri();
@@ -170,7 +189,7 @@ export class GitHubNotifications {
                 url = `https://${this.domain}/notifications/participating`;
             }
 
-            Gtk.show_uri(null, url, Gtk.get_current_event_time());
+            show_uri(null, url, CURRENT_TIME);
         } catch (e) {
             error(`Cannot open uri ${e}`);
         }
@@ -181,21 +200,21 @@ export class GitHubNotifications {
         if (this.showParticipatingOnly) {
             url = `https://api.${this.domain}/notifications?participating=1`;
         }
-        this.authUri = new Soup.URI(url);
+        this.authUri = URI.new(url);
         this.authUri.set_user(this.handle);
         this.authUri.set_password(this.token);
 
         if (this.httpSession) {
             this.httpSession.abort();
         } else {
-            this.httpSession = new Soup.Session();
+            this.httpSession = new Session();
             this.httpSession.user_agent = 'gnome-shell-extension github notification via libsoup';
 
-            this.authManager = new Soup.AuthManager();
-            this.auth = new Soup.AuthBasic({ host: `api.${this.domain}`, realm: 'Github Api' });
+            this.authManager = new AuthManager();
+            this.auth = new AuthBasic({ host: `api.${this.domain}`, realm: 'Github Api' });
 
             this.authManager.use_auth(this.authUri, this.auth);
-            Soup.Session.prototype.add_feature.call(this.httpSession, this.authManager);
+            Session.prototype.add_feature.call(this.httpSession, this.authManager);
         }
     }
 
@@ -213,21 +232,25 @@ export class GitHubNotifications {
     }
 
     fetchNotifications() {
-        const message = new Soup.Message({ method: 'GET', uri: this.authUri });
+        if (!this.httpSession) {
+            return;
+        }
+
+        const message = new Message({ method: 'GET', uri: this.authUri });
         if (this.lastModified) {
             // github's API is currently broken: marking a notification as read won't modify the "last-modified" header
             // so this is useless for now
             //message.request_headers.append('If-Modified-Since', this.lastModified);
         }
 
-        this.httpSession.queue_message(message, (_: any, response: any) => {
+        this.httpSession.queue_message(message, (_, response) => {
             try {
                 if (response.status_code == 200 || response.status_code == 304) {
                     if (response.response_headers.get('Last-Modified')) {
                         this.lastModified = response.response_headers.get('Last-Modified');
                     }
                     if (response.response_headers.get('X-Poll-Interval')) {
-                        this.githubInterval = response.response_headers.get('X-Poll-Interval');
+                        this.githubInterval = Number(response.response_headers.get('X-Poll-Interval'));
                     }
                     this.planFetch(this.interval(), false);
                     if (response.status_code == 200) {
@@ -266,7 +289,7 @@ export class GitHubNotifications {
         const lastNotificationsCount = this.notifications.length;
 
         this.notifications = data;
-        this.label && this.label.set_text(`${data.length}`);
+        this.label.set_text(`${data.length}`);
         this.checkVisibility();
         this.alertWithNotifications(lastNotificationsCount);
     }
