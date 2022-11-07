@@ -29,20 +29,20 @@ export class GitHubNotifications {
     refreshInterval: number;
     githubInterval: number;
     timeout?: number;
-    httpSession: Session | null;
 
+    httpSession?: Session;
     authUri?: URI;
     authManager?: AuthManager;
     auth?: AuthBasic;
 
     notifications = [];
-    lastModified: string | null;
     retryAttempts: number;
     retryIntervals: Array<number>;
     hasLazilyInit: boolean;
     showAlertNotification: boolean;
     showParticipatingOnly: boolean;
-    _source: any;
+
+    source?: any;
     settings?: Settings;
 
     readonly box: BoxLayout;
@@ -60,9 +60,6 @@ export class GitHubNotifications {
         this.refreshInterval = 60;
         this.githubInterval = 60;
 
-        this.httpSession = null;
-        this.lastModified = null;
-
         this.notifications = [];
 
         this.retryAttempts = 0;
@@ -70,7 +67,6 @@ export class GitHubNotifications {
         this.hasLazilyInit = false;
         this.showAlertNotification = true;
         this.showParticipatingOnly = false;
-        this._source = null;
 
         this.box = new BoxLayout({
             style_class: 'panel-button',
@@ -237,18 +233,9 @@ export class GitHubNotifications {
         }
 
         const message = new Message({ method: 'GET', uri: this.authUri });
-        if (this.lastModified) {
-            // github's API is currently broken: marking a notification as read won't modify the "last-modified" header
-            // so this is useless for now
-            //message.request_headers.append('If-Modified-Since', this.lastModified);
-        }
-
         this.httpSession.queue_message(message, (_, response) => {
             try {
                 if (response.status_code == 200 || response.status_code == 304) {
-                    if (response.response_headers.get('Last-Modified')) {
-                        this.lastModified = response.response_headers.get('Last-Modified');
-                    }
                     if (response.response_headers.get('X-Poll-Interval')) {
                         this.githubInterval = Number(response.response_headers.get('X-Poll-Interval'));
                     }
@@ -309,33 +296,27 @@ export class GitHubNotifications {
     }
 
     notify(title: string, message: string) {
-        let notification;
+        if (!this.source) {
+            this.source = new MessageTray.SystemNotificationSource();
+            this.source.connect('destroy', () => {
+                this.source = undefined;
+            });
 
-        this.addNotificationSource();
+            Main.messageTray.add(this.source);
+        }
 
-        if (this._source && this._source.notifications.length == 0) {
-            notification = new MessageTray.Notification(this._source, title, message, { gicon: this.icon.gicon });
+        let notification : any;
+        if (this.source.notifications.length == 0) {
+            notification = new MessageTray.Notification(this.source, title, message, { gicon: this.icon.gicon });
 
             notification.setTransient(false);
             notification.setResident(false);
             notification.connect('activated', this.showBrowserUri.bind(this)); // Open on click
         } else {
-            notification = this._source.notifications[0];
+            notification = this.source.notifications[0];
             notification.update(title, message, { clear: true });
         }
 
-        this._source.showNotification(notification);
-    }
-
-    addNotificationSource() {
-        if (this._source) {
-            return;
-        }
-
-        this._source = new MessageTray.SystemNotificationSource();
-        this._source.connect('destroy', () => {
-            this._source = null;
-        });
-        Main.messageTray.add(this._source);
+        this.source.showNotification(notification);
     }
 }
