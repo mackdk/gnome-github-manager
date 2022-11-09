@@ -1,6 +1,6 @@
-<schemalist gettext-domain="gnome-shell-extension-github-notifications">
+<schemalist gettext-domain="gnome-shell-extension-github-manager">
 
-  <schema id="org.gnome.shell.extensions.github.notifications" path="/org/gnome/shell/extensions/github-notifications/">
+  <schema id="org.gnome.shell.extensions.github.manager" path="/org/gnome/shell/extensions/github-manager/">
     <key name="handle" type="s">
       <default>''</default>
       <summary>Your github handle</summary>
