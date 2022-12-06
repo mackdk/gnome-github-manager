@@ -2,10 +2,10 @@
 const extensionName: string = imports.misc.extensionUtils.getCurrentExtension().metadata.name;
 
 export enum LogLevel {
-    DEBUG,
-    INFO,
-    WARN,
-    ERROR,
+    DEBUG = 'DEBUG',
+    INFO = 'INFO',
+    WARN = 'WARN',
+    ERROR = 'ERROR',
 }
 
 export class Logger {
@@ -19,31 +19,33 @@ export class Logger {
         this.logLevel = logLevel;
     }
 
-    debug(message: string, err? : Error) {
+    debug(message: string, err? : unknown) {
         this.log(LogLevel.DEBUG, message, err);
     }
 
-    info(message: string, err? : Error) {
+    info(message: string, err? : unknown) {
         this.log(LogLevel.INFO, message, err);
     }
 
-    warn(message: string, err? : Error) {
+    warn(message: string, err? : unknown) {
         this.log(LogLevel.WARN, message, err);
     }
 
-    error(message: string, err? : Error) {
+    error(message: string, err? : unknown) {
         this.log(LogLevel.ERROR, message, err);
     }
 
-    private log(level: LogLevel, message: string, err? : Error) {
+    private log(level: LogLevel, message: string, err? : unknown) {
         if (level < this.logLevel) {
             return;
         }
 
         const logMessage = `[${extensionName} Extension] ${this.loggerName} ${level} ${message}`;
 
-        if (err) {
+        if (err instanceof Error) {
             logError(err, logMessage);
+        } else if (typeof err === 'string') {
+            log(`${logMessage} - ${err}`);
         } else {
             log(logMessage);
         }
