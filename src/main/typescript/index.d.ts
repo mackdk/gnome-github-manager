@@ -16,7 +16,12 @@ declare global {
         };
         misc: {
             extensionUtils: ExtensionUtils;
-        }
+        };
+        gi: {
+            versions: {
+                Soup: string;
+            };
+        };
     };
 
     export interface ExtensionMetadata {

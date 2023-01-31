@@ -1,10 +1,12 @@
 import { BoxLayout, Label, Icon } from '@gi-types/st1';
 import { ActorAlign, CURRENT_TIME } from '@gi-types/clutter10';
-import { URI, Session, AuthManager, AuthBasic, Message } from '@gi-types/soup2';
 
 import { icon_new_for_string, Settings } from '@gi-types/gio2';
 import { show_uri } from '@gi-types/gtk4';
 
+import { Status } from '@tshttp/status';
+
+import { ApiError, GitHubClient, GitHubClientFactory, Notification } from '@github-manager/domain/GitHubClient';
 import { Logger } from '@github-manager/utils/Logger';
 
 const Main: Main = imports.ui.main;
@@ -15,7 +17,7 @@ const ExtensionUtils: ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 
 export class GitHubNotifications {
-    static readonly LOGGER: Logger = new Logger('github-manager.domain.GitHubNotifications');
+    private static readonly LOGGER: Logger = new Logger('github-manager.domain.GitHubNotifications');
 
     domain: string;
     token: string;
@@ -26,12 +28,9 @@ export class GitHubNotifications {
     githubInterval: number;
     timeout?: number;
 
-    httpSession?: Session;
-    authUri?: URI;
-    authManager?: AuthManager;
-    auth?: AuthBasic;
+    gitHubClient?: GitHubClient;
 
-    notifications = [];
+    notifications: Notification[];
     retryAttempts: number;
     retryIntervals: Array<number>;
     hasLazilyInit: boolean;
@@ -81,12 +80,12 @@ export class GitHubNotifications {
         });
     }
 
-    interval() {
-        let i = this.refreshInterval;
+    interval(minAllowed: number) {
+        let interval = this.refreshInterval;
         if (this.retryAttempts > 0) {
-            i = this.retryIntervals[this.retryAttempts] || 3600;
+            interval = this.retryIntervals[this.retryAttempts] || 3600;
         }
-        return Math.max(i, this.githubInterval);
+        return Math.max(interval, minAllowed);
     }
 
     lazyInit() {
@@ -188,26 +187,7 @@ export class GitHubNotifications {
     }
 
     initHttp() {
-        let url = `https://api.${this.domain}/notifications`;
-        if (this.showParticipatingOnly) {
-            url = `https://api.${this.domain}/notifications?participating=1`;
-        }
-        this.authUri = URI.new(url);
-        this.authUri.set_user(this.handle);
-        this.authUri.set_password(this.token);
-
-        if (this.httpSession) {
-            this.httpSession.abort();
-        } else {
-            this.httpSession = new Session();
-            this.httpSession.user_agent = 'gnome-shell-extension github notification via libsoup';
-
-            this.authManager = new AuthManager();
-            this.auth = new AuthBasic({ host: `api.${this.domain}`, realm: 'Github Api' });
-
-            this.authManager.use_auth(this.authUri, this.auth);
-            Session.prototype.add_feature.call(this.httpSession, this.authManager);
-        }
+        this.gitHubClient = GitHubClientFactory.newClient(this.domain, this.token);
     }
 
     planFetch(delay: number, retry: boolean) {
@@ -224,50 +204,30 @@ export class GitHubNotifications {
     }
 
     fetchNotifications() {
-        if (!this.httpSession) {
+        const client = this.gitHubClient;
+        if (!client) {
             return;
         }
 
-        const message = new Message({ method: 'GET', uri: this.authUri });
-        this.httpSession.queue_message(message, (_, response) => {
-            try {
-                if (response.status_code == 200 || response.status_code == 304) {
-                    if (response.response_headers.get('X-Poll-Interval')) {
-                        this.githubInterval = Number(response.response_headers.get('X-Poll-Interval'));
-                    }
-                    this.planFetch(this.interval(), false);
-                    if (response.status_code == 200) {
-                        const data = JSON.parse(response.response_body.data);
-                        this.updateNotifications(data);
-                    }
-                    return;
-                }
-                if (response.status_code == 401) {
-                    GitHubNotifications.LOGGER.error('Unauthorized. Check your github handle and token in the settings');
-                    this.planFetch(this.interval(), true);
-                    this.label.set_text('!');
-                    return;
-                }
-                if (!response.response_body.data && response.status_code > 400) {
-                    GitHubNotifications.LOGGER.error(`HTTP error:${response.status_code}`);
-                    this.planFetch(this.interval(), true);
-                    return;
-                }
-                // if we reach this point, none of the cases above have been triggered
-                // which likely means there was an error locally or on the network
-                // therefore we should try again in a while
-                GitHubNotifications.LOGGER.error(`Response error. Status: ${response.status_code}, Response: ${JSON.stringify(response)}`);
-                this.planFetch(this.interval(), true);
+        let failed = false;
+        client.listNotifications(this.showParticipatingOnly).then((notifications: Notification[]) => {
+            this.updateNotifications(notifications);
+            failed = false;
+        }).catch((error: ApiError) => {
+            if (error.statusCode == Status.NotModified) {
+                // Nothing to update, just reschedule
+                failed == false;
+            } else {
+                GitHubNotifications.LOGGER.error(`HTTP error ${error.statusCode}: ${error.message}`, error.error);
                 this.label.set_text('!');
-                return;
-            } catch (e) {
-                GitHubNotifications.LOGGER.error(`HTTP exception:${e}`);
-                return;
+                failed = true;
             }
+        }).finally(() => {
+            this.planFetch(this.interval(client.pollInterval), failed);
         });
     }
 
-    updateNotifications(data: any) {
+    updateNotifications(data: Notification[]) {
         const lastNotificationsCount = this.notifications.length;
 
         this.notifications = data;

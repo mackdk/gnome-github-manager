@@ -49,6 +49,7 @@
                 "maxEOF": 1
             }
         ],
-        "no-duplicate-imports": "error"
+        "no-duplicate-imports": "error",
+        "@typescript-eslint/no-inferrable-types": "warn"
     }
 }
