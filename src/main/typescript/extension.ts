@@ -2,7 +2,7 @@ import { GitHubNotifications } from '@github-manager/domain/GitHubNotifications'
 import { Logger, LogLevel } from '@github-manager/utils/Logger';
 
 // Set global logging level
-Logger.GLOBAL_LOGGING_LEVEL = LogLevel.DEBUG;
+Logger.globalLoggingLevel = LogLevel.DEBUG;
 
 /**
  * Main Extension class.

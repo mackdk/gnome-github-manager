@@ -80,7 +80,7 @@ export class GitHubNotifications {
         });
     }
 
-    private interval(minAllowed: number) {
+    private interval(minAllowed: number) : number {
         let interval = this.refreshInterval;
         if (this.retryAttempts > 0) {
             interval = this.retryIntervals[this.retryAttempts] || 3600;
@@ -201,6 +201,7 @@ export class GitHubNotifications {
             this.fetchNotifications();
             return false;
         });
+        GitHubNotifications.LOGGER.debug(`Next fetch execution scheduled in ${delay} seconds`);
     }
 
     private fetchNotifications() {
@@ -208,6 +209,8 @@ export class GitHubNotifications {
         if (!client) {
             return;
         }
+
+        GitHubNotifications.LOGGER.debug('Feching GitHub notifications');
 
         let failed = false;
         client.listNotifications(this.showParticipatingOnly).then((notifications: Notification[]) => {
