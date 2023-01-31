@@ -50,6 +50,7 @@
             }
         ],
         "no-duplicate-imports": "error",
-        "@typescript-eslint/no-inferrable-types": "warn"
+        "@typescript-eslint/no-inferrable-types": "warn",
+        "@typescript-eslint/explicit-member-accessibility": "error"
     }
 }

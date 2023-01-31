@@ -9,29 +9,29 @@ export enum LogLevel {
 }
 
 export class Logger {
-    static GLOBAL_LOGGING_LEVEL : LogLevel = LogLevel.DEBUG;
+    public static GLOBAL_LOGGING_LEVEL : LogLevel = LogLevel.INFO;
 
-    readonly loggerName: string;
-    readonly logLevel: LogLevel;
+    private readonly loggerName: string;
+    private readonly logLevel: LogLevel;
 
-    constructor(loggerName: string, logLevel : LogLevel = Logger.GLOBAL_LOGGING_LEVEL) {
+    public constructor(loggerName: string, logLevel : LogLevel = Logger.GLOBAL_LOGGING_LEVEL) {
         this.loggerName = loggerName;
         this.logLevel = logLevel;
     }
 
-    debug(message: string, err? : unknown) {
+    public debug(message: string, err? : unknown) {
         this.log(LogLevel.DEBUG, message, err);
     }
 
-    info(message: string, err? : unknown) {
+    public info(message: string, err? : unknown) {
         this.log(LogLevel.INFO, message, err);
     }
 
-    warn(message: string, err? : unknown) {
+    public warn(message: string, err? : unknown) {
         this.log(LogLevel.WARN, message, err);
     }
 
-    error(message: string, err? : unknown) {
+    public error(message: string, err? : unknown) {
         this.log(LogLevel.ERROR, message, err);
     }
 

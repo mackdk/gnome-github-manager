@@ -48,8 +48,8 @@ declare global {
         export class ButtonBox extends Widget { }
 
         export class Button extends ButtonBox {
-            constructor(menuAlignment: number, nameText: string, dontCreateMenu: boolean);
-            add_actor(widget: Widget): void;
+            public constructor(menuAlignment: number, nameText: string, dontCreateMenu: boolean);
+            public add_actor(widget: Widget): void;
         }
     }
 
@@ -81,21 +81,21 @@ declare global {
         }
 
         export class Notification extends Object {
-            constructor(notificationSource: SystemNotificationSource, title: string, banner: string, params: Partial<NotificationProperties>);
-            setTransient(state: boolean): void;
-            update(title: string, message: string, properties: Partial<NotificationProperties>): void;
+            public constructor(notificationSource: SystemNotificationSource, title: string, banner: string, params: Partial<NotificationProperties>);
+            public setTransient(state: boolean): void;
+            public update(title: string, message: string, properties: Partial<NotificationProperties>): void;
         }
 
         export class Source extends Object {
-            notifications: Notification[];
+            public notifications: Notification[];
 
-            constructor(title: string, iconName: string);
-            getIcon(): ThemedIcon;
+            public constructor(title: string, iconName: string);
+            public getIcon(): ThemedIcon;
         }
 
         export class SystemNotificationSource extends Source {
-            constructor();
-            showNotification(notification: Notification): void;
+            public constructor();
+            public showNotification(notification: Notification): void;
         }
     }
 

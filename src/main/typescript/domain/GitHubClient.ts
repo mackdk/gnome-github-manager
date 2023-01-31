@@ -4,11 +4,11 @@ import { Logger } from '@github-manager/utils/Logger';
 import { reason, Status } from '@tshttp/status';
 
 export class ApiError {
-    readonly statusCode: number;
-    readonly message: string;
-    readonly error?: Error;
+    public readonly statusCode: number;
+    public readonly message: string;
+    public readonly error?: Error;
 
-    constructor(statusCode: number, message: string, error? : Error) {
+    public constructor(statusCode: number, message: string, error? : Error) {
         this.statusCode = statusCode;
         this.message = message;
         this.error = error;
@@ -41,11 +41,11 @@ export interface GitHubClient {
 }
 
 class HttpReponse {
-    readonly statusCode: number;
-    readonly body: string;
-    readonly length: number;
+    public readonly statusCode: number;
+    public readonly body: string;
+    public readonly length: number;
 
-    constructor(stausCode: number, length: number, body?: string) {
+    public constructor(stausCode: number, length: number, body?: string) {
         this.statusCode = stausCode;
         this.length = length;
         this.body = body === undefined ? '' : body;
@@ -56,7 +56,7 @@ abstract class AbstractGitHubClient implements GitHubClient {
 
     protected _pollInterval: number;
 
-    constructor() {
+    protected constructor() {
         this._pollInterval = 60;
     }
 
@@ -107,7 +107,7 @@ class LibSoup2GitHubClient extends AbstractGitHubClient {
 
     private readonly baseUrl: string;
 
-    constructor(domain: string, token: string) {
+    public constructor(domain: string, token: string) {
         super();
 
         const extensionName: string = imports.misc.extensionUtils.getCurrentExtension().metadata.name;

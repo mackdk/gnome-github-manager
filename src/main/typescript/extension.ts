@@ -1,24 +1,27 @@
 import { GitHubNotifications } from '@github-manager/domain/GitHubNotifications';
-import { Logger } from '@github-manager/utils/Logger';
+import { Logger, LogLevel } from '@github-manager/utils/Logger';
+
+// Set global logging level
+Logger.GLOBAL_LOGGING_LEVEL = LogLevel.DEBUG;
 
 /**
  * Main Extension class.
  */
 class GitHubManagerExtension {
-    static readonly LOGGER: Logger = new Logger('github-manager.GitHubManagerExtension');
+    private static readonly LOGGER: Logger = new Logger('github-manager.GitHubManagerExtension');
 
-    readonly gitHubNotifications: GitHubNotifications;
+    private readonly gitHubNotifications: GitHubNotifications;
 
-    constructor() {
+    public constructor() {
         this.gitHubNotifications = new GitHubNotifications();
     }
 
-    enable(): void {
+    public enable(): void {
         GitHubManagerExtension.LOGGER.debug('Enabling extension');
         this.gitHubNotifications.start();
     }
 
-    disable(): void {
+    public disable(): void {
         GitHubManagerExtension.LOGGER.debug('Disabling extension');
         this.gitHubNotifications.stop();
     }

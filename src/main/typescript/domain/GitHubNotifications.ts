@@ -19,32 +19,32 @@ const Me = ExtensionUtils.getCurrentExtension();
 export class GitHubNotifications {
     private static readonly LOGGER: Logger = new Logger('github-manager.domain.GitHubNotifications');
 
-    domain: string;
-    token: string;
-    handle: string;
-    hideWidget: boolean;
-    hideCount: boolean;
-    refreshInterval: number;
-    githubInterval: number;
-    timeout?: number;
+    private domain: string;
+    private token: string;
+    private handle: string;
+    private hideWidget: boolean;
+    private hideCount: boolean;
+    private refreshInterval: number;
+    private githubInterval: number;
+    private timeout?: number;
 
-    gitHubClient?: GitHubClient;
+    private gitHubClient?: GitHubClient;
 
-    notifications: Notification[];
-    retryAttempts: number;
-    retryIntervals: Array<number>;
-    hasLazilyInit: boolean;
-    showAlertNotification: boolean;
-    showParticipatingOnly: boolean;
+    private notifications: Notification[];
+    private retryAttempts: number;
+    private retryIntervals: Array<number>;
+    private hasLazilyInit: boolean;
+    private showAlertNotification: boolean;
+    private showParticipatingOnly: boolean;
 
-    source?: MessageTray.SystemNotificationSource;
-    settings?: Settings;
+    private source?: MessageTray.SystemNotificationSource;
+    private settings?: Settings;
 
-    readonly box: BoxLayout;
-    readonly label: Label;
-    readonly icon: Icon;
+    private readonly box: BoxLayout;
+    private readonly label: Label;
+    private readonly icon: Icon;
 
-    constructor() {
+    public constructor() {
         this.domain = 'github.com';
         this.token = '';
         this.handle = '';
@@ -80,7 +80,7 @@ export class GitHubNotifications {
         });
     }
 
-    interval(minAllowed: number) {
+    private interval(minAllowed: number) {
         let interval = this.refreshInterval;
         if (this.retryAttempts > 0) {
             interval = this.retryIntervals[this.retryAttempts] || 3600;
@@ -88,7 +88,7 @@ export class GitHubNotifications {
         return Math.max(interval, minAllowed);
     }
 
-    lazyInit() {
+    private lazyInit() {
         if (!this.settings) {
             GitHubNotifications.LOGGER.warn('Unable to peform lazy init: extension settings are not initialized');
             return;
@@ -107,7 +107,7 @@ export class GitHubNotifications {
         this.initUI();
     }
 
-    start() {
+    public start() {
         this.settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.github.manager');
         if (!this.hasLazilyInit) {
             this.lazyInit();
@@ -116,12 +116,12 @@ export class GitHubNotifications {
         Main.panel._rightBox.insert_child_at_index(this.box, 0);
     }
 
-    stop() {
+    public stop() {
         this.stopLoop();
         Main.panel._rightBox.remove_child(this.box);
     }
 
-    reloadSettings() {
+    private reloadSettings() {
         if (this.settings) {
             this.domain = this.settings.get_string('domain');
             this.token = this.settings.get_string('token');
@@ -138,7 +138,7 @@ export class GitHubNotifications {
         this.checkVisibility();
     }
 
-    checkVisibility() {
+    private checkVisibility() {
         if (this.box) {
             this.box.visible = !this.hideWidget || this.notifications.length != 0;
         }
@@ -147,14 +147,14 @@ export class GitHubNotifications {
         }
     }
 
-    stopLoop() {
+    private stopLoop() {
         if (this.timeout) {
             Mainloop.source_remove(this.timeout);
             this.timeout = undefined;
         }
     }
 
-    initUI() {
+    private initUI() {
         this.checkVisibility();
 
         this.icon.gicon = icon_new_for_string(`${Me.path}/github.svg`);
@@ -173,7 +173,7 @@ export class GitHubNotifications {
         });
     }
 
-    showBrowserUri() {
+    private showBrowserUri() {
         try {
             let url = `https://${this.domain}/notifications`;
             if (this.showParticipatingOnly) {
@@ -186,11 +186,11 @@ export class GitHubNotifications {
         }
     }
 
-    initHttp() {
+    private initHttp() {
         this.gitHubClient = GitHubClientFactory.newClient(this.domain, this.token);
     }
 
-    planFetch(delay: number, retry: boolean) {
+    private planFetch(delay: number, retry: boolean) {
         if (retry) {
             this.retryAttempts++;
         } else {
@@ -203,7 +203,7 @@ export class GitHubNotifications {
         });
     }
 
-    fetchNotifications() {
+    private fetchNotifications() {
         const client = this.gitHubClient;
         if (!client) {
             return;
@@ -227,7 +227,7 @@ export class GitHubNotifications {
         });
     }
 
-    updateNotifications(data: Notification[]) {
+    private updateNotifications(data: Notification[]) {
         const lastNotificationsCount = this.notifications.length;
 
         this.notifications = data;
@@ -236,7 +236,7 @@ export class GitHubNotifications {
         this.alertWithNotifications(lastNotificationsCount);
     }
 
-    alertWithNotifications(lastCount: number) {
+    private alertWithNotifications(lastCount: number) {
         const newCount = this.notifications.length;
 
         if (newCount && newCount > lastCount && this.showAlertNotification) {
@@ -250,7 +250,7 @@ export class GitHubNotifications {
         }
     }
 
-    notify(title: string, message: string) {
+    private notify(title: string, message: string) {
         if (!this.source) {
             this.source = new MessageTray.SystemNotificationSource();
             this.source.connect('destroy', () => {
