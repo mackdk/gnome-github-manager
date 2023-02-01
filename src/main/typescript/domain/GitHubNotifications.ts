@@ -1,5 +1,6 @@
 import { BoxLayout, Label, Icon } from '@gi-types/st1';
 import { ActorAlign, CURRENT_TIME } from '@gi-types/clutter10';
+import { ButtonEvent, BUTTON_PRIMARY, BUTTON_SECONDARY } from '@gi-types/gdk4';
 
 import { icon_new_for_string } from '@gi-types/gio2';
 import { show_uri } from '@gi-types/gtk4';
@@ -9,9 +10,9 @@ import { Status } from '@tshttp/status';
 import { ApiError, GitHubClient, GitHubClientFactory, Notification } from '@github-manager/domain/GitHubClient';
 import { Logger } from '@github-manager/utils/Logger';
 import { Configuration } from './Configuration';
+import { LimitedRetriableTimer } from '@github-manager/utils/LimitedRetriableTimer';
 
 const Main: Main = imports.ui.main;
-const Mainloop: MainLoop = imports.mainloop;
 const MessageTray : MessageTray = imports.ui.messageTray;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
@@ -19,17 +20,13 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 export class GitHubNotifications {
     private static readonly LOGGER: Logger = new Logger('github-manager.domain.GitHubNotifications');
 
-    private timeout?: number;
-
-    private gitHubClient?: GitHubClient;
+    private gitHubClient: GitHubClient;
+    private timer: LimitedRetriableTimer;
 
     private notifications: Notification[];
-    private retryAttempts: number;
-    private retryIntervals: Array<number>;
-    private hasLazilyInit: boolean;
 
     private source?: MessageTray.SystemNotificationSource;
-    private configuration: Configuration;
+    private readonly configuration: Configuration;
 
     private readonly box: BoxLayout;
     private readonly label: Label;
@@ -38,11 +35,10 @@ export class GitHubNotifications {
     public constructor(configuration: Configuration) {
         this.configuration = configuration;
         this.configuration.addChangeListener(this.configurationPropertyChanged.bind(this));
-        this.notifications = [];
 
-        this.retryAttempts = 0;
-        this.retryIntervals = [60, 120, 240, 480, 960, 1920, 3600];
-        this.hasLazilyInit = false;
+        this.timer = new LimitedRetriableTimer(this.fetchNotifications.bind(this), this.configuration.refreshInterval);
+        this.gitHubClient = GitHubClientFactory.newClient(this.configuration.domain, this.configuration.token);
+        this.notifications = [];
 
         this.box = new BoxLayout({
             style_class: 'panel-button',
@@ -59,81 +55,63 @@ export class GitHubNotifications {
         this.icon = new Icon({
             style_class: 'system-status-icon'
         });
-    }
-
-    private interval(minAllowed: number) : number {
-        let interval = this.configuration.refreshInterval;
-        if (this.retryAttempts > 0) {
-            interval = this.retryIntervals[this.retryAttempts] || 3600;
-        }
-        return Math.max(interval, minAllowed);
-    }
-
-    private lazyInit() {
-        if (!this.configuration) {
-            GitHubNotifications.LOGGER.warn('Unable to peform lazy init: extension settings are not initialized');
-            return;
-        }
-
-        this.hasLazilyInit = true;
-        this.initHttp();
-        this.initUI();
-    }
-
-    private configurationPropertyChanged(property: string) {
-        GitHubNotifications.LOGGER.debug(`Configuration property '${property}' is changed`);
-
-        this.initHttp();
-        this.stopLoop();
-        this.planFetch(5, false);
-    }
-
-    public start() {
-        if (!this.hasLazilyInit) {
-            this.lazyInit();
-        }
-        this.fetchNotifications();
-        Main.panel._rightBox.insert_child_at_index(this.box, 0);
-    }
-
-    public stop() {
-        this.stopLoop();
-        Main.panel._rightBox.remove_child(this.box);
-    }
-
-    private checkVisibility() {
-        if (this.box) {
-            this.box.visible = !this.configuration.hideWidget || this.notifications.length != 0;
-        }
-        if (this.label) {
-            this.label.visible = !this.configuration.hideNotificationCount;
-        }
-    }
-
-    private stopLoop() {
-        if (this.timeout) {
-            Mainloop.source_remove(this.timeout);
-            this.timeout = undefined;
-        }
-    }
-
-    private initUI() {
-        this.checkVisibility();
 
         this.icon.gicon = icon_new_for_string(`${Me.path}/github.svg`);
 
         this.box.add_actor(this.icon);
         this.box.add_actor(this.label);
 
-        this.box.connect('button-press-event', (_, event) => {
-            const button: number = event.get_button();
+        this.box.connect('button-press-event', (_, event) => this.handleButtonPress(event));
 
-            if (button == 1) {
+        this.updateButtonVisibility();
+    }
+
+    private configurationPropertyChanged(property: string) {
+        GitHubNotifications.LOGGER.debug(`Configuration property '${property}' is changed`);
+
+        if (property == 'domain' || property == 'token') {
+            this.gitHubClient = GitHubClientFactory.newClient(this.configuration.domain, this.configuration.token);
+        }
+
+        if (property == 'refreshInterval' || property == 'showParticipatingOnly') {
+            this.timer.stop();
+            this.timer = new LimitedRetriableTimer(this.fetchNotifications.bind(this), this.configuration.refreshInterval);
+            this.timer.start();
+        }
+
+        if (property == 'hideWidget' || property == 'hideNotificationCount') {
+            this.updateButtonVisibility();
+        }
+    }
+
+    public start() {
+        this.timer.start();
+
+        // Add the widget to the UI
+        Main.panel._rightBox.insert_child_at_index(this.box, 0);
+    }
+
+    public stop() {
+        this.timer.stop();
+
+        // Remove the widget to the UI
+        Main.panel._rightBox.remove_child(this.box);
+    }
+
+    private updateButtonVisibility() {
+        this.box.visible = !this.configuration.hideWidget || this.notifications.length != 0;
+        this.label.visible = !this.configuration.hideNotificationCount;
+    }
+
+    private handleButtonPress(event: ButtonEvent) {
+        switch (event.get_button()) {
+            case BUTTON_PRIMARY:
                 this.showBrowserUri();
-            } else if (button == 3) {
+                break;
+            case BUTTON_SECONDARY:
                 imports.misc.extensionUtils.openPrefs();
-            }
-        });
+                break;
+        }
     }
 
     private showBrowserUri() {
@@ -149,48 +127,31 @@ export class GitHubNotifications {
         }
     }
 
-    private initHttp() {
-        this.gitHubClient = GitHubClientFactory.newClient(this.configuration.domain, this.configuration.token);
-    }
-
-    private planFetch(delay: number, retry: boolean) {
-        if (retry) {
-            this.retryAttempts++;
-        } else {
-            this.retryAttempts = 0;
-        }
-        this.stopLoop();
-        this.timeout = Mainloop.timeout_add_seconds(delay, () => {
-            this.fetchNotifications();
-            return false;
-        });
-        GitHubNotifications.LOGGER.debug(`Next fetch execution scheduled in ${delay} seconds`);
-    }
-
-    private fetchNotifications() {
-        const client = this.gitHubClient;
-        if (!client) {
-            return;
-        }
-
+    private async fetchNotifications() : Promise<boolean> {
         GitHubNotifications.LOGGER.debug('Feching GitHub notifications');
 
-        let failed = false;
-        client.listNotifications(this.configuration.showParticipatingOnly).then((notifications: Notification[]) => {
+        try {
+            const notifications = await this.gitHubClient.listNotifications(this.configuration.showParticipatingOnly);
             this.updateNotifications(notifications);
-            failed = false;
-        }).catch((error: ApiError) => {
-            if (error.statusCode == Status.NotModified) {
-                // Nothing to update, just reschedule
-                failed == false;
-            } else {
+            return true;
+        } catch(error) {
+            if (error instanceof ApiError) {
+                // If we get not modified as response just proceed
+                if (error.statusCode == Status.NotModified) {
+                    return true;
+                }
+
+                // Mark the error and prepare for retry
                 GitHubNotifications.LOGGER.error(`HTTP error ${error.statusCode}: ${error.message}`, error.error);
-                this.label.set_text('!');
-                failed = true;
+            } else {
+                GitHubNotifications.LOGGER.error('Unexpected error while retrieving notifications', error);
             }
-        }).finally(() => {
-            this.planFetch(this.interval(client.pollInterval), failed);
-        });
+
+            this.label.set_text('!');
+            return false;
+        } finally {
+            this.timer.lowerIntervalLimit = this.gitHubClient.pollInterval;
+        }
     }
 
     private updateNotifications(data: Notification[]) {
@@ -198,7 +159,7 @@ export class GitHubNotifications {
 
         this.notifications = data;
         this.label.set_text(`${data.length}`);
-        this.checkVisibility();
+        this.updateButtonVisibility();
         this.alertWithNotifications(lastNotificationsCount);
     }
 
@@ -211,7 +172,7 @@ export class GitHubNotifications {
 
                 this.notify('Github Notifications', message);
             } catch (e) {
-                GitHubNotifications.LOGGER.error(`Cannot notify ${e}`);
+                GitHubNotifications.LOGGER.error('Cannot notify', e);
             }
         }
     }
