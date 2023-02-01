@@ -2,6 +2,7 @@
 	"description": "Integrate Github within the Gnome desktop environment\nSource code is available here: https://github.com/mackdk/gnome-github-manager",
 	"uuid": "github.manager@mackdk.hotmail.com",
 	"name": "Github Manager",
+	"settings-schema": "org.gnome.shell.extensions.github.manager",
 	"shell-version": ["40", "41", "42"],
 	"version": 1
 }

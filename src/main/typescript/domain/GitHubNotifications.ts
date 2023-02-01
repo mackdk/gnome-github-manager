@@ -1,31 +1,24 @@
 import { BoxLayout, Label, Icon } from '@gi-types/st1';
 import { ActorAlign, CURRENT_TIME } from '@gi-types/clutter10';
 
-import { icon_new_for_string, Settings } from '@gi-types/gio2';
+import { icon_new_for_string } from '@gi-types/gio2';
 import { show_uri } from '@gi-types/gtk4';
 
 import { Status } from '@tshttp/status';
 
 import { ApiError, GitHubClient, GitHubClientFactory, Notification } from '@github-manager/domain/GitHubClient';
 import { Logger } from '@github-manager/utils/Logger';
+import { Configuration } from './Configuration';
 
 const Main: Main = imports.ui.main;
 const Mainloop: MainLoop = imports.mainloop;
 const MessageTray : MessageTray = imports.ui.messageTray;
 
-const ExtensionUtils: ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
+const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 export class GitHubNotifications {
     private static readonly LOGGER: Logger = new Logger('github-manager.domain.GitHubNotifications');
 
-    private domain: string;
-    private token: string;
-    private handle: string;
-    private hideWidget: boolean;
-    private hideCount: boolean;
-    private refreshInterval: number;
-    private githubInterval: number;
     private timeout?: number;
 
     private gitHubClient?: GitHubClient;
@@ -34,34 +27,22 @@ export class GitHubNotifications {
     private retryAttempts: number;
     private retryIntervals: Array<number>;
     private hasLazilyInit: boolean;
-    private showAlertNotification: boolean;
-    private showParticipatingOnly: boolean;
 
     private source?: MessageTray.SystemNotificationSource;
-    private settings?: Settings;
+    private configuration: Configuration;
 
     private readonly box: BoxLayout;
     private readonly label: Label;
     private readonly icon: Icon;
 
-    public constructor() {
-        this.domain = 'github.com';
-        this.token = '';
-        this.handle = '';
-
-        this.hideWidget = false;
-        this.hideCount = false;
-
-        this.refreshInterval = 60;
-        this.githubInterval = 60;
-
+    public constructor(configuration: Configuration) {
+        this.configuration = configuration;
+        this.configuration.addChangeListener(this.configurationPropertyChanged.bind(this));
         this.notifications = [];
 
         this.retryAttempts = 0;
         this.retryIntervals = [60, 120, 240, 480, 960, 1920, 3600];
         this.hasLazilyInit = false;
-        this.showAlertNotification = true;
-        this.showParticipatingOnly = false;
 
         this.box = new BoxLayout({
             style_class: 'panel-button',
@@ -81,7 +62,7 @@ export class GitHubNotifications {
     }
 
     private interval(minAllowed: number) : number {
-        let interval = this.refreshInterval;
+        let interval = this.configuration.refreshInterval;
         if (this.retryAttempts > 0) {
             interval = this.retryIntervals[this.retryAttempts] || 3600;
         }
@@ -89,26 +70,25 @@ export class GitHubNotifications {
     }
 
     private lazyInit() {
-        if (!this.settings) {
+        if (!this.configuration) {
             GitHubNotifications.LOGGER.warn('Unable to peform lazy init: extension settings are not initialized');
             return;
         }
 
         this.hasLazilyInit = true;
-        this.reloadSettings();
         this.initHttp();
-        this.settings.connect('changed', () => {
-            this.reloadSettings();
-            this.initHttp();
-            this.stopLoop();
-            this.planFetch(5, false);
-        });
-
         this.initUI();
     }
 
+    private configurationPropertyChanged(property: string) {
+        GitHubNotifications.LOGGER.debug(`Configuration property '${property}' is changed`);
+
+        this.initHttp();
+        this.stopLoop();
+        this.planFetch(5, false);
+    }
+
     public start() {
-        this.settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.github.manager');
         if (!this.hasLazilyInit) {
             this.lazyInit();
         }
@@ -121,29 +101,12 @@ export class GitHubNotifications {
         Main.panel._rightBox.remove_child(this.box);
     }
 
-    private reloadSettings() {
-        if (this.settings) {
-            this.domain = this.settings.get_string('domain');
-            this.token = this.settings.get_string('token');
-            this.handle = this.settings.get_string('handle');
-            this.hideWidget = this.settings.get_boolean('hide-widget');
-            this.hideCount = this.settings.get_boolean('hide-notification-count');
-            this.refreshInterval = this.settings.get_int('refresh-interval');
-            this.showAlertNotification = this.settings.get_boolean('show-alert');
-            this.showParticipatingOnly = this.settings.get_boolean('show-participating-only');
-        } else {
-            GitHubNotifications.LOGGER.error('Unable to reload settings: Extension settings object is not initialized');
-        }
-
-        this.checkVisibility();
-    }
-
     private checkVisibility() {
         if (this.box) {
-            this.box.visible = !this.hideWidget || this.notifications.length != 0;
+            this.box.visible = !this.configuration.hideWidget || this.notifications.length != 0;
         }
         if (this.label) {
-            this.label.visible = !this.hideCount;
+            this.label.visible = !this.configuration.hideNotificationCount;
         }
     }
 
@@ -168,16 +131,16 @@ export class GitHubNotifications {
             if (button == 1) {
                 this.showBrowserUri();
             } else if (button == 3) {
-                ExtensionUtils.openPrefs();
+                imports.misc.extensionUtils.openPrefs();
             }
         });
     }
 
     private showBrowserUri() {
         try {
-            let url = `https://${this.domain}/notifications`;
-            if (this.showParticipatingOnly) {
-                url = `https://${this.domain}/notifications/participating`;
+            let url = `https://${this.configuration.domain}/notifications`;
+            if (this.configuration.showParticipatingOnly) {
+                url = `https://${this.configuration.domain}/notifications/participating`;
             }
 
             show_uri(null, url, CURRENT_TIME);
@@ -187,7 +150,7 @@ export class GitHubNotifications {
     }
 
     private initHttp() {
-        this.gitHubClient = GitHubClientFactory.newClient(this.domain, this.token);
+        this.gitHubClient = GitHubClientFactory.newClient(this.configuration.domain, this.configuration.token);
     }
 
     private planFetch(delay: number, retry: boolean) {
@@ -213,7 +176,7 @@ export class GitHubNotifications {
         GitHubNotifications.LOGGER.debug('Feching GitHub notifications');
 
         let failed = false;
-        client.listNotifications(this.showParticipatingOnly).then((notifications: Notification[]) => {
+        client.listNotifications(this.configuration.showParticipatingOnly).then((notifications: Notification[]) => {
             this.updateNotifications(notifications);
             failed = false;
         }).catch((error: ApiError) => {
@@ -242,7 +205,7 @@ export class GitHubNotifications {
     private alertWithNotifications(lastCount: number) {
         const newCount = this.notifications.length;
 
-        if (newCount && newCount > lastCount && this.showAlertNotification) {
+        if (newCount && newCount > lastCount && this.configuration.showAlert) {
             try {
                 const message = `You have ${newCount} new notifications`;
 

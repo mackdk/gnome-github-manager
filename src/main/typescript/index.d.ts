@@ -41,7 +41,7 @@ declare global {
     export interface ExtensionUtils {
         openPrefs(): void;
         getCurrentExtension(): Extension;
-        getSettings(name: string): Settings;
+        getSettings(name?: string): Settings;
     }
 
     export namespace PanelMenu {
