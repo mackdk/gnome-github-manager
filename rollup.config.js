@@ -29,6 +29,17 @@ export default [
             file: `${buildPath}/extension.js`,
             format: 'iife',
             name: 'init',
+            banner: [
+                'try {',
+                '',
+            ].join('\n'),
+            footer: [
+                '}',
+                'catch(err) {',
+                '  logError(err, \'[Github Manager Extension] [init] Unxpected error\');',
+                '  throw err;',
+                '}',
+            ].join('\n'),
             exports: 'default',
             globals,
             assetFileNames: '[name][extname]',

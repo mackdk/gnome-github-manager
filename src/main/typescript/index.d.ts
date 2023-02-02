@@ -81,7 +81,7 @@ declare global {
         }
 
         export class Notification extends Object {
-            public constructor(notificationSource: SystemNotificationSource, title: string, banner: string, params: Partial<NotificationProperties>);
+            public constructor(notificationSource: Source, title: string, banner: string, params: Partial<NotificationProperties>);
             public setTransient(state: boolean): void;
             public update(title: string, message: string, properties: Partial<NotificationProperties>): void;
         }
@@ -91,11 +91,12 @@ declare global {
 
             public constructor(title: string, iconName: string);
             public getIcon(): ThemedIcon;
+
+            public showNotification(notification: Notification): void;
         }
 
         export class SystemNotificationSource extends Source {
             public constructor();
-            public showNotification(notification: Notification): void;
         }
     }
 
@@ -104,7 +105,7 @@ declare global {
 
         Notification: typeof MessageTray.Notification;
 
-        add(notificationSource: MessageTray.SystemNotificationSource): void;
+        add(notificationSource: MessageTray.Source): void;
     }
 
     interface MainLoop {

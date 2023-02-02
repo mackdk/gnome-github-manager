@@ -47,6 +47,8 @@ export class Logger {
             logError(err, logMessage);
         } else if (typeof err === 'string') {
             log(`${logMessage} - ${err}`);
+        } else if (err !== undefined) {
+            log(`${logMessage} - Additional object of type ${typeof err}: ${err}`);
         } else {
             log(logMessage);
         }

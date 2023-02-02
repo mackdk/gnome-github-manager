@@ -11,9 +11,9 @@ import { ApiError, GitHubClient, GitHubClientFactory, Notification } from '@gith
 import { Logger } from '@github-manager/utils/Logger';
 import { Configuration } from './Configuration';
 import { LimitedRetriableTimer } from '@github-manager/utils/LimitedRetriableTimer';
+import { NotificationManager } from '@github-manager/utils/NotificationManager';
 
 const Main: Main = imports.ui.main;
-const MessageTray : MessageTray = imports.ui.messageTray;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
@@ -24,8 +24,8 @@ export class GitHubNotifications {
     private timer: LimitedRetriableTimer;
 
     private notifications: Notification[];
+    private readonly notificationManager: NotificationManager;
 
-    private source?: MessageTray.SystemNotificationSource;
     private readonly configuration: Configuration;
 
     private readonly box: BoxLayout;
@@ -39,6 +39,8 @@ export class GitHubNotifications {
         this.timer = new LimitedRetriableTimer(this.fetchNotifications.bind(this), this.configuration.refreshInterval);
         this.gitHubClient = GitHubClientFactory.newClient(this.configuration.domain, this.configuration.token);
         this.notifications = [];
+
+        this.notificationManager = new NotificationManager();
 
         this.box = new BoxLayout({
             style_class: 'panel-button',
@@ -168,36 +170,11 @@ export class GitHubNotifications {
 
         if (newCount && newCount > lastCount && this.configuration.showAlert) {
             try {
-                const message = `You have ${newCount} new notifications`;
-
-                this.notify('Github Notifications', message);
+                this.notificationManager.notify('Github Notifications', `You have ${newCount} new notifications`);
             } catch (e) {
                 GitHubNotifications.LOGGER.error('Cannot notify', e);
             }
         }
     }
 
-    private notify(title: string, message: string) {
-        if (!this.source) {
-            this.source = new MessageTray.SystemNotificationSource();
-            this.source.connect('destroy', () => {
-                this.source = undefined;
-            });
-
-            Main.messageTray.add(this.source);
-        }
-
-        let notification : MessageTray.Notification;
-        if (this.source.notifications.length == 0) {
-            notification = new MessageTray.Notification(this.source, title, message, { gicon: this.icon.gicon });
-
-            notification.setTransient(false);
-            notification.connect('activated', this.showBrowserUri.bind(this)); // Open on click
-        } else {
-            notification = this.source.notifications[0];
-            notification.update(title, message, { clear: true });
-        }
-
-        this.source.showNotification(notification);
-    }
 }
