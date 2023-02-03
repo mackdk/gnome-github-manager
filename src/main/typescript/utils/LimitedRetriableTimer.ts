@@ -1,4 +1,5 @@
 import { Logger } from './Logger';
+import { PRIORITY_DEFAULT, timeout_add_seconds, source_remove } from '@gi-types/glib2';
 
 export type TimerTask = () => Promise<boolean>;
 
@@ -43,7 +44,7 @@ export class LimitedRetriableTimer {
             this.runTaskAndSchedule();
         } else {
             // Otherwise schedule the first execution
-            this.timerHandle = imports.mainloop.timeout_add_seconds(initialDelay, () => {
+            this.timerHandle = timeout_add_seconds(PRIORITY_DEFAULT, initialDelay, () => {
                 this.runTaskAndSchedule();
                 return false;
             });
@@ -57,7 +58,7 @@ export class LimitedRetriableTimer {
         }
 
         LimitedRetriableTimer.LOGGER.debug('Timer is stopped');
-        imports.mainloop.source_remove(this.timerHandle);
+        source_remove(this.timerHandle);
         this.timerHandle = undefined;
     }
 
@@ -81,7 +82,7 @@ export class LimitedRetriableTimer {
     private scheduleNextRun() {
         this.stop();
 
-        this.timerHandle = imports.mainloop.timeout_add_seconds(this.currentInterval, () => {
+        this.timerHandle = timeout_add_seconds(PRIORITY_DEFAULT, this.currentInterval, () => {
             this.runTaskAndSchedule();
             return false;
         });

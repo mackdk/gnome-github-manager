@@ -1,5 +1,6 @@
 import { Auth, AuthBasic, Message, Session, URI } from '@gi-types/soup2';
 import { Logger } from '@github-manager/utils/Logger';
+import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
 import { reason, Status } from '@tshttp/status';
 
@@ -110,7 +111,7 @@ class LibSoup2GitHubClient extends AbstractGitHubClient {
     public constructor(domain: string, token: string) {
         super();
 
-        const extensionName: string = imports.misc.extensionUtils.getCurrentExtension().metadata.name;
+        const extensionName: string = getCurrentExtension().metadata.name;
 
         this.token = token;
 

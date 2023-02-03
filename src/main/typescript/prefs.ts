@@ -1,7 +1,8 @@
 import { Box, Orientation, Label, Switch, Entry, SpinButton, Widget } from '@gi-types/gtk4';
 import { SettingsBindFlags } from '@gi-types/gio2';
+import { getSettings } from '@gnome-shell/misc/extensionUtils';
 
-const settings = imports.misc.extensionUtils.getSettings();
+const settings = getSettings();
 
 const TOKEN_EXPLAINER = `To get your token, please visit <a href="https://github.com/settings/tokens/new?scopes=notifications&amp;description=Gnome%20desktop%20notifications">https://github.com/settings/tokens</a>
  - Click on "Generate Token"

@@ -14,6 +14,11 @@ const globals = {
     '@gi-types/gtk4': 'imports.gi.Gtk',
     '@gi-types/soup2': 'imports.gi.Soup',
     '@gi-types/st1': 'imports.gi.St',
+    '@gnome-shell/misc/extensionUtils': 'imports.misc.extensionUtils',
+    '@gnome-shell/ui': 'imports.ui',
+    '@gnome-shell/ui/panel': 'imports.ui.panel',
+    '@gnome-shell/ui/panelMenu': 'imports.ui.panelMenu',
+    '@gnome-shell/ui/messageTray': 'imports.ui.messageTray',
 };
 
 const external = Object.keys(globals);

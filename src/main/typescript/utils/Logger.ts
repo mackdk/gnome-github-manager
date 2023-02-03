@@ -1,5 +1,6 @@
+import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
-const extensionName: string = imports.misc.extensionUtils.getCurrentExtension().metadata.name;
+const extensionName: string = getCurrentExtension().metadata.name;
 
 export enum LogLevel {
     DEBUG,

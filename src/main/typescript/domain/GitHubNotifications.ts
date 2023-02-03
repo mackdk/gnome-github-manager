@@ -13,9 +13,8 @@ import { Configuration } from './Configuration';
 import { LimitedRetriableTimer } from '@github-manager/utils/LimitedRetriableTimer';
 import { NotificationManager } from '@github-manager/utils/NotificationManager';
 
-const Main: Main = imports.ui.main;
-
-const Me = imports.misc.extensionUtils.getCurrentExtension();
+import { getCurrentExtension, openPrefs } from '@gnome-shell/misc/extensionUtils';
+import { main as ShellUI } from '@gnome-shell/ui';
 
 export class GitHubNotifications {
     private static readonly LOGGER: Logger = new Logger('github-manager.domain.GitHubNotifications');
@@ -58,7 +57,7 @@ export class GitHubNotifications {
             style_class: 'system-status-icon'
         });
 
-        this.icon.gicon = icon_new_for_string(`${Me.path}/github.svg`);
+        this.icon.gicon = icon_new_for_string(`${getCurrentExtension().path}/github.svg`);
 
         this.box.add_actor(this.icon);
         this.box.add_actor(this.label);
@@ -90,14 +89,14 @@ export class GitHubNotifications {
         this.timer.start();
 
         // Add the widget to the UI
-        Main.panel._rightBox.insert_child_at_index(this.box, 0);
+        ShellUI.panel._rightBox.insert_child_at_index(this.box, 0);
     }
 
     public stop() {
         this.timer.stop();
 
         // Remove the widget to the UI
-        Main.panel._rightBox.remove_child(this.box);
+        ShellUI.panel._rightBox.remove_child(this.box);
     }
 
     private updateButtonVisibility() {
@@ -111,7 +110,7 @@ export class GitHubNotifications {
                 this.showBrowserUri();
                 break;
             case BUTTON_SECONDARY:
-                imports.misc.extensionUtils.openPrefs();
+                openPrefs();
                 break;
         }
     }
@@ -169,6 +168,8 @@ export class GitHubNotifications {
         const newCount = this.notifications.length;
 
         if (newCount && newCount > lastCount && this.configuration.showAlert) {
+            GitHubNotifications.LOGGER.debug('Sending notification');
+
             try {
                 this.notificationManager.notify('Github Notifications', `You have ${newCount} new notifications`);
             } catch (e) {
