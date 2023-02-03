@@ -1,8 +1,8 @@
 import { Auth, AuthBasic, Message, Session, URI } from '@gi-types/soup2';
-import { Logger } from '@github-manager/utils/Logger';
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
-
 import { reason, Status } from '@tshttp/status';
+
+import { Logger } from '@github-manager/utils';
 
 export class ApiError {
     public readonly statusCode: number;
@@ -96,7 +96,7 @@ abstract class AbstractGitHubClient implements GitHubClient {
 
 class LibSoup2GitHubClient extends AbstractGitHubClient {
 
-    private static readonly LOGGER: Logger = new Logger('github-manager.domain.LibSoup2GitHubClient');
+    private static readonly LOGGER: Logger = new Logger('client::LibSoup2GitHubClient');
 
     private readonly session: Session;
 
@@ -158,7 +158,7 @@ class LibSoup2GitHubClient extends AbstractGitHubClient {
 
 export class GitHubClientFactory {
 
-    private static readonly LOGGER: Logger = new Logger('github-manager.domain.GitHubClientFactory');
+    private static readonly LOGGER: Logger = new Logger('client::GitHubClientFactory');
 
     public static newClient(domain: string, token: string) : GitHubClient {
         GitHubClientFactory.LOGGER.info(`Soup version: ${imports.gi.versions.Soup}`);

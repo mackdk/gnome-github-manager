@@ -1,7 +1,5 @@
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
-const extensionName: string = getCurrentExtension().metadata.name;
-
 export enum LogLevel {
     DEBUG,
     INFO,
@@ -42,7 +40,7 @@ export class Logger {
             return;
         }
 
-        const logMessage = `[${extensionName} Extension] ${this.loggerName} ${LogLevel[level]} ${message}`;
+        const logMessage = `[${getCurrentExtension().metadata.name} Extension] ${this.loggerName} ${LogLevel[level]} ${message}`;
 
         if (err instanceof Error) {
             logError(err, logMessage);

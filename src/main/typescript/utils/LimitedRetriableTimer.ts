@@ -1,11 +1,12 @@
-import { Logger } from './Logger';
 import { PRIORITY_DEFAULT, timeout_add_seconds, source_remove } from '@gi-types/glib2';
+
+import { Logger } from '@github-manager/utils/Logger';
 
 export type TimerTask = () => Promise<boolean>;
 
 export class LimitedRetriableTimer {
 
-    private static readonly LOGGER: Logger = new Logger('github-manager.utils.LimitedRetriableTimer');
+    private static readonly LOGGER: Logger = new Logger('utils::LimitedRetriableTimer');
 
     public upperIntervalLimit? : number;
 

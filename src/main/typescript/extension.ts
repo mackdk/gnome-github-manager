@@ -1,8 +1,8 @@
 import { Settings } from '@gi-types/gio2';
-import { GitHubNotifications } from '@github-manager/domain/GitHubNotifications';
-import { Logger, LogLevel } from '@github-manager/utils/Logger';
 import { getSettings } from '@gnome-shell/misc/extensionUtils';
-import { Configuration } from './domain/Configuration';
+
+import { Configuration, GitHubNotifications } from '@github-manager/core';
+import { Logger, LogLevel } from '@github-manager/utils';
 
 // Set global logging level
 Logger.globalLoggingLevel = LogLevel.DEBUG;
@@ -11,7 +11,7 @@ Logger.globalLoggingLevel = LogLevel.DEBUG;
  * Main Extension class.
  */
 class GitHubManagerExtension {
-    private static readonly LOGGER: Logger = new Logger('github-manager.GitHubManagerExtension');
+    private static readonly LOGGER: Logger = new Logger('GitHubManagerExtension');
 
     private gitHubNotifications?: GitHubNotifications;
 

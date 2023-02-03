@@ -1,23 +1,19 @@
-import { BoxLayout, Label, Icon } from '@gi-types/st1';
 import { ActorAlign, CURRENT_TIME } from '@gi-types/clutter10';
 import { ButtonEvent, BUTTON_PRIMARY, BUTTON_SECONDARY } from '@gi-types/gdk4';
-
 import { icon_new_for_string } from '@gi-types/gio2';
 import { show_uri } from '@gi-types/gtk4';
-
-import { Status } from '@tshttp/status';
-
-import { ApiError, GitHubClient, GitHubClientFactory, Notification } from '@github-manager/domain/GitHubClient';
-import { Logger } from '@github-manager/utils/Logger';
-import { Configuration } from './Configuration';
-import { LimitedRetriableTimer } from '@github-manager/utils/LimitedRetriableTimer';
-import { NotificationManager } from '@github-manager/utils/NotificationManager';
-
+import { BoxLayout, Label, Icon } from '@gi-types/st1';
 import { getCurrentExtension, openPrefs } from '@gnome-shell/misc/extensionUtils';
 import { main as ShellUI } from '@gnome-shell/ui';
+import { Status } from '@tshttp/status';
+
+import { Configuration } from '@github-manager/core';
+import { ApiError, GitHubClient, GitHubClientFactory, Notification } from '@github-manager/client';
+import { NotificationManager } from '@github-manager/ui';
+import { Logger, LimitedRetriableTimer } from '@github-manager/utils';
 
 export class GitHubNotifications {
-    private static readonly LOGGER: Logger = new Logger('github-manager.domain.GitHubNotifications');
+    private static readonly LOGGER: Logger = new Logger('core::GitHubNotifications');
 
     private gitHubClient: GitHubClient;
     private timer: LimitedRetriableTimer;
