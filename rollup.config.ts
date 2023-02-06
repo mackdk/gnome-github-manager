@@ -1,3 +1,5 @@
+import { defineConfig } from 'rollup';
+
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
@@ -23,7 +25,7 @@ const globals = {
 
 const external = Object.keys(globals);
 
-export default [
+export default defineConfig([
     {
         input: 'src/main/typescript/extension.ts',
         treeshake: {
@@ -36,7 +38,6 @@ export default [
             name: 'init',
             banner: [
                 'try {',
-                '',
             ].join('\n'),
             footer: [
                 '}',
@@ -98,4 +99,4 @@ export default [
             })
         ],
     },
-];
+]);

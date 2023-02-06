@@ -21,8 +21,8 @@
     }
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx"
+    "src/**/*.ts",
+    "rollup.config.ts"
   ],
   "exclude": [
     "build/**/*"
