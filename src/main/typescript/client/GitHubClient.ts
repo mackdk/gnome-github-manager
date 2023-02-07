@@ -134,13 +134,13 @@ class LibSoup2GitHubClient extends AbstractGitHubClient {
         const soupUri = URI.new(`https://${this.baseUrl}${path}`);
         const request = new Message({ method: method, uri: soupUri });
 
-        LibSoup2GitHubClient.LOGGER.debug(`Executing ${method} ON ${soupUri.to_string(false)}`);
+        LibSoup2GitHubClient.LOGGER.debug('Executing {0} ON {1}', method, soupUri.to_string(false));
         request.requestHeaders.append('Authorization', this.auth.get_authorization(request));
 
         return new Promise<HttpReponse>((resolve, reject) => {
             try {
                 this.session.queue_message(request, (_ : Session, response: Message) => {
-                    LibSoup2GitHubClient.LOGGER.debug(`Response: ${response.statusCode} - Length ${response.responseBody.length}`);
+                    LibSoup2GitHubClient.LOGGER.debug('Response: {0} - Length {1}', response.statusCode, response.responseBody.length);
 
                     // Update the poll interval if set in the response
                     if (response.responseHeaders.get('X-Poll-Interval')) {
@@ -161,7 +161,7 @@ export class GitHubClientFactory {
     private static readonly LOGGER: Logger = new Logger('client::GitHubClientFactory');
 
     public static newClient(domain: string, token: string) : GitHubClient {
-        GitHubClientFactory.LOGGER.info(`Using client for Soup version: ${imports.gi.versions.Soup}`);
+        GitHubClientFactory.LOGGER.info('Using client for Soup version: {0}', imports.gi.versions.Soup);
         if (imports.gi.versions.Soup == '3.0') {
             throw new Error(`Unsupported Soup version: ${imports.gi.versions.Soup}`);
         } else {

@@ -35,7 +35,7 @@ export class LimitedRetriableTimer {
     }
 
     public start(initialDelay = 0) {
-        LimitedRetriableTimer.LOGGER.debug(`Timer is started. Executing first run with initial delay ${initialDelay}s`);
+        LimitedRetriableTimer.LOGGER.debug('Timer is started. Executing first run with initial delay {0}s', initialDelay);
 
         // Reset the first timeout
         this.currentInterval = this.interval;
@@ -75,7 +75,7 @@ export class LimitedRetriableTimer {
     private runTaskAndSchedule() {
         this.task().then((outcome: boolean) => {
             this.scheduleNextRun();
-            LimitedRetriableTimer.LOGGER.debug(`Next fetch execution scheduled in ${this.currentInterval} seconds`);
+            LimitedRetriableTimer.LOGGER.debug('Next fetch execution scheduled in {0} seconds', this.currentInterval);
             this.computeCurrentInterval(outcome);
         });
     }

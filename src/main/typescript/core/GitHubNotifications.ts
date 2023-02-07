@@ -42,7 +42,7 @@ export class GitHubNotifications {
     }
 
     private configurationPropertyChanged(property: string) {
-        GitHubNotifications.LOGGER.debug(`Configuration property '${property}' is changed`);
+        GitHubNotifications.LOGGER.debug('Configuration property {0} is changed', property);
 
         if (property == 'domain' || property == 'token') {
             this.gitHubClient = GitHubClientFactory.newClient(this.configuration.domain, this.configuration.token);
@@ -98,7 +98,7 @@ export class GitHubNotifications {
 
             show_uri(null, url, CURRENT_TIME);
         } catch (e) {
-            GitHubNotifications.LOGGER.error(`Cannot open uri ${e}`);
+            GitHubNotifications.LOGGER.error('Cannot open uri', e);
         }
     }
 
@@ -117,7 +117,7 @@ export class GitHubNotifications {
                 }
 
                 // Mark the error and prepare for retry
-                GitHubNotifications.LOGGER.error(`HTTP error ${error.statusCode}: ${error.message}`, error.error);
+                GitHubNotifications.LOGGER.error('HTTP error {0}: {1}', error.statusCode, error.message, error.error);
             } else {
                 GitHubNotifications.LOGGER.error('Unexpected error while retrieving notifications', error);
             }

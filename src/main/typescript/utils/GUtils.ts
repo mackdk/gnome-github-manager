@@ -14,10 +14,10 @@ export function registerGObject<K extends object, T extends { metaInfo?: MetaInf
     // Note that we use 'hasOwnProperty' because otherwise we would get inherited meta infos.
     // This would be bad because we would inherit the GObjectName too, which is supposed to be unique.
     if (Object.prototype.hasOwnProperty.call(target, 'metaInfo')) {
-        LOGGER.debug(`Registering GObject ${typeof target} with metaInfo`);
+        LOGGER.debug('Registering GObject {0} with metaInfo', typeof target);
         return registerClass(target.metaInfo!, target) as unknown as typeof target;
     } else {
-        LOGGER.debug(`Registering GObject ${typeof target} as standalone`);
+        LOGGER.debug('Registering GObject {0} as standalone', typeof target);
         return registerClass(target) as unknown as typeof target;
     }
 }

@@ -1,6 +1,7 @@
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
 export enum LogLevel {
+    TRACE,
     DEBUG,
     INFO,
     WARN,
@@ -18,28 +19,54 @@ export class Logger {
         this.logLevel = logLevel;
     }
 
-    public debug(message: string, err? : unknown) {
-        this.addLog(LogLevel.DEBUG, message, err);
+    public isDebugEnabled(): boolean {
+        return this.isEnabled(LogLevel.DEBUG);
     }
 
-    public info(message: string, err? : unknown) {
-        this.addLog(LogLevel.INFO, message, err);
+    public debug(format: string, ...args: any[]) {
+        this.addLog(LogLevel.DEBUG, format, ...args);
     }
 
-    public warn(message: string, err? : unknown) {
-        this.addLog(LogLevel.WARN, message, err);
+    public isInfoEnabled(): boolean {
+        return this.isEnabled(LogLevel.INFO);
     }
 
-    public error(message: string, err? : unknown) {
-        this.addLog(LogLevel.ERROR, message, err);
+    public info(format: string, ...args: any[]) {
+        this.addLog(LogLevel.INFO, format, ...args);
     }
 
-    private addLog(level: LogLevel, message: string, err? : unknown) {
-        const minimumAllowedLevel = this.logLevel || Logger.globalLoggingLevel;
-        if (level < minimumAllowedLevel) {
+    public isWarnEnabled(): boolean {
+        return this.isEnabled(LogLevel.DEBUG);
+    }
+
+    public warn(format: string, ...args: any[]) {
+        this.addLog(LogLevel.WARN, format, ...args);
+    }
+
+    public isErrorEnabled(): boolean {
+        return this.isEnabled(LogLevel.DEBUG);
+    }
+
+    public error(format: string, ...args: any[]) {
+        this.addLog(LogLevel.ERROR, format, ...args);
+    }
+
+    private isEnabled(levelToCheck: LogLevel) {
+        const currentLoggerLevel = this.logLevel || Logger.globalLoggingLevel;
+        return levelToCheck >= currentLoggerLevel;
+    }
+
+    private addLog(level: LogLevel, format: string, ...args: any[]) {
+        if (!this.isEnabled(level)) {
             return;
         }
 
+        let err : unknown | undefined = undefined;
+        if (this.hasErrorParameter(format, args?.length || 0)) {
+            err = args.pop();
+        }
+
+        const message = this.format(format, ...args);
         const logMessage = `[${getCurrentExtension().metadata.name} Extension] ${this.loggerName} ${LogLevel[level]} ${message}`;
 
         if (err instanceof Error) {
@@ -51,5 +78,19 @@ export class Logger {
         } else {
             log(logMessage);
         }
+    }
+
+    private hasErrorParameter(message: string, numArguments: number): boolean {
+        if (numArguments == 0) {
+            return false;
+        }
+
+        return message.indexOf(`{${numArguments - 1}}`) == -1;
+    }
+
+    private format(format: string, ...args: any[]): string {
+        return format.replace(/{(\d+)}/g, function(match, number) {
+            return args[number] || match;
+        });
     }
 }
