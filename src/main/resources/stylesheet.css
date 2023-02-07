@@ -1,3 +1,11 @@
-.notifications-length {
-	padding: 0 inherit 0 0;
+.github-widget {
+    padding: inherit 5px;
+}
+
+.widget-icon {
+    padding: 0;
+}
+
+.widget-label {
+    padding: 0;
 }

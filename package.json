@@ -9,7 +9,8 @@
     "clean": "rm -rf build",
     "build": "rollup --config rollup.config.ts --configPlugin typescript",
     "lint": "yarn run eslint src/main/typescript/",
-    "deploy": "yarn build && rsync -a ./build/* ~/.local/share/gnome-shell/extensions/$(cat src/main/resources/metadata.json | jq -r .uuid)",
+    "sync": "rsync -a ./build/* ~/.local/share/gnome-shell/extensions/$(cat src/main/resources/metadata.json | jq -r .uuid)",
+    "deploy": "yarn build && yarn sync",
     "followLogs": "journalctl -f | grep \"\\[$(cat src/main/resources/metadata.json | jq -r .name) Extension\\]\""
   },
   "devDependencies": {
@@ -30,6 +31,7 @@
     "@gi-types/gdk4": "^4.0.1",
     "@gi-types/gio2": "^2.72.1",
     "@gi-types/glib2": "^2.72.1",
+    "@gi-types/gobject2": "^2.72.1",
     "@gi-types/gtk4": "^4.6.1",
     "@gi-types/soup2": "^2.74.1",
     "@gi-types/st1": "^1.0.1",

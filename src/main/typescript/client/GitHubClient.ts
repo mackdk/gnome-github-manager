@@ -161,7 +161,7 @@ export class GitHubClientFactory {
     private static readonly LOGGER: Logger = new Logger('client::GitHubClientFactory');
 
     public static newClient(domain: string, token: string) : GitHubClient {
-        GitHubClientFactory.LOGGER.info(`Soup version: ${imports.gi.versions.Soup}`);
+        GitHubClientFactory.LOGGER.info(`Using client for Soup version: ${imports.gi.versions.Soup}`);
         if (imports.gi.versions.Soup == '3.0') {
             throw new Error(`Unsupported Soup version: ${imports.gi.versions.Soup}`);
         } else {

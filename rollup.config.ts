@@ -6,6 +6,8 @@ import typescript from '@rollup/plugin-typescript';
 import copy from 'rollup-plugin-copy';
 import execute from 'rollup-plugin-shell';
 
+import GObjectAdapter from './src/support/typescript/GObjectAdapter';
+
 const buildPath = 'build';
 
 const globals = {
@@ -13,6 +15,7 @@ const globals = {
     '@gi-types/gdk4': 'imports.gi.Gdk',
     '@gi-types/gio2': 'imports.gi.Gio',
     '@gi-types/glib2': 'imports.gi.GLib',
+    '@gi-types/gobject2': 'imports.gi.GObject',
     '@gi-types/gtk4': 'imports.gi.Gtk',
     '@gi-types/soup2': 'imports.gi.Soup',
     '@gi-types/st1': 'imports.gi.St',
@@ -24,6 +27,8 @@ const globals = {
 };
 
 const external = Object.keys(globals);
+
+const adapter = new GObjectAdapter();
 
 export default defineConfig([
     {
@@ -58,6 +63,14 @@ export default defineConfig([
             }),
             typescript({
                 tsconfig: './tsconfig.json',
+                transformers: {
+                    before: [
+                        adapter.beforeCompilation.bind(adapter)
+                    ],
+                    after: [
+                        adapter.afterCompilation.bind(adapter)
+                    ]
+                }
             }),
             copy({
                 targets: [

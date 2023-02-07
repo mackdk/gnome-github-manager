@@ -1,5 +1,4 @@
-import { icon_new_for_string, Icon } from '@gi-types/gio2';
-import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
+import { Icon } from '@gi-types/gio2';
 import { main as ShellUI } from '@gnome-shell/ui';
 import { Source, SystemNotificationSource, Notification } from '@gnome-shell/ui/messageTray';
 
@@ -7,8 +6,8 @@ export class NotificationManager {
 
     private readonly icon: Icon;
 
-    public constructor() {
-        this.icon = icon_new_for_string(`${getCurrentExtension().path}/github.svg`);
+    public constructor(defaultIcon: Icon) {
+        this.icon = defaultIcon;
     }
 
     public notify(title: string, message: string) {

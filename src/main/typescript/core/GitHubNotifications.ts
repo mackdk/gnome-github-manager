@@ -1,15 +1,14 @@
-import { ActorAlign, CURRENT_TIME } from '@gi-types/clutter10';
+import { CURRENT_TIME } from '@gi-types/clutter10';
 import { ButtonEvent, BUTTON_PRIMARY, BUTTON_SECONDARY } from '@gi-types/gdk4';
 import { icon_new_for_string } from '@gi-types/gio2';
 import { show_uri } from '@gi-types/gtk4';
-import { BoxLayout, Label, Icon } from '@gi-types/st1';
 import { getCurrentExtension, openPrefs } from '@gnome-shell/misc/extensionUtils';
 import { main as ShellUI } from '@gnome-shell/ui';
 import { Status } from '@tshttp/status';
 
 import { Configuration } from '@github-manager/core';
 import { ApiError, GitHubClient, GitHubClientFactory, Notification } from '@github-manager/client';
-import { NotificationManager } from '@github-manager/ui';
+import { GitHubWidget, NotificationManager } from '@github-manager/ui';
 import { Logger, LimitedRetriableTimer } from '@github-manager/utils';
 
 export class GitHubNotifications {
@@ -22,10 +21,7 @@ export class GitHubNotifications {
     private readonly notificationManager: NotificationManager;
 
     private readonly configuration: Configuration;
-
-    private readonly box: BoxLayout;
-    private readonly label: Label;
-    private readonly icon: Icon;
+    private readonly widget: GitHubWidget;
 
     public constructor(configuration: Configuration) {
         this.configuration = configuration;
@@ -35,30 +31,12 @@ export class GitHubNotifications {
         this.gitHubClient = GitHubClientFactory.newClient(this.configuration.domain, this.configuration.token);
         this.notifications = [];
 
-        this.notificationManager = new NotificationManager();
+        const githubIcon = icon_new_for_string(`${getCurrentExtension().path}/github.svg`);
 
-        this.box = new BoxLayout({
-            style_class: 'panel-button',
-            reactive: true,
-            can_focus: true,
-            track_hover: true
-        });
-        this.label = new Label({
-            text: `${this.notifications.length}`,
-            style_class: 'system-status-icon notifications-length',
-            y_align: ActorAlign.CENTER,
-            y_expand: true,
-        });
-        this.icon = new Icon({
-            style_class: 'system-status-icon'
-        });
+        this.notificationManager = new NotificationManager(githubIcon);
 
-        this.icon.gicon = icon_new_for_string(`${getCurrentExtension().path}/github.svg`);
-
-        this.box.add_actor(this.icon);
-        this.box.add_actor(this.label);
-
-        this.box.connect('button-press-event', (_, event) => this.handleButtonPress(event));
+        this.widget = new GitHubWidget(githubIcon, `${this.notifications.length}`);
+        this.widget.connect('button-press-event', (_, event) => this.handleButtonPress(event));
 
         this.updateButtonVisibility();
     }
@@ -85,19 +63,19 @@ export class GitHubNotifications {
         this.timer.start();
 
         // Add the widget to the UI
-        ShellUI.panel._rightBox.insert_child_at_index(this.box, 0);
+        ShellUI.panel._rightBox.insert_child_at_index(this.widget, 0);
     }
 
     public stop() {
         this.timer.stop();
 
         // Remove the widget to the UI
-        ShellUI.panel._rightBox.remove_child(this.box);
+        ShellUI.panel._rightBox.remove_child(this.widget);
     }
 
     private updateButtonVisibility() {
-        this.box.visible = !this.configuration.hideWidget || this.notifications.length != 0;
-        this.label.visible = !this.configuration.hideNotificationCount;
+        this.widget.visible = !this.configuration.hideWidget || this.notifications.length != 0;
+        this.widget.textVisible = !this.configuration.hideNotificationCount;
     }
 
     private handleButtonPress(event: ButtonEvent) {
@@ -144,7 +122,7 @@ export class GitHubNotifications {
                 GitHubNotifications.LOGGER.error('Unexpected error while retrieving notifications', error);
             }
 
-            this.label.set_text('!');
+            this.widget.text = '!';
             return false;
         } finally {
             this.timer.lowerIntervalLimit = this.gitHubClient.pollInterval;
@@ -155,7 +133,7 @@ export class GitHubNotifications {
         const lastNotificationsCount = this.notifications.length;
 
         this.notifications = data;
-        this.label.set_text(`${data.length}`);
+        this.widget.text = `${data.length}`;
         this.updateButtonVisibility();
         this.alertWithNotifications(lastNotificationsCount);
     }

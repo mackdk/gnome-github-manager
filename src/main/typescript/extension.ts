@@ -16,19 +16,27 @@ class GitHubManagerExtension {
     private gitHubNotifications?: GitHubNotifications;
 
     public enable(): void {
-        GitHubManagerExtension.LOGGER.debug('Reading settings from schema');
-        const settings : Settings = getSettings();
+        try {
+            GitHubManagerExtension.LOGGER.debug('Reading settings from schema');
+            const settings : Settings = getSettings();
 
-        GitHubManagerExtension.LOGGER.debug('Creating main extension logic');
-        this.gitHubNotifications = new GitHubNotifications(Configuration.wrap(settings));
+            GitHubManagerExtension.LOGGER.debug('Creating main extension logic');
+            this.gitHubNotifications = new GitHubNotifications(Configuration.wrap(settings));
 
-        GitHubManagerExtension.LOGGER.debug('Starting extension');
-        this.gitHubNotifications.start();
+            GitHubManagerExtension.LOGGER.debug('Starting extension');
+            this.gitHubNotifications.start();
+        } catch(err) {
+            GitHubManagerExtension.LOGGER.error('Unexpected error while enabling extension', err);
+        }
     }
 
     public disable(): void {
-        GitHubManagerExtension.LOGGER.debug('Stopping extension');
-        this.gitHubNotifications?.stop();
+        try {
+            GitHubManagerExtension.LOGGER.debug('Stopping extension');
+            this.gitHubNotifications?.stop();
+        } catch(err) {
+            GitHubManagerExtension.LOGGER.error('Unexpected error while stopping extension', err);
+        }
     }
 }
 
