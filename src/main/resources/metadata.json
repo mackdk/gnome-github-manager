@@ -3,6 +3,6 @@
 	"uuid": "github.manager@mackdk.hotmail.com",
 	"name": "Github Manager",
 	"settings-schema": "org.gnome.shell.extensions.github.manager",
-	"shell-version": ["40", "41", "42"],
+	"shell-version": ["40", "41", "42", "43"],
 	"version": 1
 }

@@ -196,6 +196,15 @@
     "@gi-types/glib2" "^2.72.1"
     "@gi-types/gobject2" "^2.72.1"
 
+"@gi-types/soup3@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@gi-types/soup3/-/soup3-3.0.1.tgz#0b8c73c929384dba0a1122f0c20ced724808fabd"
+  integrity sha512-fZoJA5QHopIcOVf83dbhzRJqpHtbUUmyIinq6nu+sStQTOMQcf8m31cTVJvpjP6PzaBO13xaG3hagccF1PXpvw==
+  dependencies:
+    "@gi-types/gio2" "^2.72.1"
+    "@gi-types/glib2" "^2.72.1"
+    "@gi-types/gobject2" "^2.72.1"
+
 "@gi-types/st1@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@gi-types/st1/-/st1-1.0.1.tgz#4456817938050eb781e3b953d882ac7aaeff0120"

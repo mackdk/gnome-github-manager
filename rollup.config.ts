@@ -18,6 +18,7 @@ const globals = {
     '@gi-types/gobject2': 'imports.gi.GObject',
     '@gi-types/gtk4': 'imports.gi.Gtk',
     '@gi-types/soup2': 'imports.gi.Soup',
+    '@gi-types/soup3': 'imports.gi.Soup',
     '@gi-types/st1': 'imports.gi.St',
     '@gnome-shell/misc/extensionUtils': 'imports.misc.extensionUtils',
     '@gnome-shell/ui': 'imports.ui',

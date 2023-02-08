@@ -34,6 +34,7 @@
     "@gi-types/gobject2": "^2.72.1",
     "@gi-types/gtk4": "^4.6.1",
     "@gi-types/soup2": "^2.74.1",
+    "@gi-types/soup3": "^3.0.1",
     "@gi-types/st1": "^1.0.1",
     "@tshttp/status": "^2.0.0"
   }
