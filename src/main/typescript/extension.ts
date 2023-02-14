@@ -1,6 +1,3 @@
-import { Settings } from '@gi-types/gio2';
-import { getSettings } from '@gnome-shell/misc/extensionUtils';
-
 import { Configuration, GitHubNotifications } from '@github-manager/core';
 import { Logger, LogLevel } from '@github-manager/utils';
 
@@ -18,10 +15,9 @@ class GitHubManagerExtension {
     public enable(): void {
         try {
             GitHubManagerExtension.LOGGER.debug('Reading settings from schema');
-            const settings : Settings = getSettings();
 
             GitHubManagerExtension.LOGGER.debug('Creating main extension logic');
-            this.gitHubNotifications = new GitHubNotifications(Configuration.wrap(settings));
+            this.gitHubNotifications = new GitHubNotifications(Configuration.getInstance());
 
             GitHubManagerExtension.LOGGER.debug('Starting extension');
             this.gitHubNotifications.start();

@@ -1,12 +1,23 @@
 import { Settings } from '@gi-types/gio2';
+import { getSettings } from '@gnome-shell/misc/extensionUtils';
 
 export type ConfigurationChangeListener = (property: string) => void;
 
 export class Configuration {
 
+    private static instance?: Configuration;
+
     private settings: Settings;
 
     private changeListeners: ConfigurationChangeListener[];
+
+    private constructor(settings: Settings) {
+        this.settings = settings;
+        this.changeListeners = [];
+
+        // Setup the internal change event listener
+        this.settings.connect('changed', this.onChange.bind(this));
+    }
 
     public get domain(): string {
         return this.settings.get_string('domain');
@@ -40,14 +51,6 @@ export class Configuration {
         return this.settings.get_boolean('show-participating-only');
     }
 
-    private constructor(settings: Settings) {
-        this.settings = settings;
-        this.changeListeners = [];
-
-        // Setup the internal change event listener
-        this.settings.connect('changed', this.onChange.bind(this));
-    }
-
     public addChangeListener(listener: ConfigurationChangeListener): number {
         return this.changeListeners.push(listener) - 1;
     }
@@ -72,7 +75,11 @@ export class Configuration {
         return key.toLowerCase().replace(/[-]+(.)/g, (m, chr) => chr.toUpperCase());
     }
 
-    public static wrap(settings: Settings) : Configuration {
-        return new Configuration(settings);
+    public static getInstance() : Configuration {
+        if (Configuration.instance === undefined) {
+            Configuration.instance = new Configuration(getSettings());
+        }
+
+        return Configuration.instance;
     }
 }
