@@ -3,10 +3,11 @@ import { defineConfig } from 'rollup';
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
+import eslint from '@rollup/plugin-eslint';
 import copy from 'rollup-plugin-copy';
-import execute from 'rollup-plugin-shell';
 
 import GObjectAdapter from './src/support/typescript/GObjectAdapter';
+import { shellExecute } from './src/support/typescript/RollupShellExecute';
 
 const buildPath = 'build';
 
@@ -31,6 +32,25 @@ const globals = {
 const external = Object.keys(globals);
 
 const adapter = new GObjectAdapter();
+
+const eslintPluginOptions = {
+    fix: true,
+    throwOnError: true,
+    throwOnWarning: true
+};
+
+const typescriptPluginOptions = {
+    tsconfig: './tsconfig.json',
+    noEmitOnError: true,
+    transformers: {
+        before: [
+            adapter.beforeCompilation.bind(adapter)
+        ],
+        after: [
+            adapter.afterCompilation.bind(adapter)
+        ]
+    }
+};
 
 export default defineConfig([
     {
@@ -63,23 +83,14 @@ export default defineConfig([
             nodeResolve({
                 preferBuiltins: false,
             }),
-            typescript({
-                tsconfig: './tsconfig.json',
-                transformers: {
-                    before: [
-                        adapter.beforeCompilation.bind(adapter)
-                    ],
-                    after: [
-                        adapter.afterCompilation.bind(adapter)
-                    ]
-                }
-            }),
+            eslint(eslintPluginOptions),
+            typescript(typescriptPluginOptions),
             copy({
                 targets: [
                     { src: './src/main/resources/*', dest: `${buildPath}` },
                 ],
             }),
-            execute([
+            shellExecute([
                 'mkdir -p ./build/schemas',
                 'glib-compile-schemas src/main/schemas/ --targetdir=./build/schemas/'
             ])
@@ -109,17 +120,8 @@ export default defineConfig([
             nodeResolve({
                 preferBuiltins: false,
             }),
-            typescript({
-                tsconfig: './tsconfig.json',
-                transformers: {
-                    before: [
-                        adapter.beforeCompilation.bind(adapter)
-                    ],
-                    after: [
-                        adapter.afterCompilation.bind(adapter)
-                    ]
-                }
-            })
+            eslint(eslintPluginOptions),
+            typescript(typescriptPluginOptions)
         ],
     },
 ]);
