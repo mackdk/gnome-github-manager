@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+    <requires lib="gtk" version="4.0" />
+
+    <template class="PrefsPage">
+        <property name="orientation">vertical</property>
+        <property name="margin-start">36</property>
+        <property name="margin-end">36</property>
+        <property name="margin-top">36</property>
+        <property name="margin-bottom">36</property>
+        <property name="spacing">12</property>
+    </template>
+
+</interface>

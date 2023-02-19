@@ -7,7 +7,7 @@ import { ActorAlign } from '@gi-types/clutter10';
 @registerGObject
 export class GitHubWidget extends BoxLayout {
 
-    public static metaInfo: MetaInfo = {
+    public static readonly metaInfo: MetaInfo = {
         GTypeName: 'GitHubWidget',
         Properties: {
             text: ParamSpec.string('text', 'Text', 'The text of the widget', ParamFlags.READWRITE, ''),
@@ -38,7 +38,7 @@ export class GitHubWidget extends BoxLayout {
         }
 
         this.label.visible = value;
-        this.notify('text-visibile');
+        this.notify('text-visible');
     }
 
     private readonly icon: Icon;

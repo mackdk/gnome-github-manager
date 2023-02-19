@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+    <requires lib="gtk" version="4.0" />
+
+    <menu id="primary-menu">
+        <section>
+            <item>
+                <attribute name="label" translatable="yes">Reset to default</attribute>
+                <attribute name="action">actions.resetToDefault</attribute>
+            </item>
+        </section>
+        <section>
+            <item>
+                <attribute name="label" translatable="yes">Report an issue</attribute>
+                <attribute name="action">actions.reportBug</attribute>
+            </item>
+            <item>
+                <attribute name="label" translatable="yes">User guide</attribute>
+                <attribute name="action">actions.userGuide</attribute>
+            </item>
+        </section>
+        <section>
+            <item>
+                <attribute name="label" translatable="yes">About GitHub Manager</attribute>
+                <attribute name="action">actions.about</attribute>
+            </item>
+        </section>
+    </menu>
+
+    <object class="GtkHeaderBar" id="header">
+        <property name="title-widget">
+            <object class="GtkStackSwitcher">
+                <property name="stack">PrefsStack</property>
+            </object>
+        </property>
+        <child type="end">
+            <object class="GtkMenuButton">
+                <property name="receives-default">True</property>
+                <property name="menu-model">primary-menu</property>
+                <property name="icon-name">open-menu-symbolic</property>
+            </object>
+        </child>
+    </object>
+
+    <template class="PrefsStack">
+        <child>
+            <object class="PrefsPage">
+                <property name="label">General</property>
+                <child>
+                    <object class="PrefsGroup">
+                        <property name="label">GitHub Account</property>
+                        <child>
+                            <object class="PrefsRow">
+                                <property name="label">Domain</property>
+                                <property name="description">Change domain only if using GitHub Enterprise.</property>
+                                <property name="widget-type">GtkEntry</property>
+                                <property name="configuration-property">domain</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="PrefsRow">
+                                <property name="label">Token</property>
+                                <property name="description">Authentication token to access the API.</property>
+                                <property name="widget-type">GtkPasswordEntry</property>
+                                <property name="configuration-property">token</property>
+                                <property name="prefix">
+                                    <object class="GtkButton" id="generateButton">
+                                        <property name="hexpand">False</property>
+                                        <property name="vexpand">False</property>
+                                        <property name="valign">center</property>
+                                        <property name="receives-default">true</property>
+                                        <property name="icon-name">emblem-system-symbolic</property>
+                                        <property name="tooltip-text">Generate a new personal access token</property>
+                                        <style>
+                                            <class name="circular"/>
+                                        </style>
+                                    </object>
+                                </property>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+            </object>
+        </child>
+        <child>
+            <object class="PrefsPage">
+                <property name="label">Notifications</property>
+                <child>
+                    <object class="PrefsGroup">
+                        <property name="label">Behaviour</property>
+                        <child>
+                            <object class="PrefsRow">
+                                <property name="label">Refresh interval</property>
+                                <property name="description">How often data is synced. Might be enforced by &lt;a href="https://docs.github.com/en/rest/activity/notifications"&gt;GitHub Policy&lt;/a&gt;.</property>
+                                <property name="widget-type">GtkSpinButton</property>
+                                <property name="widget-parameters">{"min":60,"max":86400,"step":60}</property>
+                                <property name="configuration-property">refreshInterval</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="PrefsRow">
+                                <property name="label">Show only partecipating</property>
+                                <property name="description">Ignore notifications not for you.</property>
+                                <property name="widget-type">GtkSwitch</property>
+                                <property name="configuration-property">showParticipatingOnly</property>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+                <child>
+                    <object class="PrefsGroup">
+                        <property name="label">Appearance</property>
+                        <child>
+                            <object class="PrefsRow">
+                                <property name="label">UI notifications</property>
+                                <property name="description">Set how to receive GNOME notifications.</property>
+                                <property name="widget-type">GtkDropDown</property>
+                                <property name="widget-parameters">["None","Single","Digest"]</property>
+                                <property name="configuration-property">alertMode</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="PrefsRow">
+                                <property name="label">Hide notification count</property>
+                                <property name="description">Do not show the count next to the widget icon.</property>
+                                <property name="widget-type">GtkSwitch</property>
+                                <property name="configuration-property">hideNotificationCount</property>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+            </object>
+        </child>
+    </template>
+
+</interface>

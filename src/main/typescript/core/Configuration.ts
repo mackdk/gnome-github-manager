@@ -1,7 +1,14 @@
-import { Settings } from '@gi-types/gio2';
+import { Settings, SettingsBindFlags } from '@gi-types/gio2';
+import { Widget } from '@gi-types/gtk4';
 import { getSettings } from '@gnome-shell/misc/extensionUtils';
 
 export type ConfigurationChangeListener = (property: string) => void;
+
+export enum AlertMode {
+    NONE,
+    SINGLE,
+    DIGEST,
+}
 
 export class Configuration {
 
@@ -27,14 +34,6 @@ export class Configuration {
         return this.settings.get_string('token');
     }
 
-    public get handle(): string {
-        return this.settings.get_string('handle');
-    }
-
-    public get hideWidget(): boolean {
-        return this.settings.get_boolean('hide-widget');
-    }
-
     public get hideNotificationCount(): boolean {
         return this.settings.get_boolean('hide-notification-count');
     }
@@ -43,8 +42,15 @@ export class Configuration {
         return this.settings.get_int('refresh-interval');
     }
 
-    public get showAlert(): boolean {
-        return this.settings.get_boolean('show-alert');
+    public get alertMode(): AlertMode {
+        const validValues: number[] = Object.keys(AlertMode).map(s => Number(s)).filter(v => !isNaN(v));
+        const storedValue: number = this.settings.get_int('alert-mode');
+
+        if (validValues.indexOf(storedValue) == -1) {
+            return AlertMode.NONE;
+        }
+
+        return storedValue as AlertMode;
     }
 
     public get showParticipatingOnly(): boolean {
@@ -61,6 +67,16 @@ export class Configuration {
         }
     }
 
+    public bind(property: string, widget: Widget, widgetProperty: string) {
+        this.settings.bind(Configuration.property2key(property), widget, widgetProperty, SettingsBindFlags.DEFAULT);
+    }
+
+    public reset(): void {
+        this.listProperties()
+            .map(prop => Configuration.property2key(prop))
+            .forEach(key => this.settings.set_value(key, this.settings.get_default_value(key)!));
+    }
+
     private onChange(source: Settings, key: string) {
         if (this.settings !== source) {
             return;
@@ -71,8 +87,17 @@ export class Configuration {
         });
     }
 
+    private listProperties () {
+        const propertyDescriptor = Object.getOwnPropertyDescriptors(Reflect.getPrototypeOf(this));
+        return Object.entries(propertyDescriptor).filter(e => typeof e[1].get === 'function' && e[0] !== '__proto__').map(e => e[0]);
+    }
+
     private static key2property(key: string): string {
         return key.toLowerCase().replace(/[-]+(.)/g, (m, chr) => chr.toUpperCase());
+    }
+
+    private static property2key(property: string): string {
+        return property.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
     }
 
     public static getInstance() : Configuration {

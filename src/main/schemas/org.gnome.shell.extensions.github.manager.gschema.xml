@@ -1,10 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="gnome-shell-extension-github-manager">
-
   <schema id="org.gnome.shell.extensions.github.manager" path="/org/gnome/shell/extensions/github-manager/">
-    <key name="handle" type="s">
-      <default>''</default>
-      <summary>Your github handle</summary>
-    </key>
     <key name="domain" type="s">
       <default>'github.com'</default>
       <summary>Your github domain</summary>
@@ -15,10 +11,6 @@
       <summary>Your github token</summary>
       <description>To get your token go to https://github.com/settings/tokens and create a token, making sure you authorize it to access your notifications</description>
     </key>
-    <key name="hide-widget" type="b">
-      <default>false</default>
-      <summary>Hide widget when there are no notifications</summary>
-    </key>
     <key name="hide-notification-count" type="b">
       <default>false</default>
       <summary>Hide notification count</summary>
@@ -28,9 +20,9 @@
       <summary>The refresh interval in seconds</summary>
       <description>The refresh interval used by the extension. If this number is smaller than the header returned by github, it will be ignored and the header will take precedence. See https://developer.github.com/v3/activity/notifications/</description>
     </key>
-    <key name="show-alert" type="b">
-      <default>false</default>
-      <summary>Show notifications alert</summary>
+    <key name="alert-mode" type="i">
+      <default>1</default>
+      <summary>How to show desktop notifications</summary>
     </key>
     <key name="show-participating-only" type="b">
       <default>false</default>

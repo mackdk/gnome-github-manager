@@ -6,7 +6,7 @@ import { getCurrentExtension, openPrefs } from '@gnome-shell/misc/extensionUtils
 import { main as ShellUI } from '@gnome-shell/ui';
 import { Status } from '@tshttp/status';
 
-import { Configuration } from '@github-manager/core';
+import { AlertMode, Configuration } from './Configuration';
 import { ApiError, GitHubClient, GitHubClientFactory, Notification } from '@github-manager/client';
 import { GitHubWidget, NotificationManager } from '@github-manager/ui';
 import { Logger, LimitedRetriableTimer } from '@github-manager/utils';
@@ -74,7 +74,6 @@ export class GitHubNotifications {
     }
 
     private updateButtonVisibility() {
-        this.widget.visible = !this.configuration.hideWidget || this.notifications.length != 0;
         this.widget.textVisible = !this.configuration.hideNotificationCount;
     }
 
@@ -141,7 +140,7 @@ export class GitHubNotifications {
     private alertWithNotifications(lastCount: number) {
         const newCount = this.notifications.length;
 
-        if (newCount && newCount > lastCount && this.configuration.showAlert) {
+        if (newCount && newCount > lastCount && this.configuration.alertMode != AlertMode.NONE) {
             GitHubNotifications.LOGGER.debug('Sending notification');
 
             try {

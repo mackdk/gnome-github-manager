@@ -1,17 +1,27 @@
-import { Settings } from '@gi-types/gio2';
+import { File, Settings } from '@gi-types/gio2';
 
 export interface ExtensionMetadata {
-    uuid: string,
-    name: string,
-    description: string,
-    'shell-version': Array<string>,
-    url: string,
-    version: number
+    uuid: string;
+    name: string;
+    description: string;
+    'shell-version': string[];
+    url: string;
+    version: number;
+    status: string;
+    comment: string;
 }
 
 export interface Extension {
-    metadata: ExtensionMetadata
+    metadata: ExtensionMetadata;
+    uuid: string;
+    type: number;
+    dir: File;
     path: string;
+    error: string;
+    hasPrefs: boolean;
+    hasUpdate: boolean;
+    canChange: boolean;
+    sessionModes: string[];
 }
 
 export function openPrefs(): void;

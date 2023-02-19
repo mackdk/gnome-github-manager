@@ -13,6 +13,7 @@ const buildPath = 'build';
 const globals = {
     '@gi-types/clutter10': 'imports.gi.Clutter',
     '@gi-types/gdk4': 'imports.gi.Gdk',
+    '@gi-types/gdkpixbuf2': 'imports.gi.GdkPixbuf',
     '@gi-types/gio2': 'imports.gi.Gio',
     '@gi-types/glib2': 'imports.gi.GLib',
     '@gi-types/gobject2': 'imports.gi.GObject',
@@ -110,6 +111,14 @@ export default defineConfig([
             }),
             typescript({
                 tsconfig: './tsconfig.json',
+                transformers: {
+                    before: [
+                        adapter.beforeCompilation.bind(adapter)
+                    ],
+                    after: [
+                        adapter.afterCompilation.bind(adapter)
+                    ]
+                }
             })
         ],
     },

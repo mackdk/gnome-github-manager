@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+    <requires lib="gtk" version="4.0" />
+
+    <template class="PrefsGroup">
+        <property name="spacing">12</property>
+        <property name="orientation">vertical</property>
+        <child type="group-label">
+            <object class="GtkLabel">
+                <property name="can-focus">True</property>
+                <property name="halign">start</property>
+                <property name="hexpand">True</property>
+                <property name="label" bind-source="PrefsGroup" bind-property="label" />
+                <style>
+                    <class name="heading" />
+                </style>
+            </object>
+        </child>
+        <child type="row-container">
+            <object class="GtkListBox" id="rows">
+                <property name="show-separators">True</property>
+                <property name="can-focus">True</property>
+                <property name="margin-bottom">24</property>
+                <property name="selection-mode">none</property>
+                <style>
+                    <class name="frame" />
+                </style>
+            </object>
+        </child>
+    </template>
+</interface>
