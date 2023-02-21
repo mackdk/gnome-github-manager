@@ -1,15 +1,16 @@
 import { CURRENT_TIME } from '@gi-types/clutter10';
-import { ButtonEvent, BUTTON_PRIMARY, BUTTON_SECONDARY } from '@gi-types/gdk4';
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, ButtonEvent } from '@gi-types/gdk4';
 import { icon_new_for_string } from '@gi-types/gio2';
 import { show_uri } from '@gi-types/gtk4';
 import { getCurrentExtension, openPrefs } from '@gnome-shell/misc/extensionUtils';
 import { main as ShellUI } from '@gnome-shell/ui';
 import { Status } from '@tshttp/status';
 
-import { Configuration } from './Configuration';
 import { ApiError, GitHubClient, GitHubClientFactory, Notification } from '@github-manager/client';
 import { GitHubWidget, NotificationManager } from '@github-manager/ui';
-import { Logger, LimitedRetriableTimer } from '@github-manager/utils';
+import { LimitedRetriableTimer, Logger } from '@github-manager/utils';
+
+import { Configuration } from './Configuration';
 
 export class GitHubNotifications {
     private static readonly LOGGER: Logger = new Logger('core::GitHubNotifications');
@@ -36,12 +37,12 @@ export class GitHubNotifications {
         this.notificationManager = new NotificationManager(githubIcon);
 
         this.widget = new GitHubWidget(githubIcon, `${this.notifications.length}`);
-        this.widget.connect('button-press-event', (_, event) => this.handleButtonPress(event));
+        this.widget.connect('button-press-event', (_: this, event: ButtonEvent) => this.handleButtonPress(event));
 
         this.updateButtonVisibility();
     }
 
-    private configurationPropertyChanged(property: string) {
+    private configurationPropertyChanged(property: string): void {
         GitHubNotifications.LOGGER.debug('Configuration property {0} is changed', property);
 
         if (property == 'domain' || property == 'token') {
@@ -50,7 +51,10 @@ export class GitHubNotifications {
 
         if (property == 'refreshInterval' || property == 'showParticipatingOnly') {
             this.timer.stop();
-            this.timer = new LimitedRetriableTimer(this.fetchNotifications.bind(this), this.configuration.refreshInterval);
+            this.timer = new LimitedRetriableTimer(
+                this.fetchNotifications.bind(this),
+                this.configuration.refreshInterval
+            );
             this.timer.start();
         }
 
@@ -59,25 +63,25 @@ export class GitHubNotifications {
         }
     }
 
-    public start() {
+    public start(): void {
         this.timer.start();
 
         // Add the widget to the UI
         ShellUI.panel._rightBox.insert_child_at_index(this.widget, 0);
     }
 
-    public stop() {
+    public stop(): void {
         this.timer.stop();
 
         // Remove the widget to the UI
         ShellUI.panel._rightBox.remove_child(this.widget);
     }
 
-    private updateButtonVisibility() {
+    private updateButtonVisibility(): void {
         this.widget.textVisible = !this.configuration.hideNotificationCount;
     }
 
-    private handleButtonPress(event: ButtonEvent) {
+    private handleButtonPress(event: ButtonEvent): void {
         switch (event.get_button()) {
             case BUTTON_PRIMARY:
                 this.showBrowserUri();
@@ -88,7 +92,7 @@ export class GitHubNotifications {
         }
     }
 
-    private showBrowserUri() {
+    private showBrowserUri(): void {
         try {
             let url = `https://${this.configuration.domain}/notifications`;
             if (this.configuration.showParticipatingOnly) {
@@ -101,14 +105,14 @@ export class GitHubNotifications {
         }
     }
 
-    private async fetchNotifications() : Promise<boolean> {
+    private async fetchNotifications(): Promise<boolean> {
         GitHubNotifications.LOGGER.debug('Feching GitHub notifications');
 
         try {
             const notifications = await this.gitHubClient.listNotifications(this.configuration.showParticipatingOnly);
             this.updateNotifications(notifications);
             return true;
-        } catch(error) {
+        } catch (error) {
             if (error instanceof ApiError) {
                 // If we get not modified as response just proceed
                 if (error.statusCode == Status.NotModified) {
@@ -116,7 +120,7 @@ export class GitHubNotifications {
                 }
 
                 // Mark the error and prepare for retry
-                GitHubNotifications.LOGGER.error('HTTP error {0}: {1}', error.statusCode, error.message, error.error);
+                GitHubNotifications.LOGGER.error('HTTP error {0}: {1}', error.statusCode, error.message, error.cause);
             } else {
                 GitHubNotifications.LOGGER.error('Unexpected error while retrieving notifications', error);
             }
@@ -128,7 +132,7 @@ export class GitHubNotifications {
         }
     }
 
-    private updateNotifications(data: Notification[]) {
+    private updateNotifications(data: Notification[]): void {
         const lastNotificationsCount = this.notifications.length;
 
         this.notifications = data;
@@ -137,7 +141,7 @@ export class GitHubNotifications {
         this.alertWithNotifications(lastNotificationsCount);
     }
 
-    private alertWithNotifications(lastCount: number) {
+    private alertWithNotifications(lastCount: number): void {
         const newCount = this.notifications.length;
 
         if (newCount && newCount > lastCount && this.configuration.showAlert) {
@@ -150,5 +154,4 @@ export class GitHubNotifications {
             }
         }
     }
-
 }

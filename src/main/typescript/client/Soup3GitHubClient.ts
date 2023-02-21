@@ -1,13 +1,12 @@
+import { PRIORITY_DEFAULT, Uri } from '@gi-types/glib2';
 import { Auth, AuthBasic, HTTP_URI_FLAGS, Message, Session } from '@gi-types/soup3';
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
 import { Logger } from '@github-manager/utils';
 
 import { AbstractGitHubClient, HttpReponse } from './AbstractGitHubClient';
-import { Uri, PRIORITY_DEFAULT } from '@gi-types/glib2';
 
 export class Soup3GitHubClient extends AbstractGitHubClient {
-
     private static readonly LOGGER: Logger = new Logger('client::Soup3GitHubClient');
 
     private readonly session: Session;

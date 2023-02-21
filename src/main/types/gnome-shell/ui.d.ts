@@ -1,9 +1,9 @@
 import { MessageTray } from '@gnome-shell/ui/messageTray';
-import { Panel } from './ui/panel';
+import { Panel } from '@gnome-shell/ui/panel';
 
 export interface Main {
     panel: Panel;
     messageTray: MessageTray;
 }
 
-export const main : Main;
+export const main: Main;

@@ -6,7 +6,6 @@ import { Logger } from '@github-manager/utils';
 import { AbstractGitHubClient, HttpReponse } from './AbstractGitHubClient';
 
 export class Soup2GitHubClient extends AbstractGitHubClient {
-
     private static readonly LOGGER: Logger = new Logger('client::LibSoup2GitHubClient');
 
     private readonly session: Session;
@@ -43,22 +42,22 @@ export class Soup2GitHubClient extends AbstractGitHubClient {
 
     protected doRequest(method: string, path: string): Promise<HttpReponse> {
         const soupUri = URI.new(`https://${this.baseUrl}${path}`);
-        const request = new Message({ method: method, uri: soupUri });
+        const message = new Message({ method: method, uri: soupUri });
 
         Soup2GitHubClient.LOGGER.debug('Executing {0} ON {1}', method, soupUri.to_string(false));
-        request.requestHeaders.append('Authorization', this.auth.get_authorization(request));
+        message.requestHeaders.append('Authorization', this.auth.get_authorization(message));
 
         return new Promise<HttpReponse>((resolve, reject) => {
             try {
-                this.session.queue_message(request, (_ : Session, response: Message) => {
-                    Soup2GitHubClient.LOGGER.debug('Response: {0} - Length {1}', response.statusCode, response.responseBody.length);
+                this.session.queue_message(message, (_: Session, msg: Message) => {
+                    Soup2GitHubClient.LOGGER.debug('Response: {0} length {1}', msg.statusCode, msg.responseBody.length);
 
                     // Update the poll interval if set in the response
-                    if (response.responseHeaders.get('X-Poll-Interval')) {
-                        this._pollInterval = Number(response.responseHeaders.get('X-Poll-Interval'));
+                    if (msg.responseHeaders.get('X-Poll-Interval')) {
+                        this._pollInterval = Number(msg.responseHeaders.get('X-Poll-Interval'));
                     }
 
-                    resolve(new HttpReponse(response.statusCode, response.responseBody.length, response.responseBody.data));
+                    resolve(new HttpReponse(msg.statusCode, msg.responseBody.length, msg.responseBody.data));
                 });
             } catch (e) {
                 reject(e);

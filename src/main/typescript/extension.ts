@@ -1,5 +1,5 @@
 import { Configuration, GitHubNotifications } from '@github-manager/core';
-import { Logger, LogLevel } from '@github-manager/utils';
+import { LogLevel, Logger } from '@github-manager/utils';
 
 // Set global logging level
 Logger.globalLoggingLevel = LogLevel.DEBUG;
@@ -21,7 +21,7 @@ class GitHubManagerExtension {
 
             GitHubManagerExtension.LOGGER.debug('Starting extension');
             this.gitHubNotifications.start();
-        } catch(err) {
+        } catch (err) {
             GitHubManagerExtension.LOGGER.error('Unexpected error while enabling extension', err);
         }
     }
@@ -30,7 +30,7 @@ class GitHubManagerExtension {
         try {
             GitHubManagerExtension.LOGGER.debug('Stopping extension');
             this.gitHubNotifications?.stop();
-        } catch(err) {
+        } catch (err) {
             GitHubManagerExtension.LOGGER.error('Unexpected error while stopping extension', err);
         }
     }

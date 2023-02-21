@@ -5,16 +5,18 @@ import { getSettings } from '@gnome-shell/misc/extensionUtils';
 export type ConfigurationChangeListener = (property: string) => void;
 
 export class Configuration {
-
     private static instance?: Configuration;
 
     private settings: Settings;
 
-    private changeListeners: ConfigurationChangeListener[];
+    private changeListeners: Map<number, ConfigurationChangeListener>;
+
+    private currentHandle: number;
 
     private constructor(settings: Settings) {
         this.settings = settings;
-        this.changeListeners = [];
+        this.changeListeners = new Map<number, ConfigurationChangeListener>();
+        this.currentHandle = 0;
 
         // Setup the internal change event listener
         this.settings.connect('changed', this.onChange.bind(this));
@@ -45,49 +47,56 @@ export class Configuration {
     }
 
     public addChangeListener(listener: ConfigurationChangeListener): number {
-        return this.changeListeners.push(listener) - 1;
+        this.changeListeners.set(this.currentHandle, listener);
+        return this.currentHandle++;
     }
 
-    public removeChangeListener(handle: number) {
-        if (handle > 0 && handle < this.changeListeners.length) {
-            delete this.changeListeners[handle];
-        }
+    public removeChangeListener(handle: number): void {
+        this.changeListeners.delete(handle);
     }
 
-    public bind(property: string, widget: Widget, widgetProperty: string) {
+    public bind(property: string, widget: Widget, widgetProperty: string): void {
         this.settings.bind(Configuration.property2key(property), widget, widgetProperty, SettingsBindFlags.DEFAULT);
     }
 
     public reset(): void {
         this.listProperties()
-            .map(prop => Configuration.property2key(prop))
-            .forEach(key => this.settings.set_value(key, this.settings.get_default_value(key)!));
+            .map((prop) => Configuration.property2key(prop))
+            .forEach((key) => {
+                const defaultValue = this.settings.get_default_value(key);
+
+                if (defaultValue) {
+                    this.settings.set_value(key, defaultValue);
+                }
+            });
     }
 
-    private onChange(source: Settings, key: string) {
+    private onChange(source: Settings, key: string): void {
         if (this.settings !== source) {
             return;
         }
 
-        this.changeListeners.forEach(listener => {
+        this.changeListeners.forEach((listener) => {
             listener(Configuration.key2property(key));
         });
     }
 
-    private listProperties () {
+    private listProperties(): string[] {
         const propertyDescriptor = Object.getOwnPropertyDescriptors(Reflect.getPrototypeOf(this));
-        return Object.entries(propertyDescriptor).filter(e => typeof e[1].get === 'function' && e[0] !== '__proto__').map(e => e[0]);
+        return Object.entries(propertyDescriptor)
+            .filter((entry) => typeof entry[1].get === 'function' && entry[0] !== '__proto__')
+            .map((entry) => entry[0]);
     }
 
     private static key2property(key: string): string {
-        return key.toLowerCase().replace(/[-]+(.)/g, (m, chr) => chr.toUpperCase());
+        return key.toLowerCase().replace(/-+(.)/g, (_: string, chr: string) => chr.toUpperCase());
     }
 
     private static property2key(property: string): string {
-        return property.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
+        return property.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
     }
 
-    public static getInstance() : Configuration {
+    public static getInstance(): Configuration {
         if (Configuration.instance === undefined) {
             Configuration.instance = new Configuration(getSettings());
         }

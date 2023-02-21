@@ -1,6 +1,6 @@
-import { reason, Status } from '@tshttp/status';
+import { Status, reason } from '@tshttp/status';
 
-import { ApiError, Notification, GitHubClient } from './GitHubClient';
+import { ApiError, ErrorResponse, GitHubClient, Notification } from './GitHubClient';
 
 export class HttpReponse {
     public readonly statusCode: number;
@@ -15,23 +15,22 @@ export class HttpReponse {
 }
 
 export abstract class AbstractGitHubClient implements GitHubClient {
-
     protected _pollInterval: number;
 
     protected constructor() {
         this._pollInterval = 60;
     }
 
-    public get pollInterval() : number {
+    public get pollInterval(): number {
         return this._pollInterval;
     }
 
-    public async listNotifications(showParticipatingOnly = false): Promise<Notification[]> {
-        let response : HttpReponse;
+    public async listNotifications(showParticipatingOnly: boolean = false): Promise<Notification[]> {
+        let response: HttpReponse;
 
         try {
-            response = await this.doRequest('GET', `/notifications?${showParticipatingOnly}`);
-        } catch(e) {
+            response = await this.doRequest('GET', `/notifications?${showParticipatingOnly.toString()}`);
+        } catch (e) {
             if (e instanceof Error) {
                 throw new ApiError(-1, 'Unable to perform API call', e);
             } else if (typeof e === 'string') {
@@ -43,10 +42,10 @@ export abstract class AbstractGitHubClient implements GitHubClient {
         }
 
         if (response.statusCode == Status.Ok) {
-            return JSON.parse(response.body);
+            return JSON.parse(response.body) as Notification[];
         } else {
-            const errorResponse = response.length > 0 ? JSON.parse(response.body) : {};
-            const message = errorResponse.message !== undefined ? errorResponse.message : reason(response.statusCode as Status);
+            const errorResponse = response.length > 0 ? (JSON.parse(response.body) as Partial<ErrorResponse>) : {};
+            const message = errorResponse.message ?? reason(response.statusCode as Status);
 
             throw new ApiError(response.statusCode, message);
         }

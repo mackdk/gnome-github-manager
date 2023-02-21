@@ -1,2 +1,2 @@
 export * from './GitHubClient';
-export * from './GitHubClientFactory';
+export * as GitHubClientFactory from './GitHubClientFactory';

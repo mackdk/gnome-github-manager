@@ -1,16 +1,15 @@
-import { PRIORITY_DEFAULT, timeout_add_seconds, source_remove } from '@gi-types/glib2';
+import { PRIORITY_DEFAULT, source_remove, timeout_add_seconds } from '@gi-types/glib2';
 
 import { Logger } from '@github-manager/utils/Logger';
 
 export type TimerTask = () => Promise<boolean>;
 
 export class LimitedRetriableTimer {
-
     private static readonly LOGGER: Logger = new Logger('utils::LimitedRetriableTimer');
 
-    public upperIntervalLimit? : number;
+    public upperIntervalLimit?: number;
 
-    public lowerIntervalLimit? : number;
+    public lowerIntervalLimit?: number;
 
     public interval: number;
 
@@ -34,8 +33,11 @@ export class LimitedRetriableTimer {
         this.timerHandle = undefined;
     }
 
-    public start(initialDelay = 0) {
-        LimitedRetriableTimer.LOGGER.debug('Timer is started. Executing first run with initial delay {0}s', initialDelay);
+    public start(initialDelay: number = 0): void {
+        LimitedRetriableTimer.LOGGER.debug(
+            'Timer is started. Executing first run with initial delay {0}s',
+            initialDelay
+        );
 
         // Reset the first timeout
         this.currentInterval = this.interval;
@@ -50,10 +52,9 @@ export class LimitedRetriableTimer {
                 return false;
             });
         }
-
     }
 
-    public stop() {
+    public stop(): void {
         if (!this.timerHandle) {
             return;
         }
@@ -63,24 +64,29 @@ export class LimitedRetriableTimer {
         this.timerHandle = undefined;
     }
 
-    public restart(initialDelay = 0) {
+    public restart(initialDelay: number = 0): void {
         this.stop();
         this.start(initialDelay);
     }
 
-    public get running() {
+    public get running(): boolean {
         return this.timerHandle !== undefined;
     }
 
-    private runTaskAndSchedule() {
-        this.task().then((outcome: boolean) => {
-            this.scheduleNextRun();
-            LimitedRetriableTimer.LOGGER.debug('Next fetch execution scheduled in {0} seconds', this.currentInterval);
-            this.computeCurrentInterval(outcome);
-        });
+    private runTaskAndSchedule(): void {
+        this.task()
+            .then((outcome: boolean) => {
+                this.scheduleNextRun();
+                LimitedRetriableTimer.LOGGER.debug(
+                    'Next fetch execution scheduled in {0} seconds',
+                    this.currentInterval
+                );
+                this.computeCurrentInterval(outcome);
+            })
+            .catch((err) => LimitedRetriableTimer.LOGGER.error('Unexpected error while executing timer task', err));
     }
 
-    private scheduleNextRun() {
+    private scheduleNextRun(): void {
         this.stop();
 
         this.timerHandle = timeout_add_seconds(PRIORITY_DEFAULT, this.currentInterval, () => {
@@ -89,16 +95,15 @@ export class LimitedRetriableTimer {
         });
     }
 
-    private computeCurrentInterval(successful: boolean) {
+    private computeCurrentInterval(successful: boolean): void {
         if (successful) {
             this.currentInterval = this.interval;
         } else {
-            this.currentInterval = this.retryIntervals[this.retries] || 3600;
+            this.currentInterval = this.retryIntervals[this.retries] ?? 3600;
         }
 
         // Limit the interval according to the limits, if specified
-        this.currentInterval = Math.max(this.currentInterval, this.lowerIntervalLimit || Number.MIN_SAFE_INTEGER);
-        this.currentInterval = Math.min(this.currentInterval, this.upperIntervalLimit || Number.MAX_SAFE_INTEGER);
+        this.currentInterval = Math.max(this.currentInterval, this.lowerIntervalLimit ?? Number.MIN_SAFE_INTEGER);
+        this.currentInterval = Math.min(this.currentInterval, this.upperIntervalLimit ?? Number.MAX_SAFE_INTEGER);
     }
-
 }

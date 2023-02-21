@@ -34,22 +34,18 @@ const external = Object.keys(globals);
 const adapter = new GObjectAdapter();
 
 const eslintPluginOptions = {
-    fix: true,
+    fix: false,
     throwOnError: true,
-    throwOnWarning: true
+    throwOnWarning: true,
 };
 
 const typescriptPluginOptions = {
     tsconfig: './tsconfig.json',
     noEmitOnError: true,
     transformers: {
-        before: [
-            adapter.beforeCompilation.bind(adapter)
-        ],
-        after: [
-            adapter.afterCompilation.bind(adapter)
-        ]
-    }
+        before: [adapter.beforeCompilation.bind(adapter)],
+        after: [adapter.afterCompilation.bind(adapter)],
+    },
 };
 
 export default defineConfig([
@@ -63,13 +59,11 @@ export default defineConfig([
             file: `${buildPath}/extension.js`,
             format: 'iife',
             name: 'init',
-            banner: [
-                'try {',
-            ].join('\n'),
+            banner: ['try {'].join('\n'),
             footer: [
                 '}',
                 'catch(err) {',
-                '  logError(err, \'[Github Manager Extension] [init] Unxpected error\');',
+                "  logError(err, '[Github Manager Extension] [init] Unxpected error');",
                 '  throw err;',
                 '}',
             ].join('\n'),
@@ -86,14 +80,12 @@ export default defineConfig([
             eslint(eslintPluginOptions),
             typescript(typescriptPluginOptions),
             copy({
-                targets: [
-                    { src: './src/main/resources/*', dest: `${buildPath}` },
-                ],
+                targets: [{ src: './src/main/resources/*', dest: `${buildPath}` }],
             }),
             shellExecute([
                 'mkdir -p ./build/schemas',
-                'glib-compile-schemas src/main/schemas/ --targetdir=./build/schemas/'
-            ])
+                'glib-compile-schemas src/main/schemas/ --targetdir=./build/schemas/',
+            ]),
         ],
     },
     {
@@ -105,11 +97,8 @@ export default defineConfig([
             exports: 'default',
             name: 'prefs',
             globals,
-            banner: ['imports.gi.versions.Gtk = \'4.0\';'].join('\n'),
-            footer: [
-                'var init = prefs.init;',
-                'var buildPrefsWidget = prefs.buildPrefsWidget;'
-            ].join('\n'),
+            banner: ["imports.gi.versions.Gtk = '4.0';"].join('\n'),
+            footer: ['var init = prefs.init;', 'var buildPrefsWidget = prefs.buildPrefsWidget;'].join('\n'),
         },
         treeshake: {
             moduleSideEffects: 'no-external',
@@ -121,7 +110,7 @@ export default defineConfig([
                 preferBuiltins: false,
             }),
             eslint(eslintPluginOptions),
-            typescript(typescriptPluginOptions)
+            typescript(typescriptPluginOptions),
         ],
     },
 ]);

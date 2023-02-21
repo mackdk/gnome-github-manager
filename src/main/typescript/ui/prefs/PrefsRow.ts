@@ -1,37 +1,87 @@
 import { File } from '@gi-types/gio2';
 import { MetaInfo, ParamFlags, ParamSpec } from '@gi-types/gobject2';
 import { Align, Box, DropDown, Entry, PasswordEntry, SpinButton, StringList, Switch, Widget } from '@gi-types/gtk4';
-import { Configuration } from '@github-manager/core/Configuration';
-import { registerGObject } from '@github-manager/utils';
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
-export namespace PrefsRow {
-    export interface ConstructorProperties extends Box.ConstructorProperties {
-        label: string;
-        description: string;
-        widgetType: string;
-        widgetParameters: string;
-        configurationProperty: string;
-        prefix: Widget;
-        suffix: Widget;
-    }
+import { Configuration } from '@github-manager/core/Configuration';
+import { registerGObject } from '@github-manager/utils';
+
+export interface PrefsRowConstructorProperties extends Box.ConstructorProperties {
+    label: string;
+    description: string;
+    widgetType: string;
+    widgetParameters: string;
+    configurationProperty: string;
+    prefix: Widget;
+    suffix: Widget;
+}
+
+export interface PrefsRowSpinButtonParameters {
+    min: number;
+    max: number;
+    step: number;
+}
+
+export interface PrefsRowDropDownParameters {
+    items: string[];
 }
 
 @registerGObject
 export class PrefsRow extends Box {
-
     public static readonly metaInfo: MetaInfo = {
         GTypeName: 'PrefsRow',
         Template: File.new_for_path(`${getCurrentExtension().path}/ui/PrefsRow.ui`).get_uri(),
         Properties: {
-            'label': ParamSpec.string('label', 'Label', 'Label display for the input widget of this pref', ParamFlags.READWRITE, ''),
-            'description': ParamSpec.string('description', 'Description', 'Text to provide additional information on this pref', ParamFlags.READWRITE, ''),
-            'widgetType': ParamSpec.string('widget-type', 'Type of widget', 'The widget to use to edit this pref', ParamFlags.READWRITE, 'GktEntry'),
-            'widgetParameters': ParamSpec.string('widget-parameters', 'Widget build parameters', 'Additional parameter to build the widget to edit this pref', ParamFlags.READWRITE, ''),
-            'configurationProperty': ParamSpec.string('configuration-property', 'The configuration property', 'The configuration property controlled by this pref', ParamFlags.READWRITE, ''),
-            'prefix': ParamSpec.object('prefix', 'Prefix widget', 'Widget at the beginning of the prefs row', ParamFlags.READWRITE, Widget.$gtype),
-            'suffix': ParamSpec.object('suffix', 'Suffix widget', 'Widget at the end of the prefs row', ParamFlags.READWRITE, Widget.$gtype),
-        }
+            label: ParamSpec.string(
+                'label',
+                'Label',
+                'Label for the input widget of this pref',
+                ParamFlags.READWRITE,
+                ''
+            ),
+            description: ParamSpec.string(
+                'description',
+                'Description',
+                'Additional information on this pref',
+                ParamFlags.READWRITE,
+                ''
+            ),
+            widgetType: ParamSpec.string(
+                'widget-type',
+                'Type of widget',
+                'The widget to use to edit this pref',
+                ParamFlags.READWRITE,
+                'GktEntry'
+            ),
+            widgetParameters: ParamSpec.string(
+                'widget-parameters',
+                'Widget parameters',
+                'Additional parameter to build the widget',
+                ParamFlags.READWRITE,
+                '{}'
+            ),
+            configurationProperty: ParamSpec.string(
+                'configuration-property',
+                'The configuration property',
+                'The configuration property controlled by this pref',
+                ParamFlags.READWRITE,
+                ''
+            ),
+            prefix: ParamSpec.object(
+                'prefix',
+                'Prefix widget',
+                'Widget at the beginning of the prefs row',
+                ParamFlags.READWRITE,
+                Widget.$gtype
+            ),
+            suffix: ParamSpec.object(
+                'suffix',
+                'Suffix widget',
+                'Widget at the end of the prefs row',
+                ParamFlags.READWRITE,
+                Widget.$gtype
+            ),
+        },
     };
 
     private _label: string;
@@ -42,41 +92,44 @@ export class PrefsRow extends Box {
     private _prefix?: Widget;
     private _suffix?: Widget;
 
-    public constructor(params?: Partial<PrefsRow.ConstructorProperties>, ...args: any[]) {
-        super(params, ...args);
+    public constructor(params?: Partial<PrefsRowConstructorProperties>) {
+        super(params);
 
-        this._label = params?.label || '';
-        this._description = params?.description || '';
-        this._widgetType = params?.widgetType || 'GktEntry';
-        this._widgetParameters = params?.widgetParameters || '';
-        this._configurationProperty = params?.configurationProperty || '';
+        this._label = params?.label ?? '';
+        this._description = params?.description ?? '';
+        this._widgetType = params?.widgetType ?? 'GktEntry';
+        this._widgetParameters = params?.widgetParameters ?? '{}';
+        this._configurationProperty = params?.configurationProperty ?? '';
         this._prefix = params?.prefix;
         this._suffix = params?.suffix;
     }
 
-    public vfunc_realize() {
+    public vfunc_realize(): void {
         super.vfunc_realize();
 
         let widget: Widget, bindProperty: string;
         if (this._widgetType == 'GtkPasswordEntry') {
-            const params: Partial<PasswordEntry.ConstructorProperties> = this._widgetParameters != '' ? JSON.parse(this._widgetParameters) : {};
-            widget = new PasswordEntry({ showPeekIcon: true, valign: Align.CENTER, vexpand: false, hexpand: true, ...params });
+            widget = new PasswordEntry({ showPeekIcon: true, valign: Align.CENTER, vexpand: false, hexpand: true });
             bindProperty = 'text';
         } else if (this._widgetType == 'GtkSwitch') {
-            const params: Partial<Switch.ConstructorProperties> = this._widgetParameters != '' ? JSON.parse(this._widgetParameters) : {};
-            widget = new Switch({ halign: Align.CENTER, hexpand: false, valign: Align.CENTER, vexpand: false, ...params });
+            widget = new Switch({ halign: Align.CENTER, hexpand: false, valign: Align.CENTER, vexpand: false });
             bindProperty = 'state';
         } else if (this._widgetType == 'GtkSpinButton') {
-            const params: Partial<{min: number; max: number; step: number;}> = this._widgetParameters != '' ? JSON.parse(this._widgetParameters) : {};
-            widget = SpinButton.new_with_range(params?.min || 0, params?.max || 100, params?.step || 1);
+            const params = JSON.parse(this._widgetParameters) as Partial<PrefsRowSpinButtonParameters>;
+            widget = SpinButton.new_with_range(params.min ?? 0, params.max ?? 100, params.step ?? 1);
             bindProperty = 'value';
         } else if (this._widgetType == 'GtkDropDown') {
-            const params: string[] = this._widgetParameters != '' ? JSON.parse(this._widgetParameters) : [];
-            widget = new DropDown({ model: StringList.new(params), valign: Align.CENTER, vexpand: false, hexpand: true });
+            const params = JSON.parse(this._widgetParameters) as Partial<PrefsRowDropDownParameters>;
+            widget = new DropDown({
+                model: StringList.new(params.items ?? []),
+                valign: Align.CENTER,
+                vexpand: false,
+                hexpand: true,
+            });
+
             bindProperty = 'selected';
         } else {
-            const params: Partial<Entry.ConstructorProperties> = this._widgetParameters != '' ? JSON.parse(this._widgetParameters) : {};
-            widget = new Entry({ valign: Align.CENTER, vexpand: false, hexpand: true, ...params });
+            widget = new Entry({ valign: Align.CENTER, vexpand: false, hexpand: true });
             bindProperty = 'text';
         }
 
@@ -95,7 +148,7 @@ export class PrefsRow extends Box {
         }
     }
 
-    public get label() {
+    public get label(): string {
         return this._label;
     }
 
@@ -108,7 +161,7 @@ export class PrefsRow extends Box {
         this.notify('label');
     }
 
-    public get description() {
+    public get description(): string {
         return this._description;
     }
 
@@ -121,7 +174,7 @@ export class PrefsRow extends Box {
         this.notify('description');
     }
 
-    public get widgetType() {
+    public get widgetType(): string {
         return this._widgetType;
     }
 
@@ -134,7 +187,7 @@ export class PrefsRow extends Box {
         this.notify('widget-type');
     }
 
-    public get widgetParameters() {
+    public get widgetParameters(): string {
         return this._widgetParameters;
     }
 
@@ -147,7 +200,7 @@ export class PrefsRow extends Box {
         this.notify('widget-parameters');
     }
 
-    public get configurationProperty() {
+    public get configurationProperty(): string {
         return this._configurationProperty;
     }
 
@@ -185,5 +238,4 @@ export class PrefsRow extends Box {
         this._suffix = value;
         this.notify('suffix');
     }
-
 }

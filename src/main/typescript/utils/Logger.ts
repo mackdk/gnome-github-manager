@@ -8,13 +8,17 @@ export enum LogLevel {
     ERROR,
 }
 
+export type LoggableParameter = number | string | bigint | symbol | object | unknown;
+
 export class Logger {
     public static globalLoggingLevel: LogLevel = LogLevel.INFO;
+
+    private static EXT_PREFIX: string = `${getCurrentExtension().metadata.name} Extension`;
 
     private readonly loggerName: string;
     private readonly logLevel?: LogLevel;
 
-    public constructor(loggerName: string, logLevel? : LogLevel) {
+    public constructor(loggerName: string, logLevel?: LogLevel) {
         this.loggerName = loggerName;
         this.logLevel = logLevel;
     }
@@ -23,7 +27,7 @@ export class Logger {
         return this.isEnabled(LogLevel.DEBUG);
     }
 
-    public debug(format: string, ...args: any[]) {
+    public debug(format: string, ...args: LoggableParameter[]): void {
         this.addLog(LogLevel.DEBUG, format, ...args);
     }
 
@@ -31,7 +35,7 @@ export class Logger {
         return this.isEnabled(LogLevel.INFO);
     }
 
-    public info(format: string, ...args: any[]) {
+    public info(format: string, ...args: LoggableParameter[]): void {
         this.addLog(LogLevel.INFO, format, ...args);
     }
 
@@ -39,7 +43,7 @@ export class Logger {
         return this.isEnabled(LogLevel.DEBUG);
     }
 
-    public warn(format: string, ...args: any[]) {
+    public warn(format: string, ...args: LoggableParameter[]): void {
         this.addLog(LogLevel.WARN, format, ...args);
     }
 
@@ -47,34 +51,34 @@ export class Logger {
         return this.isEnabled(LogLevel.DEBUG);
     }
 
-    public error(format: string, ...args: any[]) {
+    public error(format: string, ...args: LoggableParameter[]): void {
         this.addLog(LogLevel.ERROR, format, ...args);
     }
 
-    private isEnabled(levelToCheck: LogLevel) {
-        const currentLoggerLevel = this.logLevel || Logger.globalLoggingLevel;
+    private isEnabled(levelToCheck: LogLevel): boolean {
+        const currentLoggerLevel = this.logLevel ?? Logger.globalLoggingLevel;
         return levelToCheck >= currentLoggerLevel;
     }
 
-    private addLog(level: LogLevel, format: string, ...args: any[]) {
+    private addLog(level: LogLevel, format: string, ...args: LoggableParameter[]): void {
         if (!this.isEnabled(level)) {
             return;
         }
 
-        let err : unknown | undefined = undefined;
-        if (this.hasErrorParameter(format, args?.length || 0)) {
+        let err: unknown | undefined = undefined;
+        if (this.hasErrorParameter(format, args.length)) {
             err = args.pop();
         }
 
         const message = this.format(format, ...args);
-        const logMessage = `[${getCurrentExtension().metadata.name} Extension] ${this.loggerName} ${LogLevel[level]} ${message}`;
+        const logMessage = `[${Logger.EXT_PREFIX}] ${this.loggerName} ${LogLevel[level]} ${message}`;
 
         if (err instanceof Error) {
             logError(err, logMessage);
         } else if (typeof err === 'string') {
             log(`${logMessage} - ${err}`);
         } else if (err !== undefined) {
-            log(`${logMessage} - Additional object of type ${typeof err}: ${err}`);
+            log(`${logMessage} - Additional object of type ${typeof err}: ${err?.toString() ?? '(n/a)'}`);
         } else {
             log(logMessage);
         }
@@ -85,12 +89,10 @@ export class Logger {
             return false;
         }
 
-        return message.indexOf(`{${numArguments - 1}}`) == -1;
+        return !message.includes(`{${numArguments - 1}}`);
     }
 
-    private format(format: string, ...args: any[]): string {
-        return format.replace(/{(\d+)}/g, function(match, number) {
-            return args[number] || match;
-        });
+    private format(format: string, ...args: LoggableParameter[]): string {
+        return format.replace(/{(\d+)}/g, (match: string, number: number) => args[number]?.toString() ?? match);
     }
 }

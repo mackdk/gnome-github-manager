@@ -1,11 +1,11 @@
 import { PrefsStack } from '@github-manager/ui/prefs';
 
 export default {
-    init: function () {
+    init: () => {
         // Nothing to initialize
     },
 
-    buildPrefsWidget: function () {
+    buildPrefsWidget: () => {
         try {
             return new PrefsStack();
         } catch (err) {

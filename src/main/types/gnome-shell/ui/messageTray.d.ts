@@ -1,25 +1,25 @@
-import { Object } from '@gi-types/gobject2';
 import { Icon, ThemedIcon } from '@gi-types/gio2';
 import { DateTime } from '@gi-types/glib2';
+import { Object as GObject } from '@gi-types/gobject2';
 import { Widget } from '@gi-types/st1';
 
 export interface NotificationProperties {
-    gicon: Icon,
-    secondaryGIcon: Icon,
-    bannerMarkup: boolean,
-    clear: boolean,
-    datetime: DateTime,
-    soundName: string,
-    soundFile: string,
+    gicon: Icon;
+    secondaryGIcon: Icon;
+    bannerMarkup: boolean;
+    clear: boolean;
+    datetime: DateTime;
+    soundName: string;
+    soundFile: string;
 }
 
-export class Notification extends Object {
-    public constructor(notificationSource: Source, title: string, banner: string, params: Partial<NotificationProperties>);
+export class Notification extends GObject {
+    public constructor(source: Source, title: string, banner: string, params: Partial<NotificationProperties>);
     public setTransient(state: boolean): void;
     public update(title: string, message: string, properties: Partial<NotificationProperties>): void;
 }
 
-export class Source extends Object {
+export class Source extends GObject {
     public notifications: Notification[];
 
     public constructor(title: string, iconName: string);

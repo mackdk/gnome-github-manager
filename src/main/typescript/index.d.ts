@@ -1,10 +1,8 @@
-
-export { };
+export {};
 
 declare global {
     export const imports: {
         gi: {
-            GObject: any,
             versions: {
                 Soup: string;
             };
@@ -20,8 +18,8 @@ declare module '@gi-types/gobject2' {
         GTypeName: string;
         GTypeFlags?: TypeFlags;
         Implements?: { $gtype: GType }[];
-        Properties?: { [K: string]: ParamSpec };
-        Signals?: { [K: string]: SignalDefinition };
+        Properties?: Record<string, ParamSpec>;
+        Signals?: Record<string, SignalDefinition>;
         Requires?: { $gtype: GType }[];
         CssName?: string;
         Template?: string;

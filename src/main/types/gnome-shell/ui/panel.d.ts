@@ -1,4 +1,5 @@
 import { BoxLayout, Widget } from '@gi-types/st1';
+
 import { Button } from './panelMenu';
 
 export interface Panel extends Widget {
