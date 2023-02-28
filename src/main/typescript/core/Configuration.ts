@@ -4,12 +4,6 @@ import { getSettings } from '@gnome-shell/misc/extensionUtils';
 
 export type ConfigurationChangeListener = (property: string) => void;
 
-export enum AlertMode {
-    NONE,
-    SINGLE,
-    DIGEST,
-}
-
 export class Configuration {
 
     private static instance?: Configuration;
@@ -42,15 +36,8 @@ export class Configuration {
         return this.settings.get_int('refresh-interval');
     }
 
-    public get alertMode(): AlertMode {
-        const validValues: number[] = Object.keys(AlertMode).map(s => Number(s)).filter(v => !isNaN(v));
-        const storedValue: number = this.settings.get_int('alert-mode');
-
-        if (validValues.indexOf(storedValue) == -1) {
-            return AlertMode.NONE;
-        }
-
-        return storedValue as AlertMode;
+    public get showAlert(): boolean {
+        return this.settings.get_boolean('show-alert');
     }
 
     public get showParticipatingOnly(): boolean {

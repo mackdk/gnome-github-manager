@@ -113,10 +113,9 @@
                         <child>
                             <object class="PrefsRow">
                                 <property name="label">UI notifications</property>
-                                <property name="description">Set how to receive GNOME notifications.</property>
-                                <property name="widget-type">GtkDropDown</property>
-                                <property name="widget-parameters">["None","Single","Digest"]</property>
-                                <property name="configuration-property">alertMode</property>
+                                <property name="description">Show a GNOME notifications.</property>
+                                <property name="widget-type">GtkSwitch</property>
+                                <property name="configuration-property">showAlert</property>
                             </object>
                         </child>
                         <child>

@@ -6,7 +6,7 @@ import { getCurrentExtension, openPrefs } from '@gnome-shell/misc/extensionUtils
 import { main as ShellUI } from '@gnome-shell/ui';
 import { Status } from '@tshttp/status';
 
-import { AlertMode, Configuration } from './Configuration';
+import { Configuration } from './Configuration';
 import { ApiError, GitHubClient, GitHubClientFactory, Notification } from '@github-manager/client';
 import { GitHubWidget, NotificationManager } from '@github-manager/ui';
 import { Logger, LimitedRetriableTimer } from '@github-manager/utils';
@@ -140,7 +140,7 @@ export class GitHubNotifications {
     private alertWithNotifications(lastCount: number) {
         const newCount = this.notifications.length;
 
-        if (newCount && newCount > lastCount && this.configuration.alertMode != AlertMode.NONE) {
+        if (newCount && newCount > lastCount && this.configuration.showAlert) {
             GitHubNotifications.LOGGER.debug('Sending notification');
 
             try {

@@ -20,9 +20,9 @@
       <summary>The refresh interval in seconds</summary>
       <description>The refresh interval used by the extension. If this number is smaller than the header returned by github, it will be ignored and the header will take precedence. See https://developer.github.com/v3/activity/notifications/</description>
     </key>
-    <key name="alert-mode" type="i">
-      <default>1</default>
-      <summary>How to show desktop notifications</summary>
+    <key name="show-alert" type="b">
+      <default>false</default>
+      <summary>Show notifications alert</summary>
     </key>
     <key name="show-participating-only" type="b">
       <default>false</default>
