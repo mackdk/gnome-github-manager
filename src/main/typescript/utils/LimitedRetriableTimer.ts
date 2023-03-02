@@ -1,6 +1,6 @@
 import { PRIORITY_DEFAULT, source_remove, timeout_add_seconds } from '@gi-types/glib2';
 
-import { Logger } from '@github-manager/utils/Logger';
+import { Logger } from './Logger';
 
 export type TimerTask = () => Promise<boolean>;
 

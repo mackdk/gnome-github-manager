@@ -25,10 +25,7 @@ export default class GObjectAdapter {
                 if (ts.isClassDeclaration(node) && this.isDecoratedClass(node, GObjectAdapter.GOBJECT_ANNOTATION)) {
                     const className = node.name?.text;
                     if (className !== undefined) {
-                        console.log(
-                            '[GObjectAdapter::beforeCompilation] Marked for GObject %s for modification.',
-                            className
-                        );
+                        console.log('[GObjectAdapter] Adapting GObject %s.', className);
                         this.gobjects.push(className);
                     }
 
@@ -52,10 +49,6 @@ export default class GObjectAdapter {
                     ts.isCallExpression(node.expression) &&
                     node.expression.expression.kind == ts.SyntaxKind.SuperKeyword
                 ) {
-                    console.log(
-                        '[GObjectAdapter::afterCompilation] Adapting reference to super construtor in %s',
-                        className?.toString() ?? '(n/a)'
-                    );
                     // Return a call to super._init() with the same arguments
                     return context.factory.createExpressionStatement(
                         context.factory.createCallExpression(
@@ -71,10 +64,6 @@ export default class GObjectAdapter {
 
             const gobjectClassVisitor = (node: ts.Node): ts.Node | undefined => {
                 if (ts.isConstructorDeclaration(node)) {
-                    console.log(
-                        '[GObjectAdapter::afterCompilation] Adapting constructor of %s',
-                        className?.toString() ?? '(n/a)'
-                    );
                     // Replace the constructor declaration with a _init() with the same argoment
                     return context.factory.createMethodDeclaration(
                         node.modifiers,

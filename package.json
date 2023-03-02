@@ -7,15 +7,16 @@
   "license": "GPL-2.0-only",
   "scripts": {
     "clean": "rm -rf build",
-    "build": "rollup --config rollup.config.ts --configPlugin typescript",
+    "compile": "rollup --config rollup.config.ts --configPlugin 'typescript={tsconfig:\"rollup.tsconfig.json\",cacheDir:\"build/compile\"}'",
     "lint": "yarn run eslint src",
-    "sync": "rsync -a ./build/* ~/.local/share/gnome-shell/extensions/$(cat src/main/resources/metadata.json | jq -r .uuid)",
+    "lintStrict": "yarn run eslint src --max-warnings=0",
+    "build": "yarn lint && yarn compile",
+    "sync": "rsync -a ./build/dist/* ~/.local/share/gnome-shell/extensions/$(cat src/main/resources/metadata.json | jq -r .uuid)",
     "deploy": "yarn build && yarn sync",
     "followLogs": "journalctl -f | grep \"\\[$(cat src/main/resources/metadata.json | jq -r .name) Extension\\]\""
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.1",
-    "@rollup/plugin-eslint": "^9.0.3",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-typescript": "^11.0.0",
     "@typescript-eslint/eslint-plugin": "^5.42.0",

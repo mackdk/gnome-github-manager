@@ -9,7 +9,7 @@ declare global {
         };
     };
 
-    export const log: (message: string) => void;
+    export const log: (message) => void;
     export const logError: (e: Error | string | unknown, message: string) => void;
 }
 

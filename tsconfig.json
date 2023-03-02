@@ -13,19 +13,22 @@
     "moduleResolution": "Node",
     "sourceMap": false,
     "outDir": "build",
-    "baseUrl": "./src/main/typescript/",
+    "baseUrl": "src",
     "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "incremental": true,
     "paths": {
-      "@gnome-shell/*": ["../types/gnome-shell/*"],
-      "@github-manager/*": ["*"],
-    }
+      "@gnome-shell/*": ["main/types/gnome-shell/*"],
+      "@github-manager/*": ["main/typescript/*"],
+    },
   },
   "include": [
     "src/**/*.ts",
     "rollup.config.ts"
   ],
   "exclude": [
-    "build/**/*"
+    "node_modules/**/*",
+    "build/**/*",
   ],
 }
 

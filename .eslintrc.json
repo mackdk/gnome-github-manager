@@ -29,14 +29,14 @@
         }
     },
     "rules": {
-        "prettier/prettier": "error",
+        "prettier/prettier": "warn",
         // Code quality
-        "sort-imports": [ "error", {
+        "sort-imports": [ "warn", {
             "ignoreDeclarationSort": true
         }],
         "import/no-deprecated": "error",
-        "import/first": "error",
-        "import/order": [ "error", {
+        "import/first": "warn",
+        "import/order": [ "warn", {
             "groups": [ "builtin", "external", "internal", "sibling", "parent", "index" ],
             "newlines-between": "always",
             "alphabetize": {

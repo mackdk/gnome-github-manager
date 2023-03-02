@@ -1,15 +1,15 @@
-import { defineConfig } from 'rollup';
-
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
-import typescript from '@rollup/plugin-typescript';
-import eslint from '@rollup/plugin-eslint';
+import typescript, { RollupTypescriptOptions } from '@rollup/plugin-typescript';
+import { defineConfig } from 'rollup';
 import copy from 'rollup-plugin-copy';
 
 import GObjectAdapter from './src/support/typescript/GObjectAdapter';
 import { shellExecute } from './src/support/typescript/RollupShellExecute';
 
 const buildPath = 'build';
+const distributionPath = `${buildPath}/dist`;
+const cachePath = `${buildPath}/compile`;
 
 const globals = {
     '@gi-types/clutter10': 'imports.gi.Clutter',
@@ -33,15 +33,11 @@ const external = Object.keys(globals);
 
 const adapter = new GObjectAdapter();
 
-const eslintPluginOptions = {
-    fix: false,
-    throwOnError: true,
-    throwOnWarning: true,
-};
-
-const typescriptPluginOptions = {
+const typescriptPluginOptions: RollupTypescriptOptions = {
     tsconfig: './tsconfig.json',
     noEmitOnError: true,
+    outputToFilesystem: true,
+    cacheDir: cachePath,
     transformers: {
         before: [adapter.beforeCompilation.bind(adapter)],
         after: [adapter.afterCompilation.bind(adapter)],
@@ -56,7 +52,7 @@ export default defineConfig([
         },
         output: {
             sourcemap: false,
-            file: `${buildPath}/extension.js`,
+            file: `${distributionPath}/extension.js`,
             format: 'iife',
             name: 'init',
             banner: ['try {'].join('\n'),
@@ -77,14 +73,13 @@ export default defineConfig([
             nodeResolve({
                 preferBuiltins: false,
             }),
-            eslint(eslintPluginOptions),
             typescript(typescriptPluginOptions),
             copy({
-                targets: [{ src: './src/main/resources/*', dest: `${buildPath}` }],
+                targets: [{ src: 'src/main/resources/*', dest: `${distributionPath}` }],
             }),
             shellExecute([
-                'mkdir -p ./build/schemas',
-                'glib-compile-schemas src/main/schemas/ --targetdir=./build/schemas/',
+                `mkdir -p ${distributionPath}/schemas`,
+                `glib-compile-schemas src/main/schemas/ --targetdir=${distributionPath}/schemas/`,
             ]),
         ],
     },
@@ -92,7 +87,7 @@ export default defineConfig([
         input: 'src/main/typescript/prefs.ts',
         output: {
             sourcemap: false,
-            file: `${buildPath}/prefs.js`,
+            file: `${distributionPath}/prefs.js`,
             format: 'iife',
             exports: 'default',
             name: 'prefs',
@@ -109,7 +104,6 @@ export default defineConfig([
             nodeResolve({
                 preferBuiltins: false,
             }),
-            eslint(eslintPluginOptions),
             typescript(typescriptPluginOptions),
         ],
     },

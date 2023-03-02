@@ -14,8 +14,6 @@ class GitHubManagerExtension {
 
     public enable(): void {
         try {
-            GitHubManagerExtension.LOGGER.debug('Reading settings from schema');
-
             GitHubManagerExtension.LOGGER.debug('Creating main extension logic');
             this.gitHubNotifications = new GitHubNotifications(Configuration.getInstance());
 
