@@ -10,15 +10,17 @@
     "compile": "rollup --config rollup.config.ts --configPlugin 'typescript={tsconfig:\"rollup.tsconfig.json\",cacheDir:\"build/compile\"}'",
     "lint": "yarn run eslint src",
     "lintStrict": "yarn run eslint src --max-warnings=0",
-    "build": "yarn lint && yarn compile",
+    "build": "yarn lint && yarn compile && yarn updateTranslations",
     "sync": "rsync -a ./build/dist/* ~/.local/share/gnome-shell/extensions/$(cat src/main/resources/metadata.json | jq -r .uuid)",
     "deploy": "yarn build && yarn sync",
-    "followLogs": "journalctl -f | grep \"\\[$(cat src/main/resources/metadata.json | jq -r .name) Extension\\]\""
+    "followLogs": "journalctl -f | grep \"\\[$(cat src/main/resources/metadata.json | jq -r .name) Extension\\]\"",
+    "updateTranslations": "(cd build/dist && xgettext --no-location -L JavaScript -o ../../src/main/po/gnome-github-manager.pot *.js && xgettext --no-location -L Glade -j -o ../../src/main/po/gnome-github-manager.pot ui/*.ui; sed -i 's/\"POT-Creation-Date[^\"]*\"/\"POT-Creation-Date: \\\\n\"/' ../../src/main/po/gnome-github-manager.pot)"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-typescript": "^11.0.0",
+    "@types/node": "^18.15.5",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
     "@typescript-eslint/parser": "^5.54.0",
     "eslint": "^8.27.0",
@@ -28,7 +30,6 @@
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.8.4",
     "rollup": "3.18.0",
-    "rollup-plugin-copy": "^3.4.0",
     "tslib": "^2.4.1",
     "typescript": "^4.8.4"
   },

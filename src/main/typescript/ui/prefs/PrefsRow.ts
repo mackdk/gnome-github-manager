@@ -109,10 +109,10 @@ export class PrefsRow extends Box {
 
         let widget: Widget, bindProperty: string;
         if (this._widgetType == 'GtkPasswordEntry') {
-            widget = new PasswordEntry({ showPeekIcon: true, valign: Align.CENTER, vexpand: false, hexpand: true });
+            widget = new PasswordEntry({ showPeekIcon: true });
             bindProperty = 'text';
         } else if (this._widgetType == 'GtkSwitch') {
-            widget = new Switch({ halign: Align.CENTER, hexpand: false, valign: Align.CENTER, vexpand: false });
+            widget = new Switch({ halign: Align.END });
             bindProperty = 'state';
         } else if (this._widgetType == 'GtkSpinButton') {
             const params = JSON.parse(this._widgetParameters) as Partial<PrefsRowSpinButtonParameters>;
@@ -120,18 +120,18 @@ export class PrefsRow extends Box {
             bindProperty = 'value';
         } else if (this._widgetType == 'GtkDropDown') {
             const params = JSON.parse(this._widgetParameters) as Partial<PrefsRowDropDownParameters>;
-            widget = new DropDown({
-                model: StringList.new(params.items ?? []),
-                valign: Align.CENTER,
-                vexpand: false,
-                hexpand: true,
-            });
+            widget = new DropDown({ model: StringList.new(params.items ?? []) });
 
             bindProperty = 'selected';
         } else {
-            widget = new Entry({ valign: Align.CENTER, vexpand: false, hexpand: true });
+            widget = new Entry();
             bindProperty = 'text';
         }
+
+        // Align the widget
+        widget.set_valign(Align.CENTER);
+        widget.set_hexpand(true);
+        widget.set_vexpand(false);
 
         if (this._configurationProperty != '') {
             Configuration.getInstance().bind(this._configurationProperty, widget, bindProperty);

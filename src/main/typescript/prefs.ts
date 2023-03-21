@@ -1,8 +1,11 @@
+import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
+
 import { PrefsStack } from '@github-manager/ui/prefs';
+import { initializeTranslations } from '@github-manager/utils';
 
 export default {
     init: () => {
-        // Nothing to initialize
+        initializeTranslations(`${getCurrentExtension().metadata.uuid}`);
     },
 
     buildPrefsWidget: () => {

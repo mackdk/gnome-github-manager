@@ -1,8 +1,10 @@
+import { readFileSync } from 'fs';
+
+import { ExtensionMetadata } from '@gnome-shell/misc/extensionUtils';
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import typescript, { RollupTypescriptOptions } from '@rollup/plugin-typescript';
 import { defineConfig } from 'rollup';
-import copy from 'rollup-plugin-copy';
 
 import GObjectAdapter from './src/support/typescript/GObjectAdapter';
 import { shellExecute } from './src/support/typescript/RollupShellExecute';
@@ -10,6 +12,15 @@ import { shellExecute } from './src/support/typescript/RollupShellExecute';
 const buildPath = 'build';
 const distributionPath = `${buildPath}/dist`;
 const cachePath = `${buildPath}/compile`;
+
+const srcPath = 'src';
+const mainSrcPath = `${srcPath}/main`;
+const typescriptSourcesPath = `${mainSrcPath}/typescript`;
+const resourcesPath = `${mainSrcPath}/resources`;
+
+// Read the extension metadata
+const data: string = readFileSync(`${resourcesPath}/metadata.json`, 'utf-8');
+const metadata: ExtensionMetadata = JSON.parse(data) as ExtensionMetadata;
 
 const globals = {
     '@gi-types/clutter10': 'imports.gi.Clutter',
@@ -27,6 +38,7 @@ const globals = {
     '@gnome-shell/ui/panel': 'imports.ui.panel',
     '@gnome-shell/ui/panelMenu': 'imports.ui.panelMenu',
     '@gnome-shell/ui/messageTray': 'imports.ui.messageTray',
+    '@gettext': 'imports.gettext',
 };
 
 const external = Object.keys(globals);
@@ -46,7 +58,7 @@ const typescriptPluginOptions: RollupTypescriptOptions = {
 
 export default defineConfig([
     {
-        input: 'src/main/typescript/extension.ts',
+        input: `${typescriptSourcesPath}/extension.ts`,
         treeshake: {
             moduleSideEffects: 'no-external',
         },
@@ -74,17 +86,29 @@ export default defineConfig([
                 preferBuiltins: false,
             }),
             typescript(typescriptPluginOptions),
-            copy({
-                targets: [{ src: 'src/main/resources/*', dest: `${distributionPath}` }],
+            shellExecute({
+                // Create distribuition dir, if not present
+                'create-dist': `mkdir -p ${distributionPath}`,
+                // Copy resources to distribution dir
+                'copy-resources': `cp -R ${resourcesPath}/* ${distributionPath}`,
+                // Replace the translation domain in the UI files
+                'replace-translation-domain': `sed -i 's/{{uuid}}/${metadata.uuid}/' ${distributionPath}/ui/PrefsStack.ui`,
+                // Compile the schema
+                'create-schema-folder': `mkdir -p ${distributionPath}/schemas`,
+                'compile-schema': `glib-compile-schemas ${mainSrcPath}/schemas/ --targetdir=${distributionPath}/schemas/`,
+                // Compile the po files and place them in the correct directory
+                // prettier-ignore
+                'compile-translations': `find ${mainSrcPath}/po/ -name "*.po" -exec basename -s .po {} \\; ` +
+                    '| xargs -I{} echo "' +
+                        `mkdir -p ${distributionPath}/locale/{}/LC_MESSAGES; ` +
+                        `msgfmt -o ${distributionPath}/locale/{}/LC_MESSAGES/${metadata.uuid}.mo ${mainSrcPath}/po/{}.po` +
+                    '" ' +
+                    '| sh',
             }),
-            shellExecute([
-                `mkdir -p ${distributionPath}/schemas`,
-                `glib-compile-schemas src/main/schemas/ --targetdir=${distributionPath}/schemas/`,
-            ]),
         ],
     },
     {
-        input: 'src/main/typescript/prefs.ts',
+        input: `${typescriptSourcesPath}/prefs.ts`,
         output: {
             sourcemap: false,
             file: `${distributionPath}/prefs.js`,

@@ -1,0 +1,121 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2023-03-21 23:04+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
+
+msgid "Github Notifications"
+msgstr "Notifiche di GitHub"
+
+msgid "You have one new notification."
+msgid_plural "You have {0} new notifications."
+msgstr[0] "Hai una nuova notifica."
+msgstr[1] "Hai {0} nuove notifiche."
+
+msgid "Are you sure you want to reset all settings?"
+msgstr "Sei sicuro di voler resettare tutte le impostazioni?"
+
+msgid ""
+"All the customizations made will be lost. This operation cannot be undone."
+msgstr ""
+"Tutte le personalizzazioni verranno perse. Questa operazione non può essere "
+"annullata."
+
+msgid "Version {0}"
+msgstr "Versione {0}"
+
+msgid ""
+"Integrate GitHub within the GNOME Desktop Environment.\n"
+"\n"
+"Based on GitHub Notifications by Alexandre Dufournet."
+msgstr ""
+"Integra GitHub nell'ambiente desktop di GNOME.\n"
+"\n"
+"Basato su GitHub Notifications di Alexandre Dufournet."
+
+msgid "Source code on GitHub"
+msgstr "Codice sorgente su GitHub"
+
+msgid "Reset to default"
+msgstr "Ripristina predefiniti"
+
+msgid "Report an issue"
+msgstr "Segnala un problema"
+
+msgid "User guide"
+msgstr "Manuale utente"
+
+msgid "About GitHub Manager"
+msgstr "Informazioni su GitHub Manager"
+
+msgid "General"
+msgstr "Generale"
+
+msgid "GitHub Account"
+msgstr "Account di GitHub"
+
+msgid "Domain"
+msgstr "Dominio"
+
+msgid "Change domain only if using GitHub Enterprise."
+msgstr "Cambia il dominio solo se usi GitHub Enterprise."
+
+msgid "Token"
+msgstr "Token"
+
+msgid "Authentication token to access the API."
+msgstr "Token di accesso per le API."
+
+msgid "Generate a new personal access token"
+msgstr "Genera un nuovo token di accesso"
+
+msgid "Notifications"
+msgstr "Notifiche"
+
+msgid "Behaviour"
+msgstr "Comportamento"
+
+msgid "Refresh interval"
+msgstr "Intervallo di aggiornamento"
+
+msgid ""
+"How often data is synced. Might be enforced by <a href=\"https://docs.github."
+"com/en/rest/activity/notifications\">GitHub Policy</a>."
+msgstr ""
+"Quanto spesso aggiornare. Può essere imposto dalla <a href=\"https://docs."
+"github.com/en/rest/activity/notifications\">Policy di GitHub</a>."
+
+msgid "Show only partecipating"
+msgstr "Mostra solo se partecipi"
+
+msgid "Ignore notifications not for you."
+msgstr "Ignora le notifiche che non sono per te."
+
+msgid "Appearance"
+msgstr "Aspetto"
+
+msgid "UI notifications"
+msgstr "Notifiche desktop"
+
+msgid "Show GNOME notifications."
+msgstr "Mostra le notifiche in GNOME."
+
+msgid "Hide notification count"
+msgstr "Nascondi il conteggio"
+
+msgid "Do not show the count next to the widget icon."
+msgstr "Non mostrare il numero di notifiche vicino all'icona."

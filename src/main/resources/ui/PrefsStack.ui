@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<interface>
+<!-- The translation domain is substituted during rollup -->
+<interface domain="{{uuid}}">
     <requires lib="gtk" version="4.0" />
 
     <menu id="primary-menu">
@@ -45,22 +46,22 @@
     <template class="PrefsStack">
         <child>
             <object class="PrefsPage">
-                <property name="label">General</property>
+                <property name="label" translatable="yes">General</property>
                 <child>
                     <object class="PrefsGroup">
-                        <property name="label">GitHub Account</property>
+                        <property name="label" translatable="yes">GitHub Account</property>
                         <child>
                             <object class="PrefsRow">
-                                <property name="label">Domain</property>
-                                <property name="description">Change domain only if using GitHub Enterprise.</property>
+                                <property name="label" translatable="yes">Domain</property>
+                                <property name="description" translatable="yes">Change domain only if using GitHub Enterprise.</property>
                                 <property name="widget-type">GtkEntry</property>
                                 <property name="configuration-property">domain</property>
                             </object>
                         </child>
                         <child>
                             <object class="PrefsRow">
-                                <property name="label">Token</property>
-                                <property name="description">Authentication token to access the API.</property>
+                                <property name="label" translatable="yes">Token</property>
+                                <property name="description" translatable="yes">Authentication token to access the API.</property>
                                 <property name="widget-type">GtkPasswordEntry</property>
                                 <property name="configuration-property">token</property>
                                 <property name="prefix">
@@ -70,7 +71,7 @@
                                         <property name="valign">center</property>
                                         <property name="receives-default">true</property>
                                         <property name="icon-name">emblem-system-symbolic</property>
-                                        <property name="tooltip-text">Generate a new personal access token</property>
+                                        <property name="tooltip-text" translatable="yes">Generate a new personal access token</property>
                                         <style>
                                             <class name="circular"/>
                                         </style>
@@ -84,14 +85,14 @@
         </child>
         <child>
             <object class="PrefsPage">
-                <property name="label">Notifications</property>
+                <property name="label" translatable="yes">Notifications</property>
                 <child>
                     <object class="PrefsGroup">
-                        <property name="label">Behaviour</property>
+                        <property name="label" translatable="yes">Behaviour</property>
                         <child>
                             <object class="PrefsRow">
-                                <property name="label">Refresh interval</property>
-                                <property name="description">How often data is synced. Might be enforced by &lt;a href="https://docs.github.com/en/rest/activity/notifications"&gt;GitHub Policy&lt;/a&gt;.</property>
+                                <property name="label" translatable="yes">Refresh interval</property>
+                                <property name="description" translatable="yes">How often data is synced. Might be enforced by &lt;a href="https://docs.github.com/en/rest/activity/notifications"&gt;GitHub Policy&lt;/a&gt;.</property>
                                 <property name="widget-type">GtkSpinButton</property>
                                 <property name="widget-parameters">{"min":60,"max":86400,"step":60}</property>
                                 <property name="configuration-property">refreshInterval</property>
@@ -99,8 +100,8 @@
                         </child>
                         <child>
                             <object class="PrefsRow">
-                                <property name="label">Show only partecipating</property>
-                                <property name="description">Ignore notifications not for you.</property>
+                                <property name="label" translatable="yes">Show only partecipating</property>
+                                <property name="description" translatable="yes">Ignore notifications not for you.</property>
                                 <property name="widget-type">GtkSwitch</property>
                                 <property name="configuration-property">showParticipatingOnly</property>
                             </object>
@@ -109,19 +110,19 @@
                 </child>
                 <child>
                     <object class="PrefsGroup">
-                        <property name="label">Appearance</property>
+                        <property name="label" translatable="yes">Appearance</property>
                         <child>
                             <object class="PrefsRow">
-                                <property name="label">UI notifications</property>
-                                <property name="description">Show a GNOME notifications.</property>
+                                <property name="label" translatable="yes">UI notifications</property>
+                                <property name="description" translatable="yes">Show GNOME notifications.</property>
                                 <property name="widget-type">GtkSwitch</property>
                                 <property name="configuration-property">showAlert</property>
                             </object>
                         </child>
                         <child>
                             <object class="PrefsRow">
-                                <property name="label">Hide notification count</property>
-                                <property name="description">Do not show the count next to the widget icon.</property>
+                                <property name="label" translatable="yes">Hide notification count</property>
+                                <property name="description" translatable="yes">Do not show the count next to the widget icon.</property>
                                 <property name="widget-type">GtkSwitch</property>
                                 <property name="configuration-property">hideNotificationCount</property>
                             </object>

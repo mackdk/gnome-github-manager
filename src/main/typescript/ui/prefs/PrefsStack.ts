@@ -25,7 +25,7 @@ import {
 import { Extension, getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
 import { Configuration } from '@github-manager/core/Configuration';
-import { Logger, registerGObject } from '@github-manager/utils';
+import { Logger, _, registerGObject } from '@github-manager/utils';
 
 import { PrefsPage } from './PrefsPage';
 
@@ -99,8 +99,8 @@ export class PrefsStack extends Stack {
             messageType: MessageType.QUESTION,
             modal: true,
             destroy_with_parent: true,
-            text: 'Are you sure you want to reset all settings?',
-            secondaryText: 'All the customizations made will be lost. This operation cannot be undone.',
+            text: _('Are you sure you want to reset all settings?'),
+            secondaryText: _('All the customizations made will be lost. This operation cannot be undone.'),
         });
 
         confirmation.get_widget_for_response(ResponseType.YES)?.add_css_class('destructive-action');
@@ -127,11 +127,14 @@ export class PrefsStack extends Stack {
                 modal: true,
                 authors: ['Thomas Florio <mackdk@hotmail.com>', 'Alexandre Dufournet <alexandre.dufournet@gmail.com>'],
                 programName: this.extension.metadata.name,
-                version: `Version ${this.extension.metadata.version.toFixed(1).toString()}`,
-                comments: this.extension.metadata.comment,
+                version: _('Version {0}', this.extension.metadata.version.toFixed(1)),
+                comments: _(
+                    'Integrate GitHub within the GNOME Desktop Environment.\n\n' +
+                        'Based on GitHub Notifications by Alexandre Dufournet.'
+                ),
                 licenseType: License.GPL_2_0,
                 website: this.extension.metadata.url,
-                website_label: 'Source code on GitHub',
+                website_label: _('Source code on GitHub'),
             });
 
             if (paintableLogo) {

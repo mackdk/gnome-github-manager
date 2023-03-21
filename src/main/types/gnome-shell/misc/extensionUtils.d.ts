@@ -24,6 +24,7 @@ export interface Extension {
     sessionModes: string[];
 }
 
+export function initTranslations(domain: string): void;
 export function openPrefs(): void;
 export function getCurrentExtension(): Extension;
 export function getSettings(name?: string): Settings;

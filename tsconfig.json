@@ -19,6 +19,7 @@
     "incremental": true,
     "paths": {
       "@gnome-shell/*": ["main/types/gnome-shell/*"],
+      "@gettext": ["main/types/gettext/"],
       "@github-manager/*": ["main/typescript/*"],
     },
   },

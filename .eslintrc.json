@@ -58,6 +58,10 @@
                 {
                     "pattern": "@gnome-shell/**",
                     "group": "external"
+                },
+                {
+                    "pattern": "@gettext",
+                    "group": "external"
                 }
             ]
         }],

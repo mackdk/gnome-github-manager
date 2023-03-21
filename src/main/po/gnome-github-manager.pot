@@ -1,0 +1,114 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "Github Notifications"
+msgstr ""
+
+msgid "You have one new notification."
+msgid_plural "You have {0} new notifications."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Are you sure you want to reset all settings?"
+msgstr ""
+
+msgid ""
+"All the customizations made will be lost. This operation cannot be undone."
+msgstr ""
+
+msgid "Version {0}"
+msgstr ""
+
+msgid ""
+"Integrate GitHub within the GNOME Desktop Environment.\n"
+"\n"
+"Based on GitHub Notifications by Alexandre Dufournet."
+msgstr ""
+
+msgid "Source code on GitHub"
+msgstr ""
+
+msgid "Reset to default"
+msgstr ""
+
+msgid "Report an issue"
+msgstr ""
+
+msgid "User guide"
+msgstr ""
+
+msgid "About GitHub Manager"
+msgstr ""
+
+msgid "General"
+msgstr ""
+
+msgid "GitHub Account"
+msgstr ""
+
+msgid "Domain"
+msgstr ""
+
+msgid "Change domain only if using GitHub Enterprise."
+msgstr ""
+
+msgid "Token"
+msgstr ""
+
+msgid "Authentication token to access the API."
+msgstr ""
+
+msgid "Generate a new personal access token"
+msgstr ""
+
+msgid "Notifications"
+msgstr ""
+
+msgid "Behaviour"
+msgstr ""
+
+msgid "Refresh interval"
+msgstr ""
+
+msgid ""
+"How often data is synced. Might be enforced by <a href=\"https://docs.github."
+"com/en/rest/activity/notifications\">GitHub Policy</a>."
+msgstr ""
+
+msgid "Show only partecipating"
+msgstr ""
+
+msgid "Ignore notifications not for you."
+msgstr ""
+
+msgid "Appearance"
+msgstr ""
+
+msgid "UI notifications"
+msgstr ""
+
+msgid "Show GNOME notifications."
+msgstr ""
+
+msgid "Hide notification count"
+msgstr ""
+
+msgid "Do not show the count next to the widget icon."
+msgstr ""

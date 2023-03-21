@@ -1,5 +1,7 @@
+import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
+
 import { Configuration, GitHubNotifications } from '@github-manager/core';
-import { LogLevel, Logger } from '@github-manager/utils';
+import { LogLevel, Logger, initializeTranslations } from '@github-manager/utils';
 
 // Set global logging level
 Logger.globalLoggingLevel = LogLevel.DEBUG;
@@ -35,5 +37,7 @@ class GitHubManagerExtension {
 }
 
 export default function (): GitHubManagerExtension {
+    initializeTranslations(`${getCurrentExtension().metadata.uuid}`);
+
     return new GitHubManagerExtension();
 }

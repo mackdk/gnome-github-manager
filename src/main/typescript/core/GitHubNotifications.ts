@@ -8,7 +8,7 @@ import { Status } from '@tshttp/status';
 
 import { ApiError, GitHubClient, GitHubClientFactory, Notification } from '@github-manager/client';
 import { GitHubWidget, NotificationManager } from '@github-manager/ui';
-import { LimitedRetriableTimer, Logger } from '@github-manager/utils';
+import { LimitedRetriableTimer, Logger, _, ngettext } from '@github-manager/utils';
 
 import { Configuration } from './Configuration';
 
@@ -148,7 +148,10 @@ export class GitHubNotifications {
             GitHubNotifications.LOGGER.debug('Sending notification');
 
             try {
-                this.notificationManager.notify('Github Notifications', `You have ${newCount} new notifications`);
+                this.notificationManager.notify(
+                    _('Github Notifications'),
+                    ngettext('You have one new notification.', 'You have {0} new notifications.', newCount, newCount)
+                );
             } catch (e) {
                 GitHubNotifications.LOGGER.error('Cannot notify', e);
             }
