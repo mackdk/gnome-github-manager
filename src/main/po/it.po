@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-21 23:04+0100\n"
+"PO-Revision-Date: 2023-04-06 00:17+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it\n"
@@ -25,6 +25,15 @@ msgid "You have one new notification."
 msgid_plural "You have {0} new notifications."
 msgstr[0] "Hai una nuova notifica."
 msgstr[1] "Hai {0} nuove notifiche."
+
+msgid "Open"
+msgstr "Apri"
+
+msgid "Mark as Read"
+msgstr "Segna come letto"
+
+msgid "Dismiss"
+msgstr "Ignora"
 
 msgid "Are you sure you want to reset all settings?"
 msgstr "Sei sicuro di voler resettare tutte le impostazioni?"
@@ -108,14 +117,47 @@ msgstr "Ignora le notifiche che non sono per te."
 msgid "Appearance"
 msgstr "Aspetto"
 
-msgid "UI notifications"
-msgstr "Notifiche desktop"
+msgid "UI notifications mode"
+msgstr "Modalità di notifica desktop"
 
-msgid "Show GNOME notifications."
-msgstr "Mostra le notifiche in GNOME."
+msgid "How to show GNOME notifications."
+msgstr "In che modo mostrare le notifiche in GNOME."
+
+#. FOR TRANSLATORS: This must be a valid JSON. Please translate only the quoted text within the brackets [] and leave the rest as is.
+msgid "{\"items\":[\"None\", \"Single\", \"Digest\"]}"
+msgstr "{\"items\":[\"Nessuna\", \"Singola\", \"Sommario\"]}"
 
 msgid "Hide notification count"
 msgstr "Nascondi il conteggio"
 
 msgid "Do not show the count next to the widget icon."
 msgstr "Non mostrare il numero di notifiche vicino all'icona."
+
+msgid "Actions"
+msgstr "Azioni"
+
+msgid "On activation"
+msgstr "All'attivazione"
+
+msgid "What happens when you click on the notification."
+msgstr "Cosa accade quando fai click sulla notifica."
+
+#. FOR TRANSLATORS: This must be a valid JSON. Please translate only the quoted text within the brackets [] and leave the rest as is.
+msgid "{\"items\":[\"Nothing\", \"Open\", \"Mark as Read\", \"Dismiss\"]}"
+msgstr "{\"items\":[\"Nulla\", \"Apri\", \"Segna come letto\", \"Ignora\"]}"
+
+msgid "Primary button"
+msgstr "Pulsante principale"
+
+msgid "Primary action button, shown on the right."
+msgstr "L'azione principale, mostrata a destra."
+
+#. FOR TRANSLATORS: This must be a valid JSON. Please translate only the quoted text within the brackets [] and leave the rest as is.
+msgid "{\"items\":[\"None\", \"Open\", \"Mark as Read\", \"Dismiss\"]}"
+msgstr "{\"items\":[\"Nessuna\", \"Apri\", \"Segna come letto\", \"Ignora\"]}"
+
+msgid "Secondary button"
+msgstr "Pulsante secondario"
+
+msgid "Secondary action button, shown on the left."
+msgstr "L'azione secondaria, mostrata a sinistra."

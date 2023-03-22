@@ -26,6 +26,15 @@ msgid_plural "You have {0} new notifications."
 msgstr[0] ""
 msgstr[1] ""
 
+msgid "Open"
+msgstr ""
+
+msgid "Mark as Read"
+msgstr ""
+
+msgid "Dismiss"
+msgstr ""
+
 msgid "Are you sure you want to reset all settings?"
 msgstr ""
 
@@ -101,14 +110,47 @@ msgstr ""
 msgid "Appearance"
 msgstr ""
 
-msgid "UI notifications"
+msgid "UI notifications mode"
 msgstr ""
 
-msgid "Show GNOME notifications."
+msgid "How to show GNOME notifications."
+msgstr ""
+
+#. FOR TRANSLATORS: This must be a valid JSON. Please translate only the quoted text within the brackets [] and leave the rest as is.
+msgid "{\"items\":[\"None\", \"Single\", \"Digest\"]}"
 msgstr ""
 
 msgid "Hide notification count"
 msgstr ""
 
 msgid "Do not show the count next to the widget icon."
+msgstr ""
+
+msgid "Actions"
+msgstr ""
+
+msgid "On activation"
+msgstr ""
+
+msgid "What happens when you click on the notification."
+msgstr ""
+
+#. FOR TRANSLATORS: This must be a valid JSON. Please translate only the quoted text within the brackets [] and leave the rest as is.
+msgid "{\"items\":[\"Nothing\", \"Open\", \"Mark as Read\", \"Dismiss\"]}"
+msgstr ""
+
+msgid "Primary button"
+msgstr ""
+
+msgid "Primary action button, shown on the right."
+msgstr ""
+
+#. FOR TRANSLATORS: This must be a valid JSON. Please translate only the quoted text within the brackets [] and leave the rest as is.
+msgid "{\"items\":[\"None\", \"Open\", \"Mark as Read\", \"Dismiss\"]}"
+msgstr ""
+
+msgid "Secondary button"
+msgstr ""
+
+msgid "Secondary action button, shown on the left."
 msgstr ""

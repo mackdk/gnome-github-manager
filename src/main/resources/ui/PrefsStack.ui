@@ -113,10 +113,12 @@
                         <property name="label" translatable="yes">Appearance</property>
                         <child>
                             <object class="PrefsRow">
-                                <property name="label" translatable="yes">UI notifications</property>
-                                <property name="description" translatable="yes">Show GNOME notifications.</property>
-                                <property name="widget-type">GtkSwitch</property>
-                                <property name="configuration-property">showAlert</property>
+                                <property name="label" translatable="yes">UI notifications mode</property>
+                                <property name="description" translatable="yes">How to show GNOME notifications.</property>
+                                <property name="widget-type">GtkDropDown</property>
+                                <!-- FOR TRANSLATORS: This must be a valid JSON. Please translate only the quoted text within the brackets [] and leave the rest as is. -->
+                                <property name="widget-parameters" translatable="yes">{"items":["None", "Single", "Digest"]}</property>
+                                <property name="configuration-property">notificationMode</property>
                             </object>
                         </child>
                         <child>
@@ -125,6 +127,41 @@
                                 <property name="description" translatable="yes">Do not show the count next to the widget icon.</property>
                                 <property name="widget-type">GtkSwitch</property>
                                 <property name="configuration-property">hideNotificationCount</property>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+                <child>
+                    <object class="PrefsGroup">
+                        <property name="label" translatable="yes">Actions</property>
+                        <child>
+                            <object class="PrefsRow">
+                                <property name="label" translatable="yes">On activation</property>
+                                <property name="description" translatable="yes">What happens when you click on the notification.</property>
+                                <property name="widget-type">GtkDropDown</property>
+                                <!-- FOR TRANSLATORS: This must be a valid JSON. Please translate only the quoted text within the brackets [] and leave the rest as is. -->
+                                <property name="widget-parameters" translatable="yes">{"items":["Nothing", "Open", "Mark as Read", "Dismiss"]}</property>
+                                <property name="configuration-property">notificationActivateAction</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="PrefsRow">
+                                <property name="label" translatable="yes">Primary button</property>
+                                <property name="description" translatable="yes">Primary action button, shown on the right.</property>
+                                <property name="widget-type">GtkDropDown</property>
+                                <!-- FOR TRANSLATORS: This must be a valid JSON. Please translate only the quoted text within the brackets [] and leave the rest as is. -->
+                                <property name="widget-parameters" translatable="yes">{"items":["None", "Open", "Mark as Read", "Dismiss"]}</property>
+                                <property name="configuration-property">notificationPrimaryAction</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="PrefsRow">
+                                <property name="label" translatable="yes">Secondary button</property>
+                                <property name="description" translatable="yes">Secondary action button, shown on the left.</property>
+                                <property name="widget-type">GtkDropDown</property>
+                                <!-- FOR TRANSLATORS: This must be a valid JSON. Please translate only the quoted text within the brackets [] and leave the rest as is. -->
+                                <property name="widget-parameters" translatable="yes">{"items":["None", "Open", "Mark as Read", "Dismiss"]}</property>
+                                <property name="configuration-property">notificationSecondaryAction</property>
                             </object>
                         </child>
                     </object>

@@ -20,13 +20,25 @@
       <summary>The refresh interval in seconds</summary>
       <description>The refresh interval used by the extension. If this number is smaller than the header returned by github, it will be ignored and the header will take precedence. See https://developer.github.com/v3/activity/notifications/</description>
     </key>
-    <key name="show-alert" type="b">
-      <default>false</default>
-      <summary>Show notifications alert</summary>
+    <key name="notification-mode" type="i">
+      <default>1</default>
+      <summary>How to show desktop notifications</summary>
     </key>
     <key name="show-participating-only" type="b">
       <default>false</default>
       <summary>Only show participating notification</summary>
+    </key>
+    <key name="notification-activate-action" type="i">
+      <default>1</default>
+      <summary>The action to execute when the notification is clicked</summary>
+    </key>
+    <key name="notification-primary-action" type="i">
+      <default>2</default>
+      <summary>The primary action, shown as button on the right side</summary>
+    </key>
+    <key name="notification-secondary-action" type="i">
+      <default>3</default>
+      <summary>The secondary action, shown as a button on the left side</summary>
     </key>
   </schema>
 </schemalist>
