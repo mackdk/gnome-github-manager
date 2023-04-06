@@ -3,7 +3,7 @@ import { Icon as GioIcon } from '@gi-types/gio2';
 import { MetaInfo, ParamFlags, ParamSpec } from '@gi-types/gobject2';
 import { BoxLayout, Icon, Label } from '@gi-types/st1';
 
-import { registerGObject } from '@github-manager/utils';
+import { registerGObject } from '@github-manager/utils/gnome';
 
 @registerGObject
 export class GitHubWidget extends BoxLayout {

@@ -4,11 +4,13 @@ import { icon_new_for_string } from '@gi-types/gio2';
 import { show_uri } from '@gi-types/gtk4';
 import { getCurrentExtension, openPrefs } from '@gnome-shell/misc/extensionUtils';
 import { main as ShellUI } from '@gnome-shell/ui';
+import { Notification as UINotification } from '@gnome-shell/ui/messageTray';
 import { Status } from '@tshttp/status';
 
 import { ApiError, GitHub, GitHubClient, GitHubClientFactory } from '@github-manager/client';
-import { NotificationAction, NotificationAdapter, NotificationCallback, notify } from '@github-manager/notifications';
-import { LimitedRetriableTimer, Logger, _ } from '@github-manager/utils';
+import { NotificationAction, NotificationAdapter, NotificationCallback } from '@github-manager/notifications';
+import { LimitedRetriableTimer, Logger } from '@github-manager/utils';
+import { _ } from '@github-manager/utils/locale';
 import { GitHubWidget } from '@github-manager/widget';
 
 import { Configuration, NotificationActionType } from './Configuration';
@@ -199,7 +201,18 @@ export class GitHubNotifications {
         this.notifications = data;
         this.widget.text = `${data.length}`;
 
-        notify(uiNotifications);
+        this.notify(uiNotifications);
+    }
+
+    private notify(notifications: UINotification | UINotification[]): void {
+        const items: UINotification[] = notifications instanceof UINotification ? [notifications] : notifications;
+
+        items.forEach((notification) => {
+            const source = notification.source;
+
+            ShellUI.messageTray.add(source);
+            source.showNotification(notification);
+        });
     }
 
     private onNotificationOpen(githubNotification?: GitHub.Thread): void {

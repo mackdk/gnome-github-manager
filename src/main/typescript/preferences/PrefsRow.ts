@@ -4,7 +4,7 @@ import { Align, Box, DropDown, Entry, PasswordEntry, SpinButton, StringList, Swi
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
 import { Configuration } from '@github-manager/core/Configuration';
-import { registerGObject } from '@github-manager/utils';
+import { registerGObject } from '@github-manager/utils/gnome';
 
 export interface PrefsRowConstructorProperties extends Box.ConstructorProperties {
     label: string;

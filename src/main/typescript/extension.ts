@@ -1,7 +1,8 @@
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
 import { Configuration, GitHubNotifications } from '@github-manager/core';
-import { LogLevel, Logger, initializeTranslations } from '@github-manager/utils';
+import { LogLevel, Logger } from '@github-manager/utils';
+import { initializeTranslations } from '@github-manager/utils/locale';
 
 // Set global logging level
 Logger.globalLoggingLevel = LogLevel.DEBUG;

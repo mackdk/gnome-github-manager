@@ -25,7 +25,9 @@ import {
 import { Extension, getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
 import { Configuration } from '@github-manager/core/Configuration';
-import { Logger, _, registerGObject } from '@github-manager/utils';
+import { Logger } from '@github-manager/utils';
+import { registerGObject } from '@github-manager/utils/gnome';
+import { _ } from '@github-manager/utils/locale';
 
 import { PrefsPage } from './PrefsPage';
 

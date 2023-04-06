@@ -1,7 +1,7 @@
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
 import { PrefsStack } from '@github-manager/preferences';
-import { initializeTranslations } from '@github-manager/utils';
+import { initializeTranslations } from '@github-manager/utils/locale';
 
 export default {
     init: () => {

@@ -2,7 +2,7 @@ import { Settings, SettingsBindFlags } from '@gi-types/gio2';
 import { Widget } from '@gi-types/gtk4';
 import { getSettings } from '@gnome-shell/misc/extensionUtils';
 
-import { camelToKekab, kebabToCamel } from '@github-manager/utils/StringUtils';
+import { StringUtils } from '@github-manager/utils';
 
 export type ConfigurationChangeListener = (property: string) => void;
 
@@ -87,12 +87,12 @@ export class Configuration {
     }
 
     public bind(property: string, widget: Widget, widgetProperty: string): void {
-        this.settings.bind(camelToKekab(property), widget, widgetProperty, SettingsBindFlags.DEFAULT);
+        this.settings.bind(StringUtils.camelToKekab(property), widget, widgetProperty, SettingsBindFlags.DEFAULT);
     }
 
     public reset(): void {
         this.listProperties()
-            .map((prop) => camelToKekab(prop))
+            .map((prop) => StringUtils.camelToKekab(prop))
             .forEach((key) => {
                 const defaultValue = this.settings.get_default_value(key);
 
@@ -108,7 +108,7 @@ export class Configuration {
         }
 
         this.changeListeners.forEach((listener) => {
-            listener(kebabToCamel(key));
+            listener(StringUtils.kebabToCamel(key));
         });
     }
 

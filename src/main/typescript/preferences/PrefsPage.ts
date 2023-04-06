@@ -3,7 +3,7 @@ import { MetaInfo, ParamFlags, ParamSpec } from '@gi-types/gobject2';
 import { Box } from '@gi-types/gtk4';
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
-import { registerGObject } from '@github-manager/utils';
+import { registerGObject } from '@github-manager/utils/gnome';
 
 export interface PrefsPageConstructorProperties extends Box.ConstructorProperties {
     label: string;

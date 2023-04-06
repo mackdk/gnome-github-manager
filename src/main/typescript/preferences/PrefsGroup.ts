@@ -3,7 +3,7 @@ import { Object as GObject, MetaInfo, ParamFlags, ParamSpec } from '@gi-types/go
 import { Box, Builder, ListBox, Widget } from '@gi-types/gtk4';
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
-import { registerGObject } from '@github-manager/utils';
+import { registerGObject } from '@github-manager/utils/gnome';
 
 import { PrefsRow } from './PrefsRow';
 
