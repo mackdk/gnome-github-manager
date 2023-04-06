@@ -1,7 +1,7 @@
 import { main as ShellUI } from '@gnome-shell/ui';
 import { Notification as UINotification } from '@gnome-shell/ui/messageTray';
 
-export * from './GitHubWidget';
+export * from './NotificationAdapter';
 
 export function notify(notifications: UINotification | UINotification[]): void {
     const items: UINotification[] = notifications instanceof UINotification ? [notifications] : notifications;

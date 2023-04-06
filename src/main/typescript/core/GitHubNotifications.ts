@@ -7,11 +7,11 @@ import { main as ShellUI } from '@gnome-shell/ui';
 import { Status } from '@tshttp/status';
 
 import { ApiError, GitHub, GitHubClient, GitHubClientFactory } from '@github-manager/client';
-import { GitHubWidget, notify } from '@github-manager/ui';
+import { NotificationAction, NotificationAdapter, NotificationCallback, notify } from '@github-manager/notifications';
 import { LimitedRetriableTimer, Logger, _ } from '@github-manager/utils';
+import { GitHubWidget } from '@github-manager/widget';
 
 import { Configuration, NotificationActionType } from './Configuration';
-import { NotificationAction, NotificationAdapter, NotificationCallback } from './NotificationAdapter';
 
 class InternalNotificationAction {
     private readonly _label: string;

@@ -5,7 +5,7 @@ import { Source, Notification as UINotification } from '@gnome-shell/ui/messageT
 import { GitHub } from '@github-manager/client';
 import { _, ngettext, registerGObject } from '@github-manager/utils';
 
-import { NotificationMode } from './Configuration';
+import { NotificationMode } from '../core/Configuration';
 
 @registerGObject
 class DigestSource extends Source {
