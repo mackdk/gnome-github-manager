@@ -8,12 +8,11 @@ import { Notification as UINotification } from '@gnome-shell/ui/messageTray';
 import { Status } from '@tshttp/status';
 
 import { ApiError, GitHub, GitHubClient, GitHubClientFactory } from '@github-manager/client';
+import { Configuration, NotificationActionType } from '@github-manager/common';
 import { NotificationAction, NotificationAdapter, NotificationCallback } from '@github-manager/notifications';
 import { LimitedRetriableTimer, Logger } from '@github-manager/utils';
 import { _ } from '@github-manager/utils/locale';
 import { GitHubWidget } from '@github-manager/widget';
-
-import { Configuration, NotificationActionType } from './Configuration';
 
 class InternalNotificationAction {
     private readonly _label: string;

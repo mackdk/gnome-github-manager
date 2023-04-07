@@ -24,7 +24,7 @@ import {
 } from '@gi-types/gtk4';
 import { Extension, getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
-import { Configuration } from '@github-manager/core/Configuration';
+import { Configuration } from '@github-manager/common';
 import { Logger } from '@github-manager/utils';
 import { registerGObject } from '@github-manager/utils/gnome';
 import { _ } from '@github-manager/utils/locale';

@@ -1,6 +1,7 @@
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
-import { Configuration, GitHubNotifications } from '@github-manager/core';
+import { Configuration } from '@github-manager/common';
+import { GitHubNotifications } from '@github-manager/core';
 import { LogLevel, Logger } from '@github-manager/utils';
 import { initializeTranslations } from '@github-manager/utils/locale';
 

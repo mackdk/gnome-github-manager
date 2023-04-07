@@ -3,7 +3,7 @@ import { MetaInfo, ParamFlags, ParamSpec } from '@gi-types/gobject2';
 import { Align, Box, DropDown, Entry, PasswordEntry, SpinButton, StringList, Switch, Widget } from '@gi-types/gtk4';
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
-import { Configuration } from '@github-manager/core/Configuration';
+import { Configuration } from '@github-manager/common';
 import { registerGObject } from '@github-manager/utils/gnome';
 
 export interface PrefsRowConstructorProperties extends Box.ConstructorProperties {
