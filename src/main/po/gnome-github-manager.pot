@@ -29,7 +29,7 @@ msgstr[1] ""
 msgid "Open"
 msgstr ""
 
-msgid "Mark as Read"
+msgid "Mark as read"
 msgstr ""
 
 msgid "Dismiss"

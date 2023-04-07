@@ -1,5 +1,4 @@
-import { Icon } from '@gi-types/gio2';
-import { icon_new_for_string } from '@gi-types/gio2';
+import { Icon, icon_new_for_string } from '@gi-types/gio2';
 import { Source, Notification as UINotification } from '@gnome-shell/ui/messageTray';
 
 import { GitHub } from '@github-manager/client';
@@ -50,11 +49,10 @@ class ProjectSource extends Source {
     }
 }
 
-export type NotificationCallback = (notification?: GitHub.Thread) => void;
-
 export interface NotificationAction {
     get label(): string;
-    get callback(): NotificationCallback;
+
+    execute(notification?: GitHub.Thread): void;
 }
 
 export class NotificationAdapter {
@@ -174,18 +172,18 @@ export class NotificationAdapter {
     private setupCommonNotificationProperties(notification: UINotification, data?: GitHub.Thread): void {
         notification.setTransient(false);
         if (this._activateAction) {
-            const actionCallback = this._activateAction.callback;
-            notification.connect('activated', () => actionCallback(data));
+            const action = this._activateAction;
+            notification.connect('activated', () => action.execute(data));
         }
 
         if (this._secondaryAction) {
-            const actionCallback = this._secondaryAction.callback;
-            notification.addAction(this._secondaryAction.label, () => actionCallback(data));
+            const action = this._secondaryAction;
+            notification.addAction(action.label, () => action.execute(data));
         }
 
         if (this._primaryAction) {
-            const actionCallback = this._primaryAction.callback;
-            notification.addAction(this._primaryAction.label, () => actionCallback(data));
+            const action = this._primaryAction;
+            notification.addAction(action.label, () => action.execute(data));
         }
     }
 }

@@ -1,1 +1,1 @@
-export * from './GitHubNotifications';
+export * from './GitHubManager';

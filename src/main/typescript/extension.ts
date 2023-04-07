@@ -1,7 +1,6 @@
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
-import { Configuration } from '@github-manager/common';
-import { GitHubNotifications } from '@github-manager/core';
+import { GitHubManager } from '@github-manager/core';
 import { LogLevel, Logger } from '@github-manager/utils';
 import { initializeTranslations } from '@github-manager/utils/locale';
 
@@ -9,31 +8,43 @@ import { initializeTranslations } from '@github-manager/utils/locale';
 Logger.globalLoggingLevel = LogLevel.DEBUG;
 
 /**
- * Main Extension class.
+ * Extension entry point class.
  */
 class GitHubManagerExtension {
     private static readonly LOGGER: Logger = new Logger('GitHubManagerExtension');
 
-    private gitHubNotifications?: GitHubNotifications;
+    private gitHubManager?: GitHubManager;
 
     public enable(): void {
-        try {
-            GitHubManagerExtension.LOGGER.debug('Creating main extension logic');
-            this.gitHubNotifications = new GitHubNotifications(Configuration.getInstance());
+        if (this.gitHubManager !== undefined) {
+            GitHubManagerExtension.LOGGER.debug('Extension already initialized. Enabling.');
+            this.gitHubManager.start();
+            return;
+        }
 
-            GitHubManagerExtension.LOGGER.debug('Starting extension');
-            this.gitHubNotifications.start();
+        GitHubManagerExtension.LOGGER.debug('Inizializing extension at {0}', new Date().toISOString());
+
+        try {
+            this.gitHubManager = new GitHubManager();
+            this.gitHubManager.start();
         } catch (err) {
             GitHubManagerExtension.LOGGER.error('Unexpected error while enabling extension', err);
+            this.gitHubManager = undefined;
         }
     }
 
     public disable(): void {
+        GitHubManagerExtension.LOGGER.debug('Disabling extension.');
+        if (this.gitHubManager === undefined) {
+            GitHubManagerExtension.LOGGER.warn('Inconsistent state: no extension to disable.');
+            return;
+        }
+
         try {
-            GitHubManagerExtension.LOGGER.debug('Stopping extension');
-            this.gitHubNotifications?.stop();
+            this.gitHubManager.stop();
         } catch (err) {
             GitHubManagerExtension.LOGGER.error('Unexpected error while stopping extension', err);
+            this.gitHubManager = undefined;
         }
     }
 }

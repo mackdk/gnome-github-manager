@@ -28,27 +28,35 @@ export class RequestBody {
 export abstract class AbstractGitHubClient implements GitHubClient {
     protected _pollInterval: number;
 
-    protected readonly domain: string;
+    protected _domain: string;
 
-    protected readonly token: string;
-
-    protected readonly baseUrl: string;
+    protected _token: string;
 
     protected constructor(domain: string, token: string) {
         this._pollInterval = 60;
 
-        this.token = token;
-        if (domain == 'github.com' || domain == 'api.github.com') {
-            this.domain = 'api.github.com';
-            this.baseUrl = 'api.github.com';
-        } else {
-            this.domain = domain;
-            this.baseUrl = `${this.domain}/api/v3`;
-        }
+        this._token = token;
+        this._domain = domain;
     }
 
     public get pollInterval(): number {
         return this._pollInterval;
+    }
+
+    public get token(): string {
+        return this._token;
+    }
+
+    public set token(value: string) {
+        this._token = value;
+    }
+
+    public get domain(): string {
+        return this._domain;
+    }
+
+    public set domain(value: string) {
+        this._domain = value;
     }
 
     public async listThreads(showParticipatingOnly: boolean = false): Promise<GitHub.Thread[]> {
@@ -121,6 +129,14 @@ export abstract class AbstractGitHubClient implements GitHubClient {
     }
 
     protected abstract doRequest(method: string, url: string, request?: RequestBody): Promise<HttpReponse>;
+
+    private get baseUrl(): string {
+        if (this.domain == 'github.com' || this.domain == 'api.github.com') {
+            return 'api.github.com';
+        } else {
+            return `${this._domain}/api/v3`;
+        }
+    }
 
     private handleRequestError(error: unknown): ApiError {
         if (error instanceof Error) {

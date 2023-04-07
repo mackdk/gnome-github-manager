@@ -2,7 +2,7 @@ import { Settings, SettingsBindFlags } from '@gi-types/gio2';
 import { Widget } from '@gi-types/gtk4';
 import { getSettings } from '@gnome-shell/misc/extensionUtils';
 
-import { StringUtils } from '@github-manager/utils';
+import { EventDispatcher, StringUtils } from '@github-manager/utils';
 
 export type ConfigurationChangeListener = (property: string) => void;
 
@@ -22,16 +22,13 @@ export enum NotificationActionType {
 export class Configuration {
     private static instance?: Configuration;
 
-    private settings: Settings;
+    private readonly eventDispatcher: EventDispatcher;
 
-    private changeListeners: Map<number, ConfigurationChangeListener>;
+    private readonly settings: Settings;
 
-    private currentHandle: number;
-
-    private constructor(settings: Settings) {
+    private constructor(settings: Settings, eventDispatcher: EventDispatcher) {
         this.settings = settings;
-        this.changeListeners = new Map<number, ConfigurationChangeListener>();
-        this.currentHandle = 0;
+        this.eventDispatcher = eventDispatcher;
 
         // Setup the internal change event listener
         this.settings.connect('changed', this.onChange.bind(this));
@@ -77,15 +74,6 @@ export class Configuration {
         return Configuration.mapIntToEnum(storedValue, NotificationActionType, NotificationActionType.NONE);
     }
 
-    public addChangeListener(listener: ConfigurationChangeListener): number {
-        this.changeListeners.set(this.currentHandle, listener);
-        return this.currentHandle++;
-    }
-
-    public removeChangeListener(handle: number): void {
-        this.changeListeners.delete(handle);
-    }
-
     public bind(property: string, widget: Widget, widgetProperty: string): void {
         this.settings.bind(StringUtils.camelToKekab(property), widget, widgetProperty, SettingsBindFlags.DEFAULT);
     }
@@ -107,9 +95,7 @@ export class Configuration {
             return;
         }
 
-        this.changeListeners.forEach((listener) => {
-            listener(StringUtils.kebabToCamel(key));
-        });
+        void this.eventDispatcher.emit('configurationPropertyChanged', StringUtils.kebabToCamel(key));
     }
 
     private listProperties(): string[] {
@@ -137,7 +123,7 @@ export class Configuration {
 
     public static getInstance(): Configuration {
         if (Configuration.instance === undefined) {
-            Configuration.instance = new Configuration(getSettings());
+            Configuration.instance = new Configuration(getSettings(), EventDispatcher.getInstance());
         }
 
         return Configuration.instance;

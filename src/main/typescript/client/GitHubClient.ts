@@ -15,6 +15,12 @@ export class ApiError extends Error {
 export interface GitHubClient {
     get pollInterval(): number;
 
+    get domain(): string;
+    set domain(value: string);
+
+    get token(): string;
+    set token(value: string);
+
     listThreads(showParticipatingOnly?: boolean): Promise<GitHub.Thread[]>;
     markThreadAsRead(githubNotification: GitHub.Thread): void;
     markAllThreadsAsRead(): void;

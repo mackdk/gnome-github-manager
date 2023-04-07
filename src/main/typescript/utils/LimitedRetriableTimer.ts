@@ -11,7 +11,7 @@ export class LimitedRetriableTimer {
 
     public lowerIntervalLimit?: number;
 
-    public interval: number;
+    public _interval: number;
 
     public retryIntervals: number[];
 
@@ -25,11 +25,11 @@ export class LimitedRetriableTimer {
 
     public constructor(task: TimerTask, interval: number) {
         this.task = task;
-        this.interval = interval;
+        this._interval = interval;
         this.retryIntervals = [60, 120, 240, 480, 960, 1920, 3600];
 
         this.retries = 0;
-        this.currentInterval = this.interval;
+        this.currentInterval = this._interval;
         this.timerHandle = undefined;
     }
 
@@ -40,7 +40,7 @@ export class LimitedRetriableTimer {
         );
 
         // Reset the first timeout
-        this.currentInterval = this.interval;
+        this.currentInterval = this._interval;
 
         // If no initial delay execute immediately
         if (initialDelay == 0) {
@@ -73,6 +73,17 @@ export class LimitedRetriableTimer {
         return this.timerHandle !== undefined;
     }
 
+    public get interval(): number {
+        return this._interval;
+    }
+
+    public set interval(value: number) {
+        this._interval = value;
+        if (this.timerHandle) {
+            this.restart();
+        }
+    }
+
     private runTaskAndSchedule(): void {
         this.task()
             .then((outcome: boolean) => {
@@ -97,7 +108,7 @@ export class LimitedRetriableTimer {
 
     private computeCurrentInterval(successful: boolean): void {
         if (successful) {
-            this.currentInterval = this.interval;
+            this.currentInterval = this._interval;
         } else {
             this.currentInterval = this.retryIntervals[this.retries] ?? 3600;
         }
