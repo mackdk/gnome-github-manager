@@ -1,10 +1,10 @@
 import { icon_new_for_string } from '@gi-types/gio2';
-import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
+import { getCurrentExtension, getSettings } from '@gnome-shell/misc/extensionUtils';
 
-import { Configuration } from '@github-manager/common';
 import { NotificationController } from '@github-manager/notifications';
+import { SettingsWrapper } from '@github-manager/settings';
 import { EventDispatcher, Logger } from '@github-manager/utils';
-import { WidgetController } from '@github-manager/widget/WidgetController';
+import { WidgetController } from '@github-manager/widget';
 
 export class GitHubManager {
     private static readonly LOGGER: Logger = new Logger('core::GitHubManager');
@@ -18,11 +18,11 @@ export class GitHubManager {
 
         const githubIcon = icon_new_for_string(`${getCurrentExtension().path}/github.svg`);
 
-        const eventDispatcher = EventDispatcher.getInstance();
-        const configuration = Configuration.getInstance();
+        const eventDispatcher = new EventDispatcher();
+        const settings = new SettingsWrapper(getSettings(), eventDispatcher);
 
-        this.widgetController = new WidgetController(configuration, eventDispatcher, githubIcon);
-        this.notificationController = new NotificationController(configuration, eventDispatcher, githubIcon);
+        this.widgetController = new WidgetController(settings, eventDispatcher, githubIcon);
+        this.notificationController = new NotificationController(settings, eventDispatcher, githubIcon);
     }
 
     public start(): void {

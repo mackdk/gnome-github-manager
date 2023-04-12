@@ -1,6 +1,6 @@
 import { CURRENT_TIME } from '@gi-types/gdk4';
 import { Pixbuf } from '@gi-types/gdkpixbuf2';
-import { ActionGroup, File, SimpleAction, SimpleActionGroup } from '@gi-types/gio2';
+import { ActionGroup, File, Settings, SimpleAction, SimpleActionGroup } from '@gi-types/gio2';
 import { Object as GObject, MetaInfo } from '@gi-types/gobject2';
 import {
     AboutDialog,
@@ -22,9 +22,8 @@ import {
     Window,
     show_uri,
 } from '@gi-types/gtk4';
-import { Extension, getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
+import { Extension, getCurrentExtension, getSettings } from '@gnome-shell/misc/extensionUtils';
 
-import { Configuration } from '@github-manager/common';
 import { Logger } from '@github-manager/utils';
 import { registerGObject } from '@github-manager/utils/gnome';
 import { _ } from '@github-manager/utils/locale';
@@ -110,7 +109,14 @@ export class PrefsStack extends Stack {
 
         confirmation.connect('response', (_source, response) => {
             if (response == ResponseType.YES) {
-                Configuration.getInstance().reset();
+                const settings: Settings = getSettings();
+                settings.list_keys().forEach((key) => {
+                    const defaultValue = settings.get_default_value(key);
+
+                    if (defaultValue) {
+                        settings.set_value(key, defaultValue);
+                    }
+                });
             }
 
             _source.destroy();

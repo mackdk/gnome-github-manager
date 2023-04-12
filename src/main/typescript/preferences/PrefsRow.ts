@@ -1,9 +1,9 @@
-import { File } from '@gi-types/gio2';
+import { File, SettingsBindFlags } from '@gi-types/gio2';
+import { Settings } from '@gi-types/gio2';
 import { MetaInfo, ParamFlags, ParamSpec } from '@gi-types/gobject2';
 import { Align, Box, DropDown, Entry, PasswordEntry, SpinButton, StringList, Switch, Widget } from '@gi-types/gtk4';
-import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
+import { getCurrentExtension, getSettings } from '@gnome-shell/misc/extensionUtils';
 
-import { Configuration } from '@github-manager/common';
 import { registerGObject } from '@github-manager/utils/gnome';
 
 export interface PrefsRowConstructorProperties extends Box.ConstructorProperties {
@@ -11,7 +11,7 @@ export interface PrefsRowConstructorProperties extends Box.ConstructorProperties
     description: string;
     widgetType: string;
     widgetParameters: string;
-    configurationProperty: string;
+    setting: string;
     prefix: Widget;
     suffix: Widget;
 }
@@ -60,10 +60,10 @@ export class PrefsRow extends Box {
                 ParamFlags.READWRITE,
                 '{}'
             ),
-            configurationProperty: ParamSpec.string(
-                'configuration-property',
-                'The configuration property',
-                'The configuration property controlled by this pref',
+            setting: ParamSpec.string(
+                'setting-key',
+                'The setting key',
+                'The key of the setting controlled by this pref',
                 ParamFlags.READWRITE,
                 ''
             ),
@@ -88,9 +88,11 @@ export class PrefsRow extends Box {
     private _description: string;
     private _widgetType: string;
     private _widgetParameters: string;
-    private _configurationProperty: string;
+    private _settingKey: string;
     private _prefix?: Widget;
     private _suffix?: Widget;
+
+    private settings: Settings;
 
     public constructor(params?: Partial<PrefsRowConstructorProperties>) {
         super(params);
@@ -99,9 +101,11 @@ export class PrefsRow extends Box {
         this._description = params?.description ?? '';
         this._widgetType = params?.widgetType ?? 'GktEntry';
         this._widgetParameters = params?.widgetParameters ?? '{}';
-        this._configurationProperty = params?.configurationProperty ?? '';
+        this._settingKey = params?.setting ?? '';
         this._prefix = params?.prefix;
         this._suffix = params?.suffix;
+
+        this.settings = getSettings();
     }
 
     public vfunc_realize(): void {
@@ -133,8 +137,8 @@ export class PrefsRow extends Box {
         widget.set_hexpand(true);
         widget.set_vexpand(false);
 
-        if (this._configurationProperty != '') {
-            Configuration.getInstance().bind(this._configurationProperty, widget, bindProperty);
+        if (this._settingKey != '') {
+            this.settings.bind(this._settingKey, widget, bindProperty, SettingsBindFlags.DEFAULT);
         }
 
         if (this._prefix) {
@@ -200,17 +204,17 @@ export class PrefsRow extends Box {
         this.notify('widget-parameters');
     }
 
-    public get configurationProperty(): string {
-        return this._configurationProperty;
+    public get settingKey(): string {
+        return this._settingKey;
     }
 
-    public set configurationProperty(value: string) {
-        if (this._configurationProperty == value) {
+    public set settingKey(value: string) {
+        if (this._settingKey == value) {
             return;
         }
 
-        this._configurationProperty = value;
-        this.notify('configuration-property');
+        this._settingKey = value;
+        this.notify('setting-key');
     }
 
     public get prefix(): Widget | undefined {
