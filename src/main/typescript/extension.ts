@@ -41,6 +41,7 @@ class GitHubManagerExtension {
 
         try {
             this.gitHubManager.stop();
+            this.gitHubManager.dispose();
         } catch (err) {
             GitHubManagerExtension.LOGGER.error('Unexpected error while stopping extension', err);
         } finally {

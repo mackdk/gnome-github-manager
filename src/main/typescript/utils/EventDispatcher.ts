@@ -1,11 +1,13 @@
+import { Disposable } from './Disposable';
+
 export type EventListener<T extends unknown[]> = (...args: T) => void;
 
 type UnknownEventListener = EventListener<unknown[]>;
 
-export class EventDispatcher {
-    private currentHandle: number;
+export class EventDispatcher implements Disposable {
+    private readonly eventListener: Map<string, Map<number, UnknownEventListener>>;
 
-    private eventListener: Map<string, Map<number, UnknownEventListener>>;
+    private currentHandle: number;
 
     public constructor() {
         this.currentHandle = 1;
@@ -25,6 +27,10 @@ export class EventDispatcher {
 
     public removeEventListener(event: string, listenerHandle: number): boolean {
         return this.eventListener.get(event)?.delete(listenerHandle) ?? false;
+    }
+
+    public dispose(): void {
+        this.eventListener.clear();
     }
 
     public async emit<T extends unknown[]>(event: string, ...args: T): Promise<boolean> {
