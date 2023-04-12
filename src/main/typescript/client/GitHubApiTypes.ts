@@ -1,12 +1,3 @@
-// To parse this data:
-//
-//   import { Convert } from "./file";
-//
-//   const thread = Convert.toThread(json);
-//
-// These functions will throw an error if the JSON doesn't
-// match the expected interface, even if the JSON is valid.
-
 // Interface to mark everything that has an html url
 export interface HtmlAccessible {
     html_url: string;
