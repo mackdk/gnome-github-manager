@@ -3,13 +3,11 @@ export type EventListener<T extends unknown[]> = (...args: T) => void;
 type UnknownEventListener = EventListener<unknown[]>;
 
 export class EventDispatcher {
-    private static instance?: EventDispatcher = undefined;
-
     private currentHandle: number;
 
     private eventListener: Map<string, Map<number, UnknownEventListener>>;
 
-    private constructor() {
+    public constructor() {
         this.currentHandle = 1;
         this.eventListener = new Map<string, Map<number, UnknownEventListener>>();
     }
@@ -37,13 +35,5 @@ export class EventDispatcher {
 
         eventListeners.forEach((listener) => listener(...args));
         return true;
-    }
-
-    public static getInstance(): EventDispatcher {
-        if (EventDispatcher.instance === undefined) {
-            EventDispatcher.instance = new EventDispatcher();
-        }
-
-        return EventDispatcher.instance;
     }
 }

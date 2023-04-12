@@ -4,7 +4,7 @@ import { Notification } from '@gnome-shell/ui/messageTray';
 import { Status } from '@tshttp/status';
 
 import { ApiError, GitHub, GitHubClient, GitHubClientFactory } from '@github-manager/client';
-import { Configuration, NotificationActionType } from '@github-manager/common';
+import { NotificationActionType, SettingsWrapper } from '@github-manager/settings';
 import { EventDispatcher, LimitedRetriableTimer, Logger } from '@github-manager/utils';
 
 import { NotificationAction, NotificationAdapter } from './NotificationAdapter';
@@ -15,7 +15,7 @@ export class NotificationController {
 
     private readonly eventDispatcher: EventDispatcher;
 
-    private readonly configuration: Configuration;
+    private readonly settings: SettingsWrapper;
 
     private readonly gitHubClient: GitHubClient;
 
@@ -25,28 +25,23 @@ export class NotificationController {
 
     private notifications: GitHub.Thread[];
 
-    public constructor(configuration: Configuration, eventDispatcher: EventDispatcher, gitHubIcon: Icon) {
-        this.configuration = configuration;
+    public constructor(settings: SettingsWrapper, eventDispatcher: EventDispatcher, gitHubIcon: Icon) {
+        this.settings = settings;
         this.eventDispatcher = eventDispatcher;
 
-        this.timer = new LimitedRetriableTimer(this.fetchNotifications.bind(this), this.configuration.refreshInterval);
-        this.gitHubClient = GitHubClientFactory.newClient(this.configuration.domain, this.configuration.token);
+        this.timer = new LimitedRetriableTimer(this.fetchNotifications.bind(this), this.settings.refreshInterval);
+        this.gitHubClient = GitHubClientFactory.newClient(this.settings.domain, this.settings.token);
         this.notifications = [];
 
         this.notificationAdapter = new NotificationAdapter(
-            this.configuration.notificationMode,
+            this.settings.notificationMode,
             gitHubIcon,
-            this.getUserDefinedAction(this.configuration.notificationActivateAction),
-            this.getUserDefinedAction(this.configuration.notificationPrimaryAction),
-            this.getUserDefinedAction(this.configuration.notificationSecondaryAction)
+            this.getUserDefinedAction(this.settings.notificationActivateAction),
+            this.getUserDefinedAction(this.settings.notificationPrimaryAction),
+            this.getUserDefinedAction(this.settings.notificationSecondaryAction)
         );
 
-        // Listen to configuration changes
-        this.eventDispatcher.addEventListener(
-            'configurationPropertyChanged',
-            this.configurationPropertyChanged.bind(this)
-        );
-
+        this.eventDispatcher.addEventListener('settingChanged', this.settingChanged.bind(this));
         this.eventDispatcher.addEventListener('notificationRead', this.markAsRead.bind(this));
         this.eventDispatcher.addEventListener('allNotificationsRead', this.markAllAsRead.bind(this));
     }
@@ -59,40 +54,38 @@ export class NotificationController {
         this.timer.stop();
     }
 
-    private configurationPropertyChanged(property: string): void {
-        NotificationController.LOGGER.debug('Configuration property {0} is changed', property);
+    private settingChanged(setting: string): void {
+        NotificationController.LOGGER.debug('Configuration property {0} is changed', setting);
 
-        if (property == 'domain') {
-            this.gitHubClient.domain = this.configuration.domain;
+        if (setting == 'domain') {
+            this.gitHubClient.domain = this.settings.domain;
         }
 
-        if (property == 'token') {
-            this.gitHubClient.token = this.configuration.token;
+        if (setting == 'token') {
+            this.gitHubClient.token = this.settings.token;
         }
 
-        if (property == 'refreshInterval' || property == 'showParticipatingOnly') {
-            this.timer.interval = this.configuration.refreshInterval;
+        if (setting == 'refresh-interval' || setting == 'show-participating-only') {
+            this.timer.interval = this.settings.refreshInterval;
         }
 
-        if (property == 'notificationMode') {
-            this.notificationAdapter.notificationMode = this.configuration.notificationMode;
+        if (setting == 'notification-mode') {
+            this.notificationAdapter.notificationMode = this.settings.notificationMode;
         }
 
-        if (property == 'notificationActivateAction') {
+        if (setting == 'notification-activate-action') {
             this.notificationAdapter.activateAction = this.getUserDefinedAction(
-                this.configuration.notificationActivateAction
+                this.settings.notificationActivateAction
             );
         }
 
-        if (property == 'notificationPrimaryAction') {
-            this.notificationAdapter.primaryAction = this.getUserDefinedAction(
-                this.configuration.notificationPrimaryAction
-            );
+        if (setting == 'notification-primary-action') {
+            this.notificationAdapter.primaryAction = this.getUserDefinedAction(this.settings.notificationPrimaryAction);
         }
 
-        if (property == 'notificationSecondaryAction') {
+        if (setting == 'notification-secondary-action') {
             this.notificationAdapter.secondaryAction = this.getUserDefinedAction(
-                this.configuration.notificationSecondaryAction
+                this.settings.notificationSecondaryAction
             );
         }
     }
@@ -101,7 +94,7 @@ export class NotificationController {
         NotificationController.LOGGER.debug('Feching GitHub notifications');
 
         try {
-            const notifications = await this.gitHubClient.listThreads(this.configuration.showParticipatingOnly);
+            const notifications = await this.gitHubClient.listThreads(this.settings.showParticipatingOnly);
             this.updateNotifications(notifications);
             return true;
         } catch (error) {

@@ -2,7 +2,7 @@ import { Icon, icon_new_for_string } from '@gi-types/gio2';
 import { Source, Notification as UINotification } from '@gnome-shell/ui/messageTray';
 
 import { GitHub } from '@github-manager/client';
-import { NotificationMode } from '@github-manager/common';
+import { NotificationMode } from '@github-manager/settings';
 import { registerGObject } from '@github-manager/utils/gnome';
 import { _, ngettext } from '@github-manager/utils/locale';
 

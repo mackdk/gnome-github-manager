@@ -55,7 +55,7 @@
                                 <property name="label" translatable="yes">Domain</property>
                                 <property name="description" translatable="yes">Change domain only if using GitHub Enterprise.</property>
                                 <property name="widget-type">GtkEntry</property>
-                                <property name="configuration-property">domain</property>
+                                <property name="setting-key">domain</property>
                             </object>
                         </child>
                         <child>
@@ -63,7 +63,7 @@
                                 <property name="label" translatable="yes">Token</property>
                                 <property name="description" translatable="yes">Authentication token to access the API.</property>
                                 <property name="widget-type">GtkPasswordEntry</property>
-                                <property name="configuration-property">token</property>
+                                <property name="setting-key">token</property>
                                 <property name="prefix">
                                     <object class="GtkButton" id="generateButton">
                                         <property name="hexpand">False</property>
@@ -95,7 +95,7 @@
                                 <property name="description" translatable="yes">How often data is synced. Might be enforced by &lt;a href="https://docs.github.com/en/rest/activity/notifications"&gt;GitHub Policy&lt;/a&gt;.</property>
                                 <property name="widget-type">GtkSpinButton</property>
                                 <property name="widget-parameters">{"min":60,"max":86400,"step":60}</property>
-                                <property name="configuration-property">refreshInterval</property>
+                                <property name="setting-key">refresh-interval</property>
                             </object>
                         </child>
                         <child>
@@ -103,7 +103,7 @@
                                 <property name="label" translatable="yes">Show only partecipating</property>
                                 <property name="description" translatable="yes">Ignore notifications not for you.</property>
                                 <property name="widget-type">GtkSwitch</property>
-                                <property name="configuration-property">showParticipatingOnly</property>
+                                <property name="setting-key">show-participating-only</property>
                             </object>
                         </child>
                     </object>
@@ -118,7 +118,7 @@
                                 <property name="widget-type">GtkDropDown</property>
                                 <!-- FOR TRANSLATORS: This must be a valid JSON. Please translate only the quoted text within the brackets [] and leave the rest as is. -->
                                 <property name="widget-parameters" translatable="yes">{"items":["None", "Single", "Digest"]}</property>
-                                <property name="configuration-property">notificationMode</property>
+                                <property name="setting-key">notification-mode</property>
                             </object>
                         </child>
                         <child>
@@ -126,7 +126,7 @@
                                 <property name="label" translatable="yes">Hide notification count</property>
                                 <property name="description" translatable="yes">Do not show the count next to the widget icon.</property>
                                 <property name="widget-type">GtkSwitch</property>
-                                <property name="configuration-property">hideNotificationCount</property>
+                                <property name="setting-key">hide-notification-count</property>
                             </object>
                         </child>
                     </object>
@@ -141,7 +141,7 @@
                                 <property name="widget-type">GtkDropDown</property>
                                 <!-- FOR TRANSLATORS: This must be a valid JSON. Please translate only the quoted text within the brackets [] and leave the rest as is. -->
                                 <property name="widget-parameters" translatable="yes">{"items":["Nothing", "Open", "Mark as Read", "Dismiss"]}</property>
-                                <property name="configuration-property">notificationActivateAction</property>
+                                <property name="setting-key">notification-activate-action</property>
                             </object>
                         </child>
                         <child>
@@ -151,7 +151,7 @@
                                 <property name="widget-type">GtkDropDown</property>
                                 <!-- FOR TRANSLATORS: This must be a valid JSON. Please translate only the quoted text within the brackets [] and leave the rest as is. -->
                                 <property name="widget-parameters" translatable="yes">{"items":["None", "Open", "Mark as Read", "Dismiss"]}</property>
-                                <property name="configuration-property">notificationPrimaryAction</property>
+                                <property name="setting-key">notification-primary-action</property>
                             </object>
                         </child>
                         <child>
@@ -161,7 +161,7 @@
                                 <property name="widget-type">GtkDropDown</property>
                                 <!-- FOR TRANSLATORS: This must be a valid JSON. Please translate only the quoted text within the brackets [] and leave the rest as is. -->
                                 <property name="widget-parameters" translatable="yes">{"items":["None", "Open", "Mark as Read", "Dismiss"]}</property>
-                                <property name="configuration-property">notificationSecondaryAction</property>
+                                <property name="setting-key">notification-secondary-action</property>
                             </object>
                         </child>
                     </object>

@@ -5,7 +5,7 @@ import { show_uri } from '@gi-types/gtk4';
 import { openPrefs } from '@gnome-shell/misc/extensionUtils';
 import { main as ShellUI } from '@gnome-shell/ui';
 
-import { Configuration } from '@github-manager/common';
+import { SettingsWrapper } from '@github-manager/settings';
 import { EventDispatcher, Logger } from '@github-manager/utils';
 
 import { GitHubWidget } from './GitHubWidget';
@@ -13,17 +13,17 @@ import { GitHubWidget } from './GitHubWidget';
 export class WidgetController {
     private static readonly LOGGER: Logger = new Logger('widget::WidgetController');
 
-    private readonly configuration: Configuration;
+    private readonly settings: SettingsWrapper;
 
     private readonly widget: GitHubWidget;
 
-    public constructor(configuration: Configuration, eventDispatcher: EventDispatcher, githubIcon: GioIcon) {
-        this.configuration = configuration;
+    public constructor(settings: SettingsWrapper, eventDispatcher: EventDispatcher, githubIcon: GioIcon) {
+        this.settings = settings;
         this.widget = new GitHubWidget(githubIcon, '0');
         this.widget.connect('button-press-event', (_: this, event: ButtonEvent) => this.handleButtonPress(event));
 
         // Listen to configuration changes
-        eventDispatcher.addEventListener('configurationPropertyChanged', this.configurationPropertyChanged.bind(this));
+        eventDispatcher.addEventListener('settingChanged', this.settingChanged.bind(this));
         // Respond to updated notifcation requests
         eventDispatcher.addEventListener('updateNotificationCount', this.updateNotificationCount.bind(this));
     }
@@ -56,8 +56,8 @@ export class WidgetController {
         switch (event.get_button()) {
             case BUTTON_PRIMARY:
                 try {
-                    let url = `https://${this.configuration.domain}/notifications`;
-                    if (this.configuration.showParticipatingOnly) {
+                    let url = `https://${this.settings.domain}/notifications`;
+                    if (this.settings.showParticipatingOnly) {
                         url = url.concat('/participating');
                     }
 
@@ -76,15 +76,15 @@ export class WidgetController {
         this.widget.text = `${notificationCount ?? '!'}`;
     }
 
-    private configurationPropertyChanged(property: string): void {
-        WidgetController.LOGGER.debug('Configuration property {0} is changed', property);
+    private settingChanged(setting: string): void {
+        WidgetController.LOGGER.debug('Configuration property {0} is changed', setting);
 
-        if (property == 'hideNotificationCount') {
+        if (setting == 'hide-notification-count') {
             this.updateButtonVisibility();
         }
     }
 
     private updateButtonVisibility(): void {
-        this.widget.textVisible = !this.configuration.hideNotificationCount;
+        this.widget.textVisible = !this.settings.hideNotificationCount;
     }
 }
