@@ -1,10 +1,12 @@
 import { Settings } from '@gi-types/gio2';
 
-import { EventDispatcher } from '@github-manager/utils';
+import { Disposable, EventDispatcher } from '@github-manager/utils';
 
 import { NotificationActionType, NotificationMode } from './SettingsTypes';
 
-export class SettingsWrapper {
+export class SettingsWrapper implements Disposable {
+    private readonly listenerId: number;
+
     private readonly eventDispatcher: EventDispatcher;
 
     private readonly settings: Settings;
@@ -14,7 +16,11 @@ export class SettingsWrapper {
         this.eventDispatcher = eventDispatcher;
 
         // Setup the internal change event listener
-        this.settings.connect('changed', this.onChange.bind(this));
+        this.listenerId = this.settings.connect('changed', this.onChange.bind(this));
+    }
+
+    public dispose(): void {
+        this.settings.disconnect(this.listenerId);
     }
 
     public get domain(): string {

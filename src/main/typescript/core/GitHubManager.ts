@@ -1,13 +1,19 @@
-import { icon_new_for_string } from '@gi-types/gio2';
+import { Icon, icon_new_for_string } from '@gi-types/gio2';
 import { getCurrentExtension, getSettings } from '@gnome-shell/misc/extensionUtils';
 
 import { NotificationController } from '@github-manager/notifications';
 import { SettingsWrapper } from '@github-manager/settings';
-import { EventDispatcher, Logger } from '@github-manager/utils';
+import { Disposable, EventDispatcher, Logger } from '@github-manager/utils';
 import { WidgetController } from '@github-manager/widget';
 
-export class GitHubManager {
+export class GitHubManager implements Disposable {
     private static readonly LOGGER: Logger = new Logger('core::GitHubManager');
+
+    private readonly githubIcon: Icon;
+
+    private readonly eventDispatcher: EventDispatcher;
+
+    private readonly settings: SettingsWrapper;
 
     private readonly widgetController: WidgetController;
 
@@ -16,13 +22,13 @@ export class GitHubManager {
     public constructor() {
         GitHubManager.LOGGER.debug('Building and wiring components');
 
-        const githubIcon = icon_new_for_string(`${getCurrentExtension().path}/github.svg`);
+        this.githubIcon = icon_new_for_string(`${getCurrentExtension().path}/github.svg`);
 
-        const eventDispatcher = new EventDispatcher();
-        const settings = new SettingsWrapper(getSettings(), eventDispatcher);
+        this.eventDispatcher = new EventDispatcher();
+        this.settings = new SettingsWrapper(getSettings(), this.eventDispatcher);
 
-        this.widgetController = new WidgetController(settings, eventDispatcher, githubIcon);
-        this.notificationController = new NotificationController(settings, eventDispatcher, githubIcon);
+        this.widgetController = new WidgetController(this.settings, this.eventDispatcher, this.githubIcon);
+        this.notificationController = new NotificationController(this.settings, this.eventDispatcher, this.githubIcon);
     }
 
     public start(): void {
@@ -39,5 +45,11 @@ export class GitHubManager {
 
         GitHubManager.LOGGER.debug('Removing the widget to the GNOME Shell UI');
         this.widgetController.hide();
+    }
+
+    public dispose(): void {
+        this.settings.dispose();
+        this.eventDispatcher.dispose();
+        this.widgetController.dispose();
     }
 }

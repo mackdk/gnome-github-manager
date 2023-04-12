@@ -6,21 +6,25 @@ import { openPrefs } from '@gnome-shell/misc/extensionUtils';
 import { main as ShellUI } from '@gnome-shell/ui';
 
 import { SettingsWrapper } from '@github-manager/settings';
-import { EventDispatcher, Logger } from '@github-manager/utils';
+import { Disposable, EventDispatcher, Logger } from '@github-manager/utils';
 
 import { GitHubWidget } from './GitHubWidget';
 
-export class WidgetController {
+export class WidgetController implements Disposable {
     private static readonly LOGGER: Logger = new Logger('widget::WidgetController');
 
     private readonly settings: SettingsWrapper;
 
     private readonly widget: GitHubWidget;
 
+    private readonly buttonPressId: number;
+
     public constructor(settings: SettingsWrapper, eventDispatcher: EventDispatcher, githubIcon: GioIcon) {
         this.settings = settings;
         this.widget = new GitHubWidget(githubIcon, '0');
-        this.widget.connect('button-press-event', (_: this, event: ButtonEvent) => this.handleButtonPress(event));
+        this.buttonPressId = this.widget.connect('button-press-event', (_: this, event: ButtonEvent) =>
+            this.handleButtonPress(event)
+        );
 
         // Listen to configuration changes
         eventDispatcher.addEventListener('settingChanged', this.settingChanged.bind(this));
@@ -46,6 +50,11 @@ export class WidgetController {
         }
 
         return false;
+    }
+
+    public dispose(): void {
+        this.widget.disconnect(this.buttonPressId);
+        this.widget.destroy();
     }
 
     public setText(text: string): void {
