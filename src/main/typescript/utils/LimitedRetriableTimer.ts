@@ -62,6 +62,7 @@ export class LimitedRetriableTimer {
         LimitedRetriableTimer.LOGGER.debug('Timer is stopped');
         source_remove(this.timerHandle);
         this.timerHandle = undefined;
+        this.retries = 0;
     }
 
     public restart(initialDelay: number = 0): void {
@@ -87,12 +88,12 @@ export class LimitedRetriableTimer {
     private runTaskAndSchedule(): void {
         this.task()
             .then((outcome: boolean) => {
+                this.computeCurrentInterval(outcome);
                 this.scheduleNextRun();
                 LimitedRetriableTimer.LOGGER.debug(
                     'Next fetch execution scheduled in {0} seconds',
                     this.currentInterval
                 );
-                this.computeCurrentInterval(outcome);
             })
             .catch((err) => LimitedRetriableTimer.LOGGER.error('Unexpected error while executing timer task', err));
     }
@@ -109,7 +110,9 @@ export class LimitedRetriableTimer {
     private computeCurrentInterval(successful: boolean): void {
         if (successful) {
             this.currentInterval = this._interval;
+            this.retries = 0;
         } else {
+            this.retries++;
             this.currentInterval = this.retryIntervals[this.retries] ?? 3600;
         }
 
