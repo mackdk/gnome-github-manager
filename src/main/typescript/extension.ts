@@ -17,8 +17,7 @@ class GitHubManagerExtension {
 
     public enable(): void {
         if (this.gitHubManager !== undefined) {
-            GitHubManagerExtension.LOGGER.debug('Extension already initialized. Enabling.');
-            this.gitHubManager.start();
+            GitHubManagerExtension.LOGGER.warn('Inconsistent state: extension already enabled.');
             return;
         }
 
@@ -44,6 +43,7 @@ class GitHubManagerExtension {
             this.gitHubManager.stop();
         } catch (err) {
             GitHubManagerExtension.LOGGER.error('Unexpected error while stopping extension', err);
+        } finally {
             this.gitHubManager = undefined;
         }
     }
