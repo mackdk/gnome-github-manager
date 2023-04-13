@@ -65,13 +65,14 @@
                                 <property name="widget-type">GtkPasswordEntry</property>
                                 <property name="setting-key">token</property>
                                 <property name="prefix">
-                                    <object class="GtkButton" id="generateButton">
+                                    <object class="GtkButton">
                                         <property name="hexpand">False</property>
                                         <property name="vexpand">False</property>
                                         <property name="valign">center</property>
                                         <property name="receives-default">true</property>
                                         <property name="icon-name">emblem-system-symbolic</property>
                                         <property name="tooltip-text" translatable="yes">Generate a new personal access token</property>
+                                        <property name="action-name">actions.generateToken</property>
                                         <style>
                                             <class name="circular"/>
                                         </style>

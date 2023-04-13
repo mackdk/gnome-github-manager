@@ -1,7 +1,7 @@
 {
     "uuid": "github-manager@mackdk-on-github",
-    "name": "Github Manager",
-    "description": "Integrate Github within the Gnome desktop environment\nSource code on GitHub: https://github.com/mackdk/gnome-github-manager",
+    "name": "GitHub Manager",
+    "description": "Integrate GitHub within the Gnome desktop environment\nSource code on GitHub: https://github.com/mackdk/gnome-github-manager",
     "url": "https://github.com/mackdk/gnome-github-manager",
     "settings-schema": "org.gnome.shell.extensions.github.manager",
     "shell-version": [
