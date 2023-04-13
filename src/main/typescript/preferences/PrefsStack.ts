@@ -5,7 +5,6 @@ import { Object as GObject, MetaInfo } from '@gi-types/gobject2';
 import {
     AboutDialog,
     Builder,
-    Button,
     ButtonsType,
     HeaderBar,
     Image,
@@ -39,12 +38,10 @@ export class PrefsStack extends Stack {
     public static metaInfo: MetaInfo = {
         GTypeName: 'PrefsStack',
         Template: File.new_for_path(`${getCurrentExtension().path}/ui/PrefsStack.ui`).get_uri(),
-        InternalChildren: ['header', 'generateButton'],
+        InternalChildren: ['header'],
     };
 
     private _header?: HeaderBar;
-
-    private _generateButton?: Button;
 
     public constructor() {
         super({ transitionType: StackTransitionType.SLIDE_LEFT_RIGHT });
@@ -83,14 +80,13 @@ export class PrefsStack extends Stack {
         if (dialog instanceof Window) {
             dialog.set_titlebar(this._header);
             dialog.insert_action_group('actions', this.buildActionGroupFor(dialog));
+        } else {
+            PrefsStack.LOGGER.error('Unable to initialize UI: PrefsStack root is not an instance of Window');
         }
-
-        const tokenGenerationUrl = 'https://github.com/settings/tokens/new?description=GNOME%20GitHub%20Manager';
-        this._generateButton?.connect('clicked', () => this.openUrl(tokenGenerationUrl));
     }
 
-    private openUrl(url: string): void {
-        show_uri(null, url, CURRENT_TIME);
+    private openUrl(url: string, dialog: Window): void {
+        show_uri(dialog, url, CURRENT_TIME);
     }
 
     private resetToDefault(dialog: Window): void {
@@ -135,7 +131,10 @@ export class PrefsStack extends Stack {
                 modal: true,
                 authors: ['Thomas Florio <mackdk@hotmail.com>', 'Alexandre Dufournet <alexandre.dufournet@gmail.com>'],
                 programName: this.extension.metadata.name,
-                version: _('Version {0}', this.extension.metadata.version.toFixed(1)),
+                version: _(
+                    'Version {0}',
+                    this.extension.metadata.version.toLocaleString('en-US', { minimumFractionDigits: 1 })
+                ),
                 comments: _(
                     'Integrate GitHub within the GNOME Desktop Environment.\n\n' +
                         'Based on GitHub Notifications by Alexandre Dufournet.'
@@ -167,9 +166,13 @@ export class PrefsStack extends Stack {
         const baseUrl = this.extension.metadata.url;
 
         this.addActionToGroup(actionGroup, 'resetToDefault', () => this.resetToDefault(dialog));
-        this.addActionToGroup(actionGroup, 'reportBug', () => this.openUrl(`${baseUrl}/issues/new`));
-        this.addActionToGroup(actionGroup, 'userGuide', () => this.openUrl(`${baseUrl}/wiki`));
+        this.addActionToGroup(actionGroup, 'reportBug', () => this.openUrl(`${baseUrl}/issues/new`, dialog));
+        this.addActionToGroup(actionGroup, 'userGuide', () => this.openUrl(`${baseUrl}/wiki`, dialog));
         this.addActionToGroup(actionGroup, 'about', () => this.about(dialog));
+
+        const description = encodeURIComponent(this.extension.metadata.name.concat(' Token'));
+        const tokenGenerationUrl = `https://github.com/settings/tokens/new?description=${description}`;
+        this.addActionToGroup(actionGroup, 'generateToken', () => this.openUrl(tokenGenerationUrl, dialog));
 
         return actionGroup;
     }
