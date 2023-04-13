@@ -7,7 +7,7 @@
   "license": "GPL-2.0-only",
   "scripts": {
     "clean": "rm -rf build",
-    "compile": "rollup --config rollup.config.ts --configPlugin 'typescript={tsconfig:\"rollup.tsconfig.json\",cacheDir:\"build/compile\"}'",
+    "compile": "rollup --config rollup.config.ts --configPlugin 'typescript={cacheDir:\"build/compile\"}'",
     "lint": "yarn run eslint src",
     "lintStrict": "yarn run eslint src --max-warnings=0",
     "build": "yarn lint && yarn compile && yarn updateTranslations",
