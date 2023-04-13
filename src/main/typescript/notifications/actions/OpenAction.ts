@@ -5,7 +5,7 @@ import { ApiError, GitHub, GitHubClient } from '@github-manager/client';
 import { EventDispatcher, Logger } from '@github-manager/utils';
 import { _ } from '@github-manager/utils/locale';
 
-import { NotificationAction } from '../NotificationAdapter';
+import { NotificationAction } from './NotificationAction';
 
 export class OpenAction implements NotificationAction {
     private static readonly LOGGER: Logger = new Logger('notifications::actions::OpenAction');
