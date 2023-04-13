@@ -35,7 +35,8 @@ export class LimitedRetriableTimer {
 
     public start(initialDelay: number = 0): void {
         LimitedRetriableTimer.LOGGER.debug(
-            'Timer is started. Executing first run with initial delay {0}s',
+            'Timer is started and will run every {0}s. Executing first run with an initial delay of {1}s',
+            this._interval,
             initialDelay
         );
 
@@ -91,8 +92,10 @@ export class LimitedRetriableTimer {
                 this.computeCurrentInterval(outcome);
                 this.scheduleNextRun();
                 LimitedRetriableTimer.LOGGER.debug(
-                    'Next fetch execution scheduled in {0} seconds',
-                    this.currentInterval
+                    'Last run {0}. Next run scheduled in {1}s (number of retries: {2})',
+                    outcome ? 'succeed' : 'failed',
+                    this.currentInterval,
+                    this.retries
                 );
             })
             .catch((err) => LimitedRetriableTimer.LOGGER.error('Unexpected error while executing timer task', err));

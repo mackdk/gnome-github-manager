@@ -23,6 +23,14 @@ export class Logger {
         this.logLevel = logLevel;
     }
 
+    public isTraceEnabled(): boolean {
+        return this.isEnabled(LogLevel.TRACE);
+    }
+
+    public trace(format: string, ...args: LoggableParameter[]): void {
+        this.addLog(LogLevel.TRACE, format, ...args);
+    }
+
     public isDebugEnabled(): boolean {
         return this.isEnabled(LogLevel.DEBUG);
     }

@@ -5,7 +5,7 @@ import { LogLevel, Logger } from '@github-manager/utils';
 import { initializeTranslations } from '@github-manager/utils/locale';
 
 // Set global logging level
-Logger.globalLoggingLevel = LogLevel.DEBUG;
+Logger.globalLoggingLevel = LogLevel.INFO;
 
 /**
  * Extension entry point class.
@@ -17,13 +17,12 @@ class GitHubManagerExtension {
 
     public enable(): void {
         if (this.gitHubManager !== undefined) {
-            GitHubManagerExtension.LOGGER.warn('Inconsistent state: extension already enabled.');
+            GitHubManagerExtension.LOGGER.warn('Inconsistent state: enabled() call with extension already enabled.');
             return;
         }
 
-        GitHubManagerExtension.LOGGER.debug('Inizializing extension at {0}', new Date().toISOString());
-
         try {
+            GitHubManagerExtension.LOGGER.debug('Inizializing extension at {0}', new Date().toISOString());
             this.gitHubManager = new GitHubManager();
             this.gitHubManager.start();
         } catch (err) {
@@ -33,13 +32,13 @@ class GitHubManagerExtension {
     }
 
     public disable(): void {
-        GitHubManagerExtension.LOGGER.debug('Disabling extension.');
         if (this.gitHubManager === undefined) {
-            GitHubManagerExtension.LOGGER.warn('Inconsistent state: no extension to disable.');
+            GitHubManagerExtension.LOGGER.warn('Inconsistent state: disable() called and extension was never enabled.');
             return;
         }
 
         try {
+            GitHubManagerExtension.LOGGER.debug('Disabling extension at {0}.', new Date().toISOString());
             this.gitHubManager.stop();
             this.gitHubManager.dispose();
         } catch (err) {

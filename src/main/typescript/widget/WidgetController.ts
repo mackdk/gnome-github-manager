@@ -28,7 +28,7 @@ export class WidgetController implements Disposable {
 
         // Listen to configuration changes
         eventDispatcher.addEventListener('settingChanged', this.settingChanged.bind(this));
-        // Respond to updated notifcation requests
+        // Respond to updated notification requests
         eventDispatcher.addEventListener('updateNotificationCount', this.updateNotificationCount.bind(this));
     }
 
@@ -86,11 +86,21 @@ export class WidgetController implements Disposable {
     }
 
     private settingChanged(setting: string): void {
-        WidgetController.LOGGER.debug('Configuration property {0} is changed', setting);
+        switch (setting) {
+            case 'hide-notification-count':
+                this.updateButtonVisibility();
+                break;
 
-        if (setting == 'hide-notification-count') {
-            this.updateButtonVisibility();
+            case 'show-participating-only':
+                // Nothing to do, method gets everytime the most updated value
+                break;
+
+            default:
+                // Other settings are not of any interest for this controller
+                return;
         }
+
+        WidgetController.LOGGER.debug("Setting '{0}' is changed", setting);
     }
 
     private updateButtonVisibility(): void {

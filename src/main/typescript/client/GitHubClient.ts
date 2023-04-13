@@ -22,8 +22,8 @@ export interface GitHubClient {
     set token(value: string);
 
     listThreads(showParticipatingOnly?: boolean): Promise<GitHub.Thread[]>;
-    markThreadAsRead(githubNotification: GitHub.Thread): void;
-    markAllThreadsAsRead(): void;
+    markThreadAsRead(githubNotification: GitHub.Thread): Promise<void>;
+    markAllThreadsAsRead(): Promise<void>;
 
     getWebUrlForSubject(subject: GitHub.Subject): Promise<string>;
 }

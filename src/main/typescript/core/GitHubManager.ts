@@ -20,7 +20,7 @@ export class GitHubManager implements Disposable {
     private readonly notificationController: NotificationController;
 
     public constructor() {
-        GitHubManager.LOGGER.debug('Building and wiring components');
+        GitHubManager.LOGGER.trace('Building and wiring components');
 
         this.githubIcon = icon_new_for_string(`${getCurrentExtension().path}/github.svg`);
 
@@ -32,22 +32,23 @@ export class GitHubManager implements Disposable {
     }
 
     public start(): void {
-        GitHubManager.LOGGER.debug('Starting the notification polling loop');
+        GitHubManager.LOGGER.trace('Starting the notification polling loop');
         this.notificationController.startPolling();
 
-        GitHubManager.LOGGER.debug('Adding the widget to the GNOME Shell UI');
+        GitHubManager.LOGGER.trace('Adding the widget to the GNOME Shell UI');
         this.widgetController.show();
     }
 
     public stop(): void {
-        GitHubManager.LOGGER.debug('Stopping the notification polling loop');
+        GitHubManager.LOGGER.trace('Stopping the notification polling loop');
         this.notificationController.stopPolling();
 
-        GitHubManager.LOGGER.debug('Removing the widget to the GNOME Shell UI');
+        GitHubManager.LOGGER.trace('Removing the widget to the GNOME Shell UI');
         this.widgetController.hide();
     }
 
     public dispose(): void {
+        GitHubManager.LOGGER.trace('Disposing all objects');
         this.settings.dispose();
         this.eventDispatcher.dispose();
         this.widgetController.dispose();
