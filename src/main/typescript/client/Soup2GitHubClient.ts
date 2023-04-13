@@ -16,7 +16,7 @@ export class Soup2GitHubClient extends AbstractGitHubClient {
         const extensionName: string = getCurrentExtension().metadata.name;
 
         this.session = new Session();
-        this.session.user_agent = `gnome-shell-extension ${extensionName} via libsoup2`;
+        this.session.user_agent = `${extensionName} Extension via libsoup2`;
     }
 
     protected doRequest(method: string, url: string, request?: RequestBody): Promise<HttpReponse> {
@@ -42,7 +42,14 @@ export class Soup2GitHubClient extends AbstractGitHubClient {
 
                     // Update the poll interval if set in the response
                     if (msg.responseHeaders.get('X-Poll-Interval')) {
-                        this._pollInterval = Number(msg.responseHeaders.get('X-Poll-Interval'));
+                        const enforcedPollInterval = Number(msg.responseHeaders.get('X-Poll-Interval'));
+                        if (enforcedPollInterval !== this._pollInterval) {
+                            Soup2GitHubClient.LOGGER.info(
+                                'New polling interval enforced by GitHub {}s',
+                                enforcedPollInterval
+                            );
+                            this._pollInterval = enforcedPollInterval;
+                        }
                     }
 
                     resolve(new HttpReponse(msg.statusCode, msg.responseBody.length, msg.responseBody.data));

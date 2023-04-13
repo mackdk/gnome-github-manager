@@ -25,23 +25,34 @@ export class OpenAction implements NotificationAction {
 
     public execute(notification?: GitHub.Thread): void {
         if (notification) {
-            this.gitHubClient
-                .getWebUrlForSubject(notification.subject)
-                .then((url) => show_uri(null, url, CURRENT_TIME))
-                .then(() => this.eventDispatcher.emit('notificationRead', notification.id))
-                .catch((error) => {
-                    if (error instanceof ApiError) {
-                        OpenAction.LOGGER.error('HTTP error {0}: {1}', error.statusCode, error.message, error.cause);
-                    } else {
-                        OpenAction.LOGGER.error('Unexpected error while retrieving notifications', error);
-                    }
-
-                    // Fallback opening the notifications page
-                    show_uri(null, `https://${this.gitHubClient.domain}/notifications`, CURRENT_TIME);
-                });
-        } else {
-            // No specific notification selected, action on a digest notification
-            show_uri(null, `https://${this.gitHubClient.domain}/notifications`, CURRENT_TIME);
+            this.openSingle(notification);
+            return;
         }
+
+        // No specific notification selected, action on a digest notification
+        show_uri(null, `https://${this.gitHubClient.domain}/notifications`, CURRENT_TIME);
+    }
+
+    private openSingle(notification: GitHub.Thread): void {
+        this.gitHubClient
+            .getWebUrlForSubject(notification.subject)
+            .then((url) => show_uri(null, url, CURRENT_TIME))
+            .then(() => this.eventDispatcher.emit('notificationRead', notification.id))
+            .catch((error) => {
+                if (error instanceof ApiError) {
+                    OpenAction.LOGGER.error(
+                        'Cannot open notification {0}: HTTP error {1}: {2}',
+                        notification.id,
+                        error.statusCode,
+                        error.message,
+                        error.cause
+                    );
+                } else {
+                    OpenAction.LOGGER.error('Cannot open notification {0}', notification.id, error);
+                }
+
+                // Fallback opening the notifications page
+                show_uri(null, `https://${this.gitHubClient.domain}/notifications`, CURRENT_TIME);
+            });
     }
 }

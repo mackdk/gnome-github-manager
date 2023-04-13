@@ -55,39 +55,41 @@ export class NotificationController {
     }
 
     private settingChanged(setting: string): void {
-        NotificationController.LOGGER.debug('Configuration property {0} is changed', setting);
+        switch (setting) {
+            case 'domain':
+                this.gitHubClient.domain = this.settings.domain;
+                break;
+            case 'token':
+                this.gitHubClient.token = this.settings.token;
+                break;
+            case 'refresh-interval':
+                this.timer.interval = this.settings.refreshInterval;
+                break;
+            case 'notification-mode':
+                this.notificationAdapter.notificationMode = this.settings.notificationMode;
+                break;
+            case 'notification-activate-action':
+                this.notificationAdapter.activateAction = this.getUserDefinedAction(
+                    this.settings.notificationActivateAction
+                );
+                break;
+            case 'notification-primary-action':
+                this.notificationAdapter.primaryAction = this.getUserDefinedAction(
+                    this.settings.notificationPrimaryAction
+                );
+                break;
+            case 'notification-secondary-action':
+                this.notificationAdapter.secondaryAction = this.getUserDefinedAction(
+                    this.settings.notificationSecondaryAction
+                );
+                break;
 
-        if (setting == 'domain') {
-            this.gitHubClient.domain = this.settings.domain;
+            default:
+                // Other settings are not of any interest for this controller
+                return;
         }
 
-        if (setting == 'token') {
-            this.gitHubClient.token = this.settings.token;
-        }
-
-        if (setting == 'refresh-interval' || setting == 'show-participating-only') {
-            this.timer.interval = this.settings.refreshInterval;
-        }
-
-        if (setting == 'notification-mode') {
-            this.notificationAdapter.notificationMode = this.settings.notificationMode;
-        }
-
-        if (setting == 'notification-activate-action') {
-            this.notificationAdapter.activateAction = this.getUserDefinedAction(
-                this.settings.notificationActivateAction
-            );
-        }
-
-        if (setting == 'notification-primary-action') {
-            this.notificationAdapter.primaryAction = this.getUserDefinedAction(this.settings.notificationPrimaryAction);
-        }
-
-        if (setting == 'notification-secondary-action') {
-            this.notificationAdapter.secondaryAction = this.getUserDefinedAction(
-                this.settings.notificationSecondaryAction
-            );
-        }
+        NotificationController.LOGGER.debug("Setting '{0}' is changed", setting);
     }
 
     private async fetchNotifications(): Promise<boolean> {
@@ -106,13 +108,13 @@ export class NotificationController {
 
                 // Mark the error and prepare for retry
                 NotificationController.LOGGER.error(
-                    'HTTP error {0}: {1}',
+                    'Cannot retrieve notifications: HTTP error {0}: {1}',
                     error.statusCode,
                     error.message,
                     error.cause
                 );
             } else {
-                NotificationController.LOGGER.error('Unexpected error while retrieving notifications', error);
+                NotificationController.LOGGER.error('Cannot retrieve notifications', error);
             }
 
             void this.eventDispatcher.emit('updateNotificationCount', undefined);
