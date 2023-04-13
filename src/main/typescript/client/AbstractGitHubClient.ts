@@ -11,7 +11,7 @@ export class HttpReponse {
     public constructor(stausCode: number, length: number, body?: string) {
         this.statusCode = stausCode;
         this.length = length;
-        this.body = body === undefined ? '' : body;
+        this.body = body ?? '';
     }
 }
 
