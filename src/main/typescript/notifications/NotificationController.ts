@@ -7,8 +7,8 @@ import { ApiError, GitHub, GitHubClient, GitHubClientFactory } from '@github-man
 import { NotificationActionType, SettingsWrapper } from '@github-manager/settings';
 import { EventDispatcher, LimitedRetriableTimer, Logger } from '@github-manager/utils';
 
-import { NotificationAction, NotificationAdapter } from './NotificationAdapter';
-import { DismissAction, MarkAsReadAction, OpenAction } from './actions/';
+import { NotificationAdapter } from './NotificationAdapter';
+import { DismissAction, MarkAsReadAction, NotificationAction, OpenAction } from './actions/';
 
 export class NotificationController {
     private static readonly LOGGER: Logger = new Logger('notifications::NotificationController');

@@ -6,6 +6,8 @@ import { NotificationMode } from '@github-manager/settings';
 import { registerGObject } from '@github-manager/utils/gnome';
 import { _, ngettext } from '@github-manager/utils/locale';
 
+import { NotificationAction } from './actions/NotificationAction';
+
 @registerGObject
 class DigestSource extends Source {
     private readonly icon: Icon;
@@ -47,12 +49,6 @@ class ProjectSource extends Source {
     public open(): void {
         this.destroy();
     }
-}
-
-export interface NotificationAction {
-    get label(): string;
-
-    execute(notification?: GitHub.Thread): void;
 }
 
 export class NotificationAdapter {

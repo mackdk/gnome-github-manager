@@ -2,7 +2,7 @@ import { GitHub, GitHubClient } from '@github-manager/client';
 import { EventDispatcher } from '@github-manager/utils';
 import { _ } from '@github-manager/utils/locale';
 
-import { NotificationAction } from '../NotificationAdapter';
+import { NotificationAction } from './NotificationAction';
 
 export class MarkAsReadAction implements NotificationAction {
     private readonly gitHubClient: GitHubClient;
