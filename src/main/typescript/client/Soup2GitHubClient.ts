@@ -24,6 +24,7 @@ export class Soup2GitHubClient extends AbstractGitHubClient {
         const message = new Message({ method: method, uri: soupUri });
 
         // Set the headers
+        message.requestHeaders.append('X-GitHub-Api-Version', this.apiVersion);
         message.requestHeaders.append('Authorization', `Bearer ${this._token}`);
 
         // Set the request body, if available

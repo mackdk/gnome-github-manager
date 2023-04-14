@@ -26,6 +26,8 @@ export class RequestBody {
 }
 
 export abstract class AbstractGitHubClient implements GitHubClient {
+    protected readonly apiVersion: string;
+
     protected _pollInterval: number;
 
     protected _domain: string;
@@ -37,6 +39,9 @@ export abstract class AbstractGitHubClient implements GitHubClient {
 
         this._token = token;
         this._domain = domain;
+
+        // GitHub API version to use
+        this.apiVersion = '2022-11-28';
     }
 
     public get pollInterval(): number {
