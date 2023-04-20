@@ -1,6 +1,6 @@
 import { File } from '@gi-types/gio2';
 import { MetaInfo, ParamFlags, ParamSpec } from '@gi-types/gobject2';
-import { Box } from '@gi-types/gtk4';
+import { Box, Buildable } from '@gi-types/gtk4';
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
 import { registerGObject } from '@github-manager/utils/gnome';
@@ -23,6 +23,7 @@ export class PrefsPage extends Box {
                 ''
             ),
         },
+        Implements: [Buildable],
     };
 
     private _label: string;
