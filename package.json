@@ -13,7 +13,8 @@
     "sync": "rsync -a ./build/dist/* ~/.local/share/gnome-shell/extensions/$(cat src/main/resources/metadata.json | jq -r .uuid)",
     "deploy": "yarn build && yarn sync",
     "followLogs": "journalctl -f | grep \"\\[$(cat src/main/resources/metadata.json | jq -r .name) Extension\\]\"",
-    "updateTranslations": "(cd build/dist && xgettext --no-location -L JavaScript -o ../../src/main/po/gnome-github-manager.pot *.js && xgettext --no-location -L Glade -j -o ../../src/main/po/gnome-github-manager.pot ui/*.ui; sed -i 's/\"POT-Creation-Date[^\"]*\"/\"POT-Creation-Date: \\\\n\"/' ../../src/main/po/gnome-github-manager.pot)"
+    "updateTranslations": "(cd build/dist && xgettext --no-location -L JavaScript -o ../../src/main/po/gnome-github-manager.pot *.js && xgettext --no-location -L Glade -j -o ../../src/main/po/gnome-github-manager.pot ui/*.ui; sed -i 's/\"POT-Creation-Date[^\"]*\"/\"POT-Creation-Date: \\\\n\"/' ../../src/main/po/gnome-github-manager.pot)",
+    "package": "yarn build && (cd build/dist && zip ../gnome-github-manager-$(cat src/main/resources/metadata.json | jq -r .version).zip ./*)"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.1",

@@ -1,0 +1,33 @@
+name: Lint
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopend
+
+jobs:
+  linting:
+    name: Run ESLint on Typescript codebase
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install NodeJS 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Code Checkout
+        uses: actions/checkout@v3
+
+      - name: Install yarn
+        run: npm install --global yarn
+
+      - name: Install dependencies
+        run: yarn install
+      
+      - name: Run ESLint
+        run: yarn lint

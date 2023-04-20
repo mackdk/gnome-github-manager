@@ -1,0 +1,36 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopend
+
+jobs:
+  building:
+    name: Build the extension from the Typescript source code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install NodeJS 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install translation tools
+        run: sudo apt-get install -y make gettext
+
+      - name: Code Checkout
+        uses: actions/checkout@v3
+
+      - name: Install yarn
+        run: yarn --version || npm install --global yarn
+
+      - name: Install the dependencies
+        run: yarn install
+      
+      - name: Build the extension
+        run: yarn build
