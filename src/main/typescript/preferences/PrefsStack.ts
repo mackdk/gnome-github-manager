@@ -4,6 +4,7 @@ import { ActionGroup, File, Settings, SimpleAction, SimpleActionGroup } from '@g
 import { Object as GObject, MetaInfo } from '@gi-types/gobject2';
 import {
     AboutDialog,
+    Buildable,
     Builder,
     ButtonsType,
     HeaderBar,
@@ -39,6 +40,7 @@ export class PrefsStack extends Stack {
         GTypeName: 'PrefsStack',
         Template: File.new_for_path(`${getCurrentExtension().path}/ui/PrefsStack.ui`).get_uri(),
         InternalChildren: ['header'],
+        Implements: [Buildable],
     };
 
     private _header?: HeaderBar;

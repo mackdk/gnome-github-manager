@@ -1,6 +1,6 @@
 import { File } from '@gi-types/gio2';
 import { Object as GObject, MetaInfo, ParamFlags, ParamSpec } from '@gi-types/gobject2';
-import { Box, Builder, ListBox, Widget } from '@gi-types/gtk4';
+import { Box, Buildable, Builder, ListBox, Widget } from '@gi-types/gtk4';
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
 import { registerGObject } from '@github-manager/utils/gnome';
@@ -26,6 +26,7 @@ export class PrefsGroup extends Box {
             ),
         },
         InternalChildren: ['rows'],
+        Implements: [Buildable],
     };
 
     private _label: string;
