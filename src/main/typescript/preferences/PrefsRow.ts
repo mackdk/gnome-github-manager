@@ -1,10 +1,11 @@
-import { File, SettingsBindFlags } from '@gi-types/gio2';
-import { Settings } from '@gi-types/gio2';
+import { File } from '@gi-types/gio2';
 import { MetaInfo, ParamFlags, ParamSpec } from '@gi-types/gobject2';
-import { Align, Box, DropDown, Entry, PasswordEntry, SpinButton, StringList, Switch, Widget } from '@gi-types/gtk4';
-import { getCurrentExtension, getSettings } from '@gnome-shell/misc/extensionUtils';
+import { Box, Widget } from '@gi-types/gtk4';
+import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
 import { registerGObject } from '@github-manager/utils/gnome';
+
+import * as PreferencesController from './PreferencesController';
 
 export interface PrefsRowConstructorProperties extends Box.ConstructorProperties {
     label: string;
@@ -14,16 +15,6 @@ export interface PrefsRowConstructorProperties extends Box.ConstructorProperties
     setting: string;
     prefix: Widget;
     suffix: Widget;
-}
-
-export interface PrefsRowSpinButtonParameters {
-    min: number;
-    max: number;
-    step: number;
-}
-
-export interface PrefsRowDropDownParameters {
-    items: string[];
 }
 
 @registerGObject
@@ -92,8 +83,6 @@ export class PrefsRow extends Box {
     private _prefix?: Widget;
     private _suffix?: Widget;
 
-    private settings: Settings;
-
     public constructor(params?: Partial<PrefsRowConstructorProperties>) {
         super(params);
 
@@ -104,42 +93,16 @@ export class PrefsRow extends Box {
         this._settingKey = params?.setting ?? '';
         this._prefix = params?.prefix;
         this._suffix = params?.suffix;
-
-        this.settings = getSettings();
     }
 
     public vfunc_realize(): void {
         super.vfunc_realize();
 
-        let widget: Widget, bindProperty: string;
-        if (this._widgetType == 'GtkPasswordEntry') {
-            widget = new PasswordEntry({ showPeekIcon: true });
-            bindProperty = 'text';
-        } else if (this._widgetType == 'GtkSwitch') {
-            widget = new Switch({ halign: Align.END });
-            bindProperty = 'state';
-        } else if (this._widgetType == 'GtkSpinButton') {
-            const params = JSON.parse(this._widgetParameters) as Partial<PrefsRowSpinButtonParameters>;
-            widget = SpinButton.new_with_range(params.min ?? 0, params.max ?? 100, params.step ?? 1);
-            bindProperty = 'value';
-        } else if (this._widgetType == 'GtkDropDown') {
-            const params = JSON.parse(this._widgetParameters) as Partial<PrefsRowDropDownParameters>;
-            widget = new DropDown({ model: StringList.new(params.items ?? []) });
-
-            bindProperty = 'selected';
-        } else {
-            widget = new Entry();
-            bindProperty = 'text';
-        }
-
-        // Align the widget
-        widget.set_valign(Align.CENTER);
-        widget.set_hexpand(true);
-        widget.set_vexpand(false);
-
-        if (this._settingKey != '') {
-            this.settings.bind(this._settingKey, widget, bindProperty, SettingsBindFlags.DEFAULT);
-        }
+        const widget = PreferencesController.createAndBindWidget(
+            this._widgetType,
+            this._widgetParameters,
+            this._settingKey
+        );
 
         if (this._prefix) {
             this.append(this._prefix);
