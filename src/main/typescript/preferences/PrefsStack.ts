@@ -4,6 +4,7 @@ import {
     Buildable,
     Builder,
     HeaderBar,
+    MenuButton,
     ScrolledWindow,
     Stack,
     StackPage,
@@ -27,11 +28,13 @@ export class PrefsStack extends Stack {
     public static metaInfo: MetaInfo = {
         GTypeName: 'PrefsStack',
         Template: File.new_for_path(`${getCurrentExtension().path}/ui/PrefsStack.ui`).get_uri(),
-        InternalChildren: ['header'],
+        InternalChildren: ['header', 'primaryMenu'],
         Implements: [Buildable],
     };
 
     private _header?: HeaderBar;
+
+    private _primaryMenu?: MenuButton;
 
     public constructor() {
         super({ hexpand: true, vexpand: true, transitionType: StackTransitionType.SLIDE_LEFT_RIGHT });
@@ -64,6 +67,11 @@ export class PrefsStack extends Stack {
     public vfunc_realize(): void {
         super.vfunc_realize();
 
+        if (!this._header || !this._primaryMenu) {
+            PrefsStack.LOGGER.error('Unable to initialize UI: header and/or primary menu are undefined');
+            return;
+        }
+
         const dialog = this.get_root();
         if (dialog instanceof Window) {
             dialog.set_titlebar(this._header);
@@ -71,5 +79,7 @@ export class PrefsStack extends Stack {
         } else {
             PrefsStack.LOGGER.error('Unable to initialize UI: PrefsStack root is not an instance of Window');
         }
+
+        PreferencesController.addMenuButton(this._header, this._primaryMenu);
     }
 }

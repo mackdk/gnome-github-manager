@@ -1,5 +1,5 @@
-import { HeaderBar, PreferencesPage, PreferencesWindow } from '@gi-types/adw1';
-import { Builder } from '@gi-types/gtk4';
+import { PreferencesPage, PreferencesWindow } from '@gi-types/adw1';
+import { Builder, HeaderBar } from '@gi-types/gtk4';
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
 import { PreferencesController, PrefsStack } from '@github-manager/preferences';
@@ -39,6 +39,6 @@ export default {
             ?.get_parent() // GtkBox
             ?.get_first_child() as HeaderBar;
 
-        header.pack_start(builder.get_object('primaryMenu'));
+        PreferencesController.addMenuButton(header, builder.get_object('primaryMenu'));
     },
 };
