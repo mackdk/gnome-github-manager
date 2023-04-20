@@ -23,7 +23,8 @@ const data: string = readFileSync(`${resourcesPath}/metadata.json`, 'utf-8');
 const metadata: ExtensionMetadata = JSON.parse(data) as ExtensionMetadata;
 
 const globals = {
-    '@gi-types/adw1': 'imports.gi.Adw',
+    // Dirty hack to make class that require Adwaita to work even in Gnome < 42
+    '@gi-types/adw1': 'imports.gi.versions.Adw ? imports.gi.Adw : { ActionRow: imports.gi.Gtk.Widget }',
     '@gi-types/clutter10': 'imports.gi.Clutter',
     '@gi-types/gdk4': 'imports.gi.Gdk',
     '@gi-types/gdkpixbuf2': 'imports.gi.GdkPixbuf',
