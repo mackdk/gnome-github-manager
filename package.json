@@ -8,9 +8,8 @@
   "scripts": {
     "clean": "rm -rf build",
     "compile": "rollup --config rollup.config.ts --configPlugin 'typescript={cacheDir:\"build/compile\"}'",
-    "lint": "yarn run eslint src",
-    "lintStrict": "yarn run eslint src --max-warnings=0",
-    "build": "yarn lint && yarn compile && yarn updateTranslations",
+    "lint": "yarn run eslint src --max-warnings=0",
+    "build": "yarn compile && yarn updateTranslations",
     "sync": "rsync -a ./build/dist/* ~/.local/share/gnome-shell/extensions/$(cat src/main/resources/metadata.json | jq -r .uuid)",
     "deploy": "yarn build && yarn sync",
     "followLogs": "journalctl -f | grep \"\\[$(cat src/main/resources/metadata.json | jq -r .name) Extension\\]\"",
