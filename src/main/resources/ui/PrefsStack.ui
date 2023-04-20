@@ -34,13 +34,12 @@
                 <property name="stack">PrefsStack</property>
             </object>
         </property>
-        <child type="end">
-            <object class="GtkMenuButton">
-                <property name="receives-default">True</property>
-                <property name="menu-model">primary-menu</property>
-                <property name="icon-name">open-menu-symbolic</property>
-            </object>
-        </child>
+    </object>
+
+    <object class="GtkMenuButton" id="primaryMenu">
+        <property name="receives-default">True</property>
+        <property name="menu-model">primary-menu</property>
+        <property name="icon-name">open-menu-symbolic</property>
     </object>
 
     <template class="PrefsStack">

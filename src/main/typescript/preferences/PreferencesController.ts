@@ -90,6 +90,21 @@ export function buildActionGroupFor(dialog: Window): ActionGroup {
     return actionGroup;
 }
 
+export function addMenuButton(header: HeaderBar, menu: Widget): void {
+    try {
+        // Try to set the menu button according to the title bar setting
+        const buttonLayout = getSettings('org.gnome.desktop.wm.preferences').get_string('button-layout');
+        if (buttonLayout == 'appmenu:close') {
+            header.pack_start(menu);
+        } else {
+            header.pack_end(menu);
+        }
+    } catch (error) {
+        // No luck... just set at the beginning
+        header.pack_start(menu);
+    }
+}
+
 function addActionToGroup(actionGroup: SimpleActionGroup, name: string, callback: () => void): void {
     const action = new SimpleAction({ name: name });
     action.connect('activate', callback);
