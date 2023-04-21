@@ -1,7 +1,5 @@
-import { Status, reason } from '@tshttp/status';
-
 import * as GitHub from './GitHubApiTypes';
-import { ApiError, GitHubClient } from './GitHubClient';
+import { ApiError, GitHubClient, HttpStatus } from './GitHubClient';
 
 export class HttpReponse {
     public readonly statusCode: number;
@@ -76,7 +74,7 @@ export abstract class AbstractGitHubClient implements GitHubClient {
             this.handleRequestError(error);
         }
 
-        this.validateResponseCode(response, Status.Ok);
+        this.validateResponseCode(response, HttpStatus.Ok);
         return JSON.parse(response.body) as GitHub.Thread[];
     }
 
@@ -89,7 +87,7 @@ export abstract class AbstractGitHubClient implements GitHubClient {
             this.handleRequestError(error);
         }
 
-        this.validateResponseCode(response, Status.Ok);
+        this.validateResponseCode(response, HttpStatus.Ok);
 
         const subjectDetail = JSON.parse(response.body) as GitHub.HtmlAccessible;
         return subjectDetail.html_url;
@@ -104,7 +102,7 @@ export abstract class AbstractGitHubClient implements GitHubClient {
             this.handleRequestError(error);
         }
 
-        this.validateResponseCode(response, Status.ResetContent, Status.NotModified);
+        this.validateResponseCode(response, HttpStatus.ResetContent, HttpStatus.NotModified);
     }
 
     public async markAllThreadsAsRead(): Promise<void> {
@@ -123,7 +121,7 @@ export abstract class AbstractGitHubClient implements GitHubClient {
             this.handleRequestError(error);
         }
 
-        this.validateResponseCode(response, Status.Accepted, Status.ResetContent, Status.NotModified);
+        this.validateResponseCode(response, HttpStatus.Accepted, HttpStatus.ResetContent, HttpStatus.NotModified);
     }
 
     protected abstract doRequest(method: string, url: string, request?: RequestBody): Promise<HttpReponse>;
@@ -150,7 +148,15 @@ export abstract class AbstractGitHubClient implements GitHubClient {
     private validateResponseCode(response: HttpReponse, ...validStates: number[]): void {
         if (!validStates.includes(response.statusCode)) {
             const errorResponse = JSON.parse(response.body) as GitHub.BasicError;
-            const message = errorResponse.message ?? reason(response.statusCode as Status);
+            const message =
+                errorResponse.message ??
+                HttpStatus[response.statusCode]
+                    // insert a space between lower & upper
+                    .replace(/([a-z])([A-Z])/g, '$1 $2')
+                    // space before last upper in a sequence followed by lower
+                    .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
+                    // uppercase the first character
+                    .replace(/^./, (str: string) => str.toUpperCase());
 
             throw new ApiError(response.statusCode, message);
         }
