@@ -94,8 +94,7 @@ export default defineConfig([
                 // Replace the translation domain in the UI files
                 'replace-translation-domain': `sed -i 's/{{uuid}}/${metadata.uuid}/' ${distributionPath}/ui/PrefsStack.ui`,
                 // Compile the schema
-                'create-schema-folder': `mkdir -p ${distributionPath}/schemas`,
-                'compile-schema': `glib-compile-schemas ${mainSrcPath}/schemas/ --targetdir=${distributionPath}/schemas/`,
+                'compile-schema': `glib-compile-schemas ${resourcesPath}/schemas/ --targetdir=${distributionPath}/schemas/`,
                 // Compile the po files and place them in the correct directory
                 // prettier-ignore
                 'compile-translations': `find ${mainSrcPath}/po/ -name "*.po" -exec basename -s .po {} \\; ` +
