@@ -1,9 +1,8 @@
 import { Icon } from '@gi-types/gio2';
 import { main as ShellUI } from '@gnome-shell/ui';
 import { Notification } from '@gnome-shell/ui/messageTray';
-import { Status } from '@tshttp/status';
 
-import { ApiError, GitHub, GitHubClient, GitHubClientFactory } from '@github-manager/client';
+import { ApiError, GitHub, GitHubClient, GitHubClientFactory, HttpStatus } from '@github-manager/client';
 import { NotificationActionType, SettingsWrapper } from '@github-manager/settings';
 import { EventDispatcher, LimitedRetriableTimer, Logger } from '@github-manager/utils';
 
@@ -102,7 +101,7 @@ export class NotificationController {
         } catch (error) {
             if (error instanceof ApiError) {
                 // If we get not modified as response just proceed
-                if (error.statusCode == Status.NotModified) {
+                if (error.statusCode == HttpStatus.NotModified) {
                     return true;
                 }
 

@@ -48,10 +48,6 @@
                     "group": "internal"
                 },
                 {
-                    "pattern": "@tshttp/**",
-                    "group": "external"
-                },
-                {
                     "pattern": "@gi-types/**",
                     "group": "external"
                 },
