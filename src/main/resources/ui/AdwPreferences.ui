@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface domain="{{uuid}}">
+
+    <menu id="primary-menu">
+        <section>
+            <item>
+                <attribute name="label" translatable="yes">Reset to default</attribute>
+                <attribute name="action">actions.resetToDefault</attribute>
+            </item>
+        </section>
+        <section>
+            <item>
+                <attribute name="label" translatable="yes">Report an issue</attribute>
+                <attribute name="action">actions.reportBug</attribute>
+            </item>
+            <item>
+                <attribute name="label" translatable="yes">User guide</attribute>
+                <attribute name="action">actions.userGuide</attribute>
+            </item>
+        </section>
+        <section>
+            <item>
+                <attribute name="label" translatable="yes">About GitHub Manager</attribute>
+                <attribute name="action">actions.about</attribute>
+            </item>
+        </section>
+    </menu>
+
+    <object class="GtkMenuButton" id="primaryMenu">
+        <property name="menu-model">primary-menu</property>
+        <property name="icon-name">open-menu-symbolic</property>
+    </object>
+
+    <object class="AdwPreferencesPage" id="general">
+        <property name="title" translatable="yes">General</property>
+        <property name="icon-name">view-app-grid-symbolic</property>
+        <child>
+            <object class="AdwPreferencesGroup">
+                <property name="title" translatable="yes">GitHub Account</property>
+                <child>
+                    <object class="SettingRow">
+                        <property name="title" translatable="yes">Domain</property>
+                        <property name="subtitle" translatable="yes">Change domain only if using GitHub Enterprise.</property>
+                        <property name="widget-type">GtkEntry</property>
+                        <property name="setting-key">domain</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="SettingRow">
+                        <property name="title" translatable="yes">Token</property>
+                        <property name="subtitle" translatable="yes">Authentication token to access the API.</property>
+                        <property name="widget-type">GtkPasswordEntry</property>
+                        <property name="setting-key">token</property>
+                        <property name="prefix">
+                            <object class="GtkButton">
+                                <property name="hexpand">False</property>
+                                <property name="vexpand">False</property>
+                                <property name="valign">center</property>
+                                <property name="receives-default">true</property>
+                                <property name="icon-name">emblem-system-symbolic</property>
+                                <property name="tooltip-text" translatable="yes">Generate a new personal access token</property>
+                                <property name="action-name">actions.generateToken</property>
+                                <style>
+                                    <class name="circular"/>
+                                </style>
+                            </object>
+                        </property>
+                    </object>
+                </child>
+            </object>
+        </child>
+    </object>
+
+    <object class="AdwPreferencesPage" id="notifications">
+        <property name="title" translatable="yes">Notifications</property>
+        <property name="icon-name">preferences-system-notifications-symbolic</property>
+        <child>
+            <object class="AdwPreferencesGroup">
+                <property name="title" translatable="yes">Behaviour</property>
+                <child>
+                    <object class="SettingRow">
+                        <property name="title" translatable="yes">Refresh interval</property>
+                        <property name="subtitle" translatable="yes">How often data is synced. Might be enforced by &lt;a href="https://docs.github.com/en/rest/activity/notifications"&gt;GitHub Policy&lt;/a&gt;.</property>
+                        <property name="widget-type">GtkSpinButton</property>
+                        <property name="widget-parameters">{"min":60,"max":86400,"step":60}</property>
+                        <property name="setting-key">refresh-interval</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="SettingRow">
+                        <property name="title" translatable="yes">Show only partecipating</property>
+                        <property name="subtitle" translatable="yes">Ignore notifications not for you.</property>
+                        <property name="widget-type">GtkSwitch</property>
+                        <property name="setting-key">show-participating-only</property>
+                    </object>
+                </child>
+            </object>
+        </child>
+        <child>
+            <object class="AdwPreferencesGroup">
+                <property name="title" translatable="yes">Appearance</property>
+                <child>
+                    <object class="SettingRow">
+                        <property name="title" translatable="yes">UI notifications mode</property>
+                        <property name="subtitle" translatable="yes">How to show GNOME notifications.</property>
+                        <property name="widget-type">GtkDropDown</property>
+                        <!-- FOR TRANSLATORS: This must be a valid JSON. Please translate only the quoted text within the brackets [] and leave the rest as is. -->
+                        <property name="widget-parameters" translatable="yes">{"items":["None", "Single", "Digest"]}</property>
+                        <property name="setting-key">notification-mode</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="SettingRow">
+                        <property name="title" translatable="yes">Hide notification count</property>
+                        <property name="subtitle" translatable="yes">Do not show the count next to the widget icon.</property>
+                        <property name="widget-type">GtkSwitch</property>
+                        <property name="setting-key">hide-notification-count</property>
+                    </object>
+                </child>
+            </object>
+        </child>
+        <child>
+            <object class="AdwPreferencesGroup">
+                <property name="title" translatable="yes">Actions</property>
+                <child>
+                    <object class="SettingRow">
+                        <property name="title" translatable="yes">On activation</property>
+                        <property name="subtitle" translatable="yes">What happens when you click on the notification.</property>
+                        <property name="widget-type">GtkDropDown</property>
+                        <!-- FOR TRANSLATORS: This must be a valid JSON. Please translate only the quoted text within the brackets [] and leave the rest as is. -->
+                        <property name="widget-parameters" translatable="yes">{"items":["Nothing", "Open", "Mark as Read", "Dismiss"]}</property>
+                        <property name="setting-key">notification-activate-action</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="SettingRow">
+                        <property name="title" translatable="yes">Primary button</property>
+                        <property name="subtitle" translatable="yes">Primary action button, shown on the right.</property>
+                        <property name="widget-type">GtkDropDown</property>
+                        <!-- FOR TRANSLATORS: This must be a valid JSON. Please translate only the quoted text within the brackets [] and leave the rest as is. -->
+                        <property name="widget-parameters" translatable="yes">{"items":["None", "Open", "Mark as Read", "Dismiss"]}</property>
+                        <property name="setting-key">notification-primary-action</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="SettingRow">
+                        <property name="title" translatable="yes">Secondary button</property>
+                        <property name="subtitle" translatable="yes">Secondary action button, shown on the left.</property>
+                        <property name="widget-type">GtkDropDown</property>
+                        <!-- FOR TRANSLATORS: This must be a valid JSON. Please translate only the quoted text within the brackets [] and leave the rest as is. -->
+                        <property name="widget-parameters" translatable="yes">{"items":["None", "Open", "Mark as Read", "Dismiss"]}</property>
+                        <property name="setting-key">notification-secondary-action</property>
+                    </object>
+                </child>
+            </object>
+        </child>
+    </object>
+
+</interface>

@@ -4,6 +4,7 @@ declare global {
     export const imports: {
         gi: {
             versions: {
+                Adw: string;
                 Soup: string;
             };
         };

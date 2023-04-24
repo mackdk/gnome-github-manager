@@ -34,6 +34,7 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
+    "@gi-types/adw1": "^1.1.1",
     "@gi-types/clutter10": "^10.0.1",
     "@gi-types/gdk4": "^4.0.1",
     "@gi-types/gdkpixbuf2": "^2.0.2",
