@@ -23,6 +23,7 @@ const data: string = readFileSync(`${resourcesPath}/metadata.json`, 'utf-8');
 const metadata: ExtensionMetadata = JSON.parse(data) as ExtensionMetadata;
 
 const globals = {
+    '@gi-types/adw1': 'imports.gi.Adw',
     '@gi-types/clutter10': 'imports.gi.Clutter',
     '@gi-types/gdk4': 'imports.gi.Gdk',
     '@gi-types/gdkpixbuf2': 'imports.gi.GdkPixbuf',
@@ -116,7 +117,11 @@ export default defineConfig([
             name: 'prefs',
             globals,
             banner: ["imports.gi.versions.Gtk = '4.0';"].join('\n'),
-            footer: ['var init = prefs.init;', 'var buildPrefsWidget = prefs.buildPrefsWidget;'].join('\n'),
+            footer: [
+                'var init = prefs.init;',
+                'var buildPrefsWidget = prefs.buildPrefsWidget;',
+                'var fillPreferencesWindow = prefs.fillPreferencesWindow;',
+            ].join('\n'),
         },
         treeshake: {
             moduleSideEffects: 'no-external',
