@@ -1,6 +1,7 @@
 import { CURRENT_TIME } from '@gi-types/gdk4';
 import { Pixbuf } from '@gi-types/gdkpixbuf2';
-import { ActionGroup, Settings, SettingsBindFlags, SimpleAction, SimpleActionGroup } from '@gi-types/gio2';
+import { ActionGroup, File, Settings, SettingsBindFlags, SimpleAction, SimpleActionGroup } from '@gi-types/gio2';
+import { free } from '@gi-types/glib2';
 import {
     AboutDialog,
     Align,
@@ -38,6 +39,12 @@ interface SpinButtonParameters {
 
 interface DropDownParameters {
     items: string[];
+}
+
+interface ExtensionInfo {
+    version: string;
+    authors: string[];
+    translators: Record<string, string[]>;
 }
 
 export function createAndBindWidget(widgetType: string, _widgetParameters: string, settingKey?: string): Widget {
@@ -148,16 +155,22 @@ function about(dialog: Window): void {
         const githubIcon = Pixbuf.new_from_file_at_scale(`${extension.path}/github.svg`, -1, 128, true);
         const paintableLogo = Image.new_from_pixbuf(githubIcon).get_paintable();
 
+        const extensionInfo = getAdditionalExtensionInfo('extension-info.json');
+        const translatorsMap = new Map<string, string[]>(Object.entries(extensionInfo.translators));
+
         const aboutDialog = new AboutDialog({
             transientFor: dialog,
             modal: true,
-            authors: ['Thomas Florio <mackdk@hotmail.com>', 'Alexandre Dufournet <alexandre.dufournet@gmail.com>'],
+            authors: extensionInfo.authors,
             programName: extension.metadata.name,
-            version: _('Version {0}', extension.metadata.version.toLocaleString('en-US', { minimumFractionDigits: 1 })),
+            version: _('Version {0}', extensionInfo.version),
             comments: _(
                 'Integrate GitHub within the GNOME Desktop Environment.\n\n' +
                     'Based on GitHub Notifications by Alexandre Dufournet.'
             ),
+            translatorCredits: Array.from(translatorsMap.entries())
+                .map(([lang, authors]) => `${lang}:\n${authors.map((author) => `\t${author}`).join('\n')}\n`)
+                .join('\n'),
             licenseType: License.GPL_2_0,
             website: extension.metadata.url,
             website_label: _('Source code on GitHub'),
@@ -178,6 +191,18 @@ function about(dialog: Window): void {
     } catch (err) {
         LOGGER.error('Unable to open about dialog', err);
     }
+}
+
+function getAdditionalExtensionInfo(filename: string): ExtensionInfo {
+    const [success, bytes] = File.new_for_path(`${extension.path}/${filename}`).load_contents(null);
+    if (!success) {
+        throw new Error('Unable to correcly load extension-info.json');
+    }
+
+    const additionalMetadata = JSON.parse(new TextDecoder('utf-8').decode(bytes.buffer)) as ExtensionInfo;
+    free(bytes);
+
+    return additionalMetadata;
 }
 
 function openUrl(url: string, dialog: Window): void {
