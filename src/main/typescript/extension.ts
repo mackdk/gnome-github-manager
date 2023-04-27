@@ -1,11 +1,8 @@
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
 import { GitHubManager } from '@github-manager/core';
-import { LogLevel, Logger } from '@github-manager/utils';
+import { Logger } from '@github-manager/utils';
 import { initializeTranslations } from '@github-manager/utils/locale';
-
-// Set global logging level
-Logger.globalLoggingLevel = LogLevel.INFO;
 
 /**
  * Extension entry point class.
