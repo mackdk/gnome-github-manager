@@ -198,10 +198,11 @@ function getAdditionalExtensionInfo(filename: string): ExtensionInfo {
         throw new Error('Unable to correcly load extension-info.json');
     }
 
-    const additionalMetadata = JSON.parse(new TextDecoder('utf-8').decode(bytes.buffer)) as ExtensionInfo;
-    free(bytes);
-
-    return additionalMetadata;
+    try {
+        return JSON.parse(new TextDecoder('utf-8').decode(bytes.buffer)) as ExtensionInfo;
+    } finally {
+        free(bytes);
+    }
 }
 
 function openUrl(url: string, dialog: Window): void {

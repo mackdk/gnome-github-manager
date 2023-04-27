@@ -1,5 +1,5 @@
 import { File } from '@gi-types/gio2';
-import { get_user_data_dir } from '@gi-types/glib2';
+import { free, get_user_data_dir } from '@gi-types/glib2';
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
 export enum LogLevel {
@@ -31,22 +31,26 @@ export class Logger {
         if (configuration.query_exists(null)) {
             const [success, bytes] = configuration.load_contents(null);
             if (success) {
-                const lines = new TextDecoder('utf-8').decode(bytes.buffer).split('\n');
-                lines.forEach((line) => {
-                    // Remove any comments
-                    if (line.includes('#')) {
-                        line = line.substring(0, line.indexOf('#'));
-                    }
-
-                    if (line.match(/^\s*(\w+(::\w+)*)\s=\s(TRACE|DEBUG|INFO|WARN|ERROR)\s*$/) !== null) {
-                        const [scope, level] = line.split('=').map((s) => s.trim());
-                        if (scope === Logger.ROOT_SCOPE) {
-                            this.rootLogLevel = LogLevel[level as keyof typeof LogLevel];
-                        } else {
-                            Logger.scopeLevelsMap.set(scope, LogLevel[level as keyof typeof LogLevel]);
+                try {
+                    const lines = new TextDecoder('utf-8').decode(bytes.buffer).split('\n');
+                    lines.forEach((line) => {
+                        // Remove any comments
+                        if (line.includes('#')) {
+                            line = line.substring(0, line.indexOf('#'));
                         }
-                    }
-                });
+
+                        if (line.match(/^\s*(\w+(::\w+)*)\s=\s(TRACE|DEBUG|INFO|WARN|ERROR)\s*$/) !== null) {
+                            const [scope, level] = line.split('=').map((s) => s.trim());
+                            if (scope === Logger.ROOT_SCOPE) {
+                                this.rootLogLevel = LogLevel[level as keyof typeof LogLevel];
+                            } else {
+                                Logger.scopeLevelsMap.set(scope, LogLevel[level as keyof typeof LogLevel]);
+                            }
+                        }
+                    });
+                } finally {
+                    free(bytes);
+                }
             } else {
                 log(`[${Logger.EXT_PREFIX}] Logger initialization ERROR Unable to load configuration file`);
             }
