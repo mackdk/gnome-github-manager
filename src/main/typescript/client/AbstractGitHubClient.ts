@@ -127,7 +127,7 @@ export abstract class AbstractGitHubClient implements GitHubClient {
     protected abstract doRequest(method: string, url: string, request?: RequestBody): Promise<HttpReponse>;
 
     private get baseUrl(): string {
-        if (this.domain == 'github.com' || this.domain == 'api.github.com') {
+        if (this.domain === 'github.com' || this.domain === 'api.github.com') {
             return 'api.github.com';
         } else {
             return `${this._domain}/api/v3`;

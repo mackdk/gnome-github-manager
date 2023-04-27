@@ -133,7 +133,7 @@ export class NotificationAdapter {
 
     private isNotificationNeeded(updatedAtMap: Map<string, Date>, notification: GitHub.Thread): boolean {
         const lastUpdatedAt = updatedAtMap.get(notification.id);
-        return lastUpdatedAt == undefined || notification.updated_at > lastUpdatedAt;
+        return lastUpdatedAt === undefined || notification.updated_at > lastUpdatedAt;
     }
 
     private buildProjectNotification(data: GitHub.Thread): UINotification {
@@ -167,17 +167,17 @@ export class NotificationAdapter {
 
     private setupCommonNotificationProperties(notification: UINotification, data?: GitHub.Thread): void {
         notification.setTransient(false);
-        if (this._activateAction) {
+        if (this._activateAction !== undefined) {
             const action = this._activateAction;
             notification.connect('activated', () => action.execute(data));
         }
 
-        if (this._secondaryAction) {
+        if (this._secondaryAction !== undefined) {
             const action = this._secondaryAction;
             notification.addAction(action.label, () => action.execute(data));
         }
 
-        if (this._primaryAction) {
+        if (this._primaryAction !== undefined) {
             const action = this._primaryAction;
             notification.addAction(action.label, () => action.execute(data));
         }

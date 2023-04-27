@@ -104,13 +104,13 @@ export class PrefsRow extends Box {
             this._settingKey
         );
 
-        if (this._prefix) {
+        if (this._prefix !== undefined) {
             this.append(this._prefix);
         }
 
         this.append(widget);
 
-        if (this._suffix) {
+        if (this._suffix !== undefined) {
             this.append(this._suffix);
         }
     }
@@ -120,7 +120,7 @@ export class PrefsRow extends Box {
     }
 
     public set label(value: string) {
-        if (this._label == value) {
+        if (this._label === value) {
             return;
         }
 
@@ -133,7 +133,7 @@ export class PrefsRow extends Box {
     }
 
     public set description(value: string) {
-        if (this._description == value) {
+        if (this._description === value) {
             return;
         }
 
@@ -146,7 +146,7 @@ export class PrefsRow extends Box {
     }
 
     public set widgetType(value: string) {
-        if (this._widgetType == value) {
+        if (this._widgetType === value) {
             return;
         }
 
@@ -159,7 +159,7 @@ export class PrefsRow extends Box {
     }
 
     public set widgetParameters(value: string) {
-        if (this._widgetParameters == value) {
+        if (this._widgetParameters === value) {
             return;
         }
 
@@ -172,7 +172,7 @@ export class PrefsRow extends Box {
     }
 
     public set settingKey(value: string) {
-        if (this._settingKey == value) {
+        if (this._settingKey === value) {
             return;
         }
 
@@ -185,7 +185,7 @@ export class PrefsRow extends Box {
     }
 
     public set prefix(value: Widget | undefined) {
-        if (this._prefix == value) {
+        if (this._prefix === value) {
             return;
         }
 
@@ -198,7 +198,7 @@ export class PrefsRow extends Box {
     }
 
     public set suffix(value: Widget | undefined) {
-        if (this._suffix == value) {
+        if (this._suffix === value) {
             return;
         }
 

@@ -49,17 +49,17 @@ interface ExtensionInfo {
 
 export function createAndBindWidget(widgetType: string, _widgetParameters: string, settingKey?: string): Widget {
     let widget: Widget, bindProperty: string;
-    if (widgetType == 'GtkPasswordEntry') {
+    if (widgetType === 'GtkPasswordEntry') {
         widget = new PasswordEntry({ showPeekIcon: true });
         bindProperty = 'text';
-    } else if (widgetType == 'GtkSwitch') {
+    } else if (widgetType === 'GtkSwitch') {
         widget = new Switch({ halign: Align.END });
         bindProperty = 'state';
-    } else if (widgetType == 'GtkSpinButton') {
+    } else if (widgetType === 'GtkSpinButton') {
         const params = JSON.parse(_widgetParameters) as Partial<SpinButtonParameters>;
         widget = SpinButton.new_with_range(params.min ?? 0, params.max ?? 100, params.step ?? 1);
         bindProperty = 'value';
-    } else if (widgetType == 'GtkDropDown') {
+    } else if (widgetType === 'GtkDropDown') {
         const params = JSON.parse(_widgetParameters) as Partial<DropDownParameters>;
         widget = new DropDown({ model: StringList.new(params.items ?? []) });
 
@@ -74,7 +74,7 @@ export function createAndBindWidget(widgetType: string, _widgetParameters: strin
     widget.set_hexpand(true);
     widget.set_vexpand(false);
 
-    if (settingKey && settingKey != '') {
+    if (settingKey !== undefined && settingKey !== '') {
         getSettings().bind(settingKey, widget, bindProperty, SettingsBindFlags.DEFAULT);
     }
 
@@ -101,7 +101,7 @@ export function addMenuButton(header: HeaderBar, menu: Widget): void {
     try {
         // Try to set the menu button according to the title bar setting
         const buttonLayout = getSettings('org.gnome.desktop.wm.preferences').get_string('button-layout');
-        if (buttonLayout == 'appmenu:close') {
+        if (buttonLayout === 'appmenu:close') {
             header.pack_start(menu);
         } else {
             header.pack_end(menu);
@@ -133,12 +133,11 @@ function resetToDefault(dialog: Window): void {
     confirmation.set_default_response(ResponseType.NO);
 
     confirmation.connect('response', (_source, response) => {
-        if (response == ResponseType.YES) {
+        if (response === ResponseType.YES) {
             const settings: Settings = getSettings();
             settings.list_keys().forEach((key) => {
                 const defaultValue = settings.get_default_value(key);
-
-                if (defaultValue) {
+                if (defaultValue !== null) {
                     settings.set_value(key, defaultValue);
                 }
             });
@@ -176,7 +175,7 @@ function about(dialog: Window): void {
             website_label: _('Source code on GitHub'),
         });
 
-        if (paintableLogo) {
+        if (paintableLogo !== null) {
             aboutDialog.logo = paintableLogo;
         }
 

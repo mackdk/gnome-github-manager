@@ -52,7 +52,7 @@ export class PrefsStack extends Stack {
 
             super.add_titled(window, child.label, child.label);
         } else if (child instanceof StackPage) {
-            if (child.title) {
+            if (child.title.length > 0) {
                 super.add_titled(child.child, child.name, child.title);
             } else {
                 super.add_named(child.child, child.name);
@@ -67,7 +67,7 @@ export class PrefsStack extends Stack {
     public vfunc_realize(): void {
         super.vfunc_realize();
 
-        if (!this._header || !this._primaryMenu) {
+        if (this._header === undefined || this._primaryMenu === undefined) {
             PrefsStack.LOGGER.error('Unable to initialize UI: header and/or primary menu are undefined');
             return;
         }

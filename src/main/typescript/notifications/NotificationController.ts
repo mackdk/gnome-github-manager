@@ -101,7 +101,7 @@ export class NotificationController {
         } catch (error) {
             if (error instanceof ApiError) {
                 // If we get not modified as response just proceed
-                if (error.statusCode == HttpStatus.NotModified) {
+                if (error.statusCode === HttpStatus.NotModified) {
                     return true;
                 }
 
@@ -145,7 +145,7 @@ export class NotificationController {
 
     private markAsRead(notificationId: string): void {
         this.notifications.forEach((item, index) => {
-            if (item.id == notificationId) {
+            if (item.id === notificationId) {
                 this.notifications.splice(index, 1);
             }
         });

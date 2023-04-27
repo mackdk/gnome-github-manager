@@ -28,7 +28,7 @@ export class Soup2GitHubClient extends AbstractGitHubClient {
         message.requestHeaders.append('Authorization', `Bearer ${this._token}`);
 
         // Set the request body, if available
-        if (request) {
+        if (request !== undefined) {
             const encoder = new TextEncoder();
             message.set_request(request.contentType, MemoryUse.COPY, encoder.encode(request.body));
         }
@@ -41,7 +41,7 @@ export class Soup2GitHubClient extends AbstractGitHubClient {
                     Soup2GitHubClient.LOGGER.debug('Response: {0} length {1}', msg.statusCode, msg.responseBody.length);
 
                     // Update the poll interval if set in the response
-                    if (msg.responseHeaders.get('X-Poll-Interval')) {
+                    if (msg.responseHeaders.get('X-Poll-Interval') !== null) {
                         const enforcedPollInterval = Number(msg.responseHeaders.get('X-Poll-Interval'));
                         if (enforcedPollInterval !== this._pollInterval) {
                             Soup2GitHubClient.LOGGER.info(

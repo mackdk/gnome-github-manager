@@ -38,9 +38,9 @@ export class Logger {
                         line = line.substring(0, line.indexOf('#'));
                     }
 
-                    if (line.match(/^\s*(\w+(::\w+)*)\s=\s(TRACE|DEBUG|INFO|WARN|ERROR)\s*$/)) {
+                    if (line.match(/^\s*(\w+(::\w+)*)\s=\s(TRACE|DEBUG|INFO|WARN|ERROR)\s*$/) !== null) {
                         const [scope, level] = line.split('=').map((s) => s.trim());
-                        if (scope == Logger.ROOT_SCOPE) {
+                        if (scope === Logger.ROOT_SCOPE) {
                             this.rootLogLevel = LogLevel[level as keyof typeof LogLevel];
                         } else {
                             Logger.scopeLevelsMap.set(scope, LogLevel[level as keyof typeof LogLevel]);
@@ -54,7 +54,7 @@ export class Logger {
     }
 
     private static findLogLevel(loggerName: string): LogLevel {
-        if (Logger.scopeLevelsMap.size == 0) {
+        if (Logger.scopeLevelsMap.size === 0) {
             return Logger.rootLogLevel;
         }
 
@@ -144,7 +144,7 @@ export class Logger {
     }
 
     private hasErrorParameter(message: string, numArguments: number): boolean {
-        if (numArguments == 0) {
+        if (numArguments === 0) {
             return false;
         }
 

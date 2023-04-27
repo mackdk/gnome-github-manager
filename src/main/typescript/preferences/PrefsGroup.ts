@@ -65,7 +65,7 @@ export class PrefsGroup extends Box {
     }
 
     public set label(value: string) {
-        if (this._label == value) {
+        if (this._label === value) {
             return;
         }
 

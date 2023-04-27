@@ -24,7 +24,7 @@ export class OpenAction implements NotificationAction {
     }
 
     public execute(notification?: GitHub.Thread): void {
-        if (notification) {
+        if (notification !== undefined) {
             this.openSingle(notification);
             return;
         }

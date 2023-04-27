@@ -44,7 +44,7 @@ export class LimitedRetriableTimer {
         this.currentInterval = this._interval;
 
         // If no initial delay execute immediately
-        if (initialDelay == 0) {
+        if (initialDelay === 0) {
             this.runTaskAndSchedule();
         } else {
             // Otherwise schedule the first execution
@@ -56,7 +56,7 @@ export class LimitedRetriableTimer {
     }
 
     public stop(): void {
-        if (!this.timerHandle) {
+        if (this.timerHandle === undefined) {
             return;
         }
 
@@ -81,7 +81,7 @@ export class LimitedRetriableTimer {
 
     public set interval(value: number) {
         this._interval = value;
-        if (this.timerHandle) {
+        if (this.timerHandle !== undefined) {
             this.restart();
         }
     }

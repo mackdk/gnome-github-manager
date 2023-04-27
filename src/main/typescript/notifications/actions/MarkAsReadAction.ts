@@ -21,7 +21,7 @@ export class MarkAsReadAction implements NotificationAction {
     }
 
     public execute(notification?: GitHub.Thread): void {
-        if (notification) {
+        if (notification !== undefined) {
             this.readSingle(notification);
             return;
         }

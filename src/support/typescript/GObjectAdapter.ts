@@ -47,7 +47,7 @@ export default class GObjectAdapter {
                 if (
                     ts.isExpressionStatement(node) &&
                     ts.isCallExpression(node.expression) &&
-                    node.expression.expression.kind == ts.SyntaxKind.SuperKeyword
+                    node.expression.expression.kind === ts.SyntaxKind.SuperKeyword
                 ) {
                     // Return a call to super._init() with the same arguments
                     return context.factory.createExpressionStatement(
@@ -84,7 +84,7 @@ export default class GObjectAdapter {
             const visitor = (node: ts.Node): ts.Node => {
                 if (ts.isClassDeclaration(node) || ts.isClassExpression(node)) {
                     className = node.name?.getText();
-                    if (className && this.gobjects.includes(className)) {
+                    if (className !== undefined && this.gobjects.includes(className)) {
                         return ts.visitEachChild(node, gobjectClassVisitor, context);
                     }
                 }
@@ -98,10 +98,10 @@ export default class GObjectAdapter {
 
     private isDecoratedClass(node: ts.ClassDeclaration, decorator: string): boolean {
         const decorators = ts.getDecorators(node) ?? [];
-        if (decorators.length == 0) {
+        if (decorators.length === 0) {
             return false;
         }
 
-        return decorators.find((n) => n.getText() == decorator) !== undefined;
+        return decorators.find((n) => n.getText() === decorator) !== undefined;
     }
 }

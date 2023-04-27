@@ -82,14 +82,14 @@ export class SettingRow extends ActionRow {
             this._settingKey
         );
 
-        if (this._prefix) {
+        if (this._prefix !== undefined) {
             this.add_suffix(this._prefix);
         }
 
         this.set_activatable_widget(widget);
         this.add_suffix(widget);
 
-        if (this._suffix) {
+        if (this._suffix !== undefined) {
             this.add_suffix(this._suffix);
         }
     }
@@ -99,7 +99,7 @@ export class SettingRow extends ActionRow {
     }
 
     public set widgetType(value: string) {
-        if (this._widgetType == value) {
+        if (this._widgetType === value) {
             return;
         }
 
@@ -112,7 +112,7 @@ export class SettingRow extends ActionRow {
     }
 
     public set widgetParameters(value: string) {
-        if (this._widgetParameters == value) {
+        if (this._widgetParameters === value) {
             return;
         }
 
@@ -125,7 +125,7 @@ export class SettingRow extends ActionRow {
     }
 
     public set settingKey(value: string) {
-        if (this._settingKey == value) {
+        if (this._settingKey === value) {
             return;
         }
 
@@ -138,7 +138,7 @@ export class SettingRow extends ActionRow {
     }
 
     public set prefix(value: Widget | undefined) {
-        if (this._prefix == value) {
+        if (this._prefix === value) {
             return;
         }
 
@@ -151,7 +151,7 @@ export class SettingRow extends ActionRow {
     }
 
     public set suffix(value: Widget | undefined) {
-        if (this._suffix == value) {
+        if (this._suffix === value) {
             return;
         }
 

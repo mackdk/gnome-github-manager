@@ -17,7 +17,7 @@ export class DismissAction implements NotificationAction {
             return;
         }
 
-        if (notification) {
+        if (notification !== undefined) {
             DismissAction.LOGGER.debug('Dismissing notification {0}', notification.id);
         } else {
             DismissAction.LOGGER.debug(`Dismissing all notifications`);

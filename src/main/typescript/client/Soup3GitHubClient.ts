@@ -28,7 +28,7 @@ export class Soup3GitHubClient extends AbstractGitHubClient {
         message.requestHeaders.append('Authorization', `Bearer ${this._token}`);
 
         // Set the request body, if available
-        if (request) {
+        if (request !== undefined) {
             const encoder = new TextEncoder();
             message.set_request_body_from_bytes(request.contentType, new Bytes(encoder.encode(request.body)));
         }
@@ -41,7 +41,7 @@ export class Soup3GitHubClient extends AbstractGitHubClient {
 
         // Update the poll interval if set in the response
         const pollIntervalHeader = message.responseHeaders.get_one('X-Poll-Interval');
-        if (pollIntervalHeader) {
+        if (pollIntervalHeader !== null) {
             const enforcedPollInterval = Number(pollIntervalHeader);
             if (enforcedPollInterval !== this._pollInterval) {
                 Soup3GitHubClient.LOGGER.info('New polling interval enforced by GitHub {}s', enforcedPollInterval);

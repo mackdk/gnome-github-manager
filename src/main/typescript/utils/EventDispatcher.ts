@@ -35,7 +35,7 @@ export class EventDispatcher implements Disposable {
 
     public async emit<T extends unknown[]>(event: string, ...args: T): Promise<boolean> {
         const eventListeners = await Promise.resolve(this.eventListener.get(event));
-        if (eventListeners == undefined) {
+        if (eventListeners === undefined) {
             return false;
         }
 

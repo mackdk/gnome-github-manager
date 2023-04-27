@@ -26,7 +26,7 @@ export class GitHubWidget extends BoxLayout {
     }
 
     public set text(value: string) {
-        if (this.label.text == value) {
+        if (this.label.text === value) {
             return;
         }
 
@@ -39,7 +39,7 @@ export class GitHubWidget extends BoxLayout {
     }
 
     public set textVisible(value: boolean) {
-        if (this.label.visible == value) {
+        if (this.label.visible === value) {
             return;
         }
 
