@@ -168,8 +168,8 @@ function about(dialog: Window): void {
                     'Based on GitHub Notifications by Alexandre Dufournet.'
             ),
             translatorCredits: Array.from(translatorsMap.entries())
-                .map(([lang, authors]) => `${lang}:\n${authors.map((author) => `\t${author}`).join('\n')}\n`)
-                .join('\n'),
+                .map(([lang, translators]) => `${lang}:\n\t${translators.join('\n\t')}`)
+                .join('\n\n'),
             licenseType: License.GPL_2_0,
             website: extension.metadata.url,
             website_label: _('Source code on GitHub'),
