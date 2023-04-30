@@ -162,7 +162,7 @@ function about(dialog: Window): void {
             modal: true,
             authors: extensionInfo.authors,
             programName: extension.metadata.name,
-            version: _('Version {0}', extensionInfo.version),
+            version: _('Version {0} r{1}', extensionInfo.version, extension.metadata.version),
             comments: _(
                 'Integrate GitHub within the GNOME Desktop Environment.\n\n' +
                     'Based on GitHub Notifications by Alexandre Dufournet.'

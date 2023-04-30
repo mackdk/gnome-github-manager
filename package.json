@@ -4,17 +4,22 @@
   "main": "extension.js",
   "repository": "git@github.com:mackdk/gnome-github-notifications.git",
   "author": "Thomas Florio <mackdk@hotmail.com>",
-  "license": "GPL-2.0-only",
+  "contributors": [
+    "Alexandre Dufournet <alexandre.dufournet@gmail.com>",
+    "Mohammad Amin Chitgarha <machitgarha@outlook.com>"
+  ],
+  "license": "GPL-2.0-or-later",
   "scripts": {
     "clean": "rm -rf build",
     "compile": "rollup --config rollup.config.ts --configPlugin 'typescript={cacheDir:\"build/compile\"}'",
     "lint": "yarn run eslint src --max-warnings=0",
     "build": "yarn compile && yarn updateTranslations",
-    "sync": "rsync -a ./build/dist/* ~/.local/share/gnome-shell/extensions/$(cat src/main/resources/metadata.json | jq -r .uuid)",
+    "sync": "test -d build/dist && rsync -a ./build/dist/* ~/.local/share/gnome-shell/extensions/$(jq -r .uuid src/main/resources/metadata.json) || echo 'Compile the extension first!'",
     "deploy": "yarn build && yarn sync",
-    "followLogs": "journalctl -f | grep \"\\[$(cat src/main/resources/metadata.json | jq -r .name) Extension\\]\"",
-    "updateTranslations": "(cd build/dist && xgettext --no-location -L JavaScript -o ../../src/main/po/gnome-github-manager.pot *.js && xgettext --no-location -L Glade -j -o ../../src/main/po/gnome-github-manager.pot ui/*.ui; sed -i 's/\"POT-Creation-Date[^\"]*\"/\"POT-Creation-Date: \\\\n\"/' ../../src/main/po/gnome-github-manager.pot)",
-    "package": "yarn build && (cd build/dist && zip -r ../gnome-github-manager-$(cat ../../src/main/resources/metadata.json | jq -r .version).zip ./*)"
+    "followLogs": "journalctl -f | grep \"\\[$(jq -r .name src/main/resources/metadata.json) Extension\\]\"",
+    "updateTranslations": "test -d build/dist && (cd build/dist && xgettext --no-location -L JavaScript -o ../../src/main/po/gnome-github-manager.pot *.js && xgettext --no-location -L Glade -j -o ../../src/main/po/gnome-github-manager.pot ui/*.ui; sed -i 's/\"POT-Creation-Date[^\"]*\"/\"POT-Creation-Date: \\\\n\"/' ../../src/main/po/gnome-github-manager.pot) || echo 'Compile the extension first!'",
+    "createZip": "test -d build/dist && (cd build/dist && zip -r ../gnome-github-manager-$(jq -r .version ../../package.json).zip ./*) || echo 'Compile the extension first!'",
+    "package": "yarn build && yarn createZip"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.1",

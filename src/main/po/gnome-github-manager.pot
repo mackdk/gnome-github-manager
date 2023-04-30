@@ -42,7 +42,7 @@ msgid ""
 "All the customizations made will be lost. This operation cannot be undone."
 msgstr ""
 
-msgid "Version {0}"
+msgid "Version {0} r{1}"
 msgstr ""
 
 msgid ""

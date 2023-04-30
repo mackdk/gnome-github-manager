@@ -58,6 +58,30 @@ const typescriptPluginOptions: RollupTypescriptOptions = {
     },
 };
 
+// prettier-ignore
+// JQ template to convert a property file to a json
+const jqPropertiesToJson =
+    // Start by splitting every line
+    'split("\\n")' +
+        // Discard empty lines
+        '| map(select(length > 0)) ' +
+        // Discards comments
+        '| map(select(startswith("#") | not)) ' +
+        // Split on equals to divide the key from value
+        '| map(split("=")) ' +
+        // map to the json object
+        '| map({' +
+            // convert property key to json field removing initial and final spaces
+            '(.[0] | gsub("(^\\\\s+|\\\\s+$)"; "")): ' +
+            // convert property value to json value, splitting comma separated values into an array and removing spaces
+            '.[1] | tostring | gsub("(^\\\\s+|\\\\s+$)"; "") | gsub("\\\\s+"; " ") | gsub(",\\\\s+"; ",") | split(",")' +
+          '}) ' +
+        // add the new entry
+        '| add';
+
+// JQ template to convert from package.json to extension-info.json adding the translators
+const jqPackageToExtensionInfo = '{("version"): .version, ("authors"): [.author, .contributors[]]} + {$translators}';
+
 export default defineConfig([
     {
         input: `${typescriptSourcesPath}/extension.ts`,
@@ -105,6 +129,18 @@ export default defineConfig([
                         `msgfmt -o ${distributionPath}/locale/{}/LC_MESSAGES/${metadata.uuid}.mo ${mainSrcPath}/po/{}.po` +
                     '" ' +
                     '| sh',
+                // Generate extension-info.json
+                // prettier-ignore
+                'generate-extension-info': 'jq ' +
+                    '--argjson translators "$(' +
+                        `sed -nr 's/.*(Project-Id-Version|Language-Team): ([^\\"]+).*$/\\2/p' src/main/po/*.po ` +
+                            '| paste -d "=" - - ' +
+                            `| jq -R -s '${jqPropertiesToJson}'` +
+                    ')" ' +
+                    '--indent 4 ' +
+                    `'${jqPackageToExtensionInfo}' ` +
+                    'package.json ' +
+                    `> ${distributionPath}/extension-info.json`,
             }),
         ],
     },
