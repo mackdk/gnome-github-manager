@@ -18,7 +18,7 @@
     "deploy": "yarn build && yarn sync",
     "followLogs": "journalctl -f | grep \"\\[$(jq -r .name src/main/resources/metadata.json) Extension\\]\"",
     "updateTranslations": "test -d build/dist && (cd build/dist && xgettext --no-location -L JavaScript -o ../../src/main/po/gnome-github-manager.pot *.js && xgettext --no-location -L Glade -j -o ../../src/main/po/gnome-github-manager.pot ui/*.ui; sed -i 's/\"POT-Creation-Date[^\"]*\"/\"POT-Creation-Date: \\\\n\"/' ../../src/main/po/gnome-github-manager.pot) || echo 'Compile the extension first!'",
-    "createZip": "test -d build/dist && (cd build/dist && zip -r ../gnome-github-manager-$(jq -r .version ../../package.json).zip ./*) || echo 'Compile the extension first!'",
+    "createZip": "test -d build/dist && (cd build/dist && zip -r ../gnome-github-manager-v$(jq -r .version ../../package.json).zip ./*) || echo 'Compile the extension first!'",
     "package": "yarn build && yarn createZip"
   },
   "devDependencies": {

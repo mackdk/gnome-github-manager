@@ -1,0 +1,36 @@
+name: Package
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  packaging:
+    name: Package the extension for Extension Manager
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install NodeJS 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install translation tools
+        run: sudo apt-get install -y make gettext
+
+      - name: Code Checkout
+        uses: actions/checkout@v3
+
+      - name: Install yarn
+        run: yarn --version || npm install --global yarn
+
+      - name: Install the dependencies
+        run: yarn install
+      
+      - name: Build and package the extension
+        run: yarn package
+
+      - uses: shogo82148/actions-upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: build/gnome-github-manager-${{ github.event.release.tag_name }}.zip
