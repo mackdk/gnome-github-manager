@@ -94,7 +94,7 @@ export default defineConfig([
                 // Copy resources to distribution dir
                 'copy-resources': `cp -R ${resourcesPath}/* ${distributionPath}`,
                 // Replace the translation domain in the UI files
-                'replace-translation-domain': `sed -i 's/{{uuid}}/${metadata.uuid}/' ${distributionPath}/ui/PrefsStack.ui`,
+                'replace-translation-domain': `sed -i 's/{{uuid}}/${metadata.uuid}/' ${distributionPath}/ui/*.ui`,
                 // Compile the schema
                 'compile-schema': `glib-compile-schemas ${resourcesPath}/schemas/ --targetdir=${distributionPath}/schemas/`,
                 // Compile the po files and place them in the correct directory
