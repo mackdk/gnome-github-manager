@@ -18,18 +18,18 @@
     "skipLibCheck": true,
     "incremental": true,
     "paths": {
-      "@gnome-shell/*": ["main/types/gnome-shell/*"],
-      "@gettext": ["main/types/gettext/"],
       "@github-manager/*": ["main/typescript/*"],
-    },
+      "@gnome-shell/*": ["main/types/gnome-shell/*"],
+      "@gettext": ["main/types/gettext/"]
+    }
   },
   "include": [
-    "src/**/*.ts",
+    "src/main/typescript/**/*.ts",
     "rollup.config.ts"
   ],
   "exclude": [
     "node_modules/**/*",
-    "build/**/*",
-  ],
+    "build/**/*"
+  ]
 }
 
