@@ -3,10 +3,11 @@ import { getCurrentExtension, getSettings } from '@gnome-shell/misc/extensionUti
 
 import { NotificationController } from '@github-manager/notifications';
 import { SettingsWrapper } from '@github-manager/settings';
-import { Disposable, EventDispatcher, Logger } from '@github-manager/utils';
+import { Disposable, EventDispatcher, Logger, lazy } from '@github-manager/utils';
 import { WidgetController } from '@github-manager/widget';
 
 export class GitHubManager implements Disposable {
+    @lazy
     private static readonly LOGGER: Logger = new Logger('core::GitHubManager');
 
     private readonly githubIcon: Icon;

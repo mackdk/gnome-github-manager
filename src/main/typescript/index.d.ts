@@ -1,7 +1,8 @@
 export {};
 
 declare global {
-    export const imports: {
+    // eslint-disable-next-line no-var
+    export var imports: {
         gi: {
             versions: {
                 Adw: string;
@@ -10,8 +11,8 @@ declare global {
         };
     };
 
-    export const log: (message) => void;
-    export const logError: (e: Error | string | unknown, message: string) => void;
+    export function log(message: string): void;
+    export function logError(e: Error | string | unknown, message: string): void;
 }
 
 declare module '@gi-types/gobject2' {

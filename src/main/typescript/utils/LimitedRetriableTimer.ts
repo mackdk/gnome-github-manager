@@ -1,10 +1,12 @@
 import { PRIORITY_DEFAULT, source_remove, timeout_add_seconds } from '@gi-types/glib2';
 
 import { Logger } from './Logger';
+import { lazy } from './utilities';
 
 export type TimerTask = () => Promise<boolean>;
 
 export class LimitedRetriableTimer {
+    @lazy
     private static readonly LOGGER: Logger = new Logger('utils::LimitedRetriableTimer');
 
     public upperIntervalLimit?: number;

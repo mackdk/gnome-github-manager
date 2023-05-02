@@ -6,7 +6,7 @@ import nodeResolve from '@rollup/plugin-node-resolve';
 import typescript, { RollupTypescriptOptions } from '@rollup/plugin-typescript';
 import { defineConfig } from 'rollup';
 
-import GObjectAdapter from './src/support/typescript/GObjectAdapter';
+import { CodeAdapter } from './src/support/typescript/CodeAdapter';
 import { shellExecute } from './src/support/typescript/RollupShellExecute';
 
 const buildPath = 'build';
@@ -45,7 +45,7 @@ const globals = {
 
 const external = Object.keys(globals);
 
-const adapter = new GObjectAdapter();
+const adapter = new CodeAdapter();
 
 const typescriptPluginOptions: RollupTypescriptOptions = {
     tsconfig: './tsconfig.json',

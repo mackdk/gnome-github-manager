@@ -1,10 +1,11 @@
 import { ApiError, GitHub, GitHubClient } from '@github-manager/client';
-import { EventDispatcher, Logger } from '@github-manager/utils';
+import { EventDispatcher, Logger, lazy } from '@github-manager/utils';
 import { _ } from '@github-manager/utils/locale';
 
 import { NotificationAction } from './NotificationAction';
 
 export class MarkAsReadAction implements NotificationAction {
+    @lazy
     private static readonly LOGGER: Logger = new Logger('notifications::actions::MarkAsReadAction');
 
     private readonly gitHubClient: GitHubClient;

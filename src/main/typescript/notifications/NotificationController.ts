@@ -4,12 +4,13 @@ import { Notification } from '@gnome-shell/ui/messageTray';
 
 import { ApiError, GitHub, GitHubClient, GitHubClientFactory, HttpStatus } from '@github-manager/client';
 import { NotificationActionType, SettingsWrapper } from '@github-manager/settings';
-import { EventDispatcher, LimitedRetriableTimer, Logger } from '@github-manager/utils';
+import { EventDispatcher, LimitedRetriableTimer, Logger, lazy } from '@github-manager/utils';
 
 import { NotificationAdapter } from './NotificationAdapter';
 import { DismissAction, MarkAsReadAction, NotificationAction, OpenAction } from './actions/';
 
 export class NotificationController {
+    @lazy
     private static readonly LOGGER: Logger = new Logger('notifications::NotificationController');
 
     private readonly eventDispatcher: EventDispatcher;

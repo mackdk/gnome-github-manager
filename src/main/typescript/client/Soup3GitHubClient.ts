@@ -2,11 +2,12 @@ import { Bytes, PRIORITY_DEFAULT, Uri } from '@gi-types/glib2';
 import { HTTP_URI_FLAGS, Message, Session } from '@gi-types/soup3';
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
-import { Logger } from '@github-manager/utils';
+import { Logger, lazy } from '@github-manager/utils';
 
 import { AbstractGitHubClient, HttpReponse, RequestBody } from './AbstractGitHubClient';
 
 export class Soup3GitHubClient extends AbstractGitHubClient {
+    @lazy
     private static readonly LOGGER: Logger = new Logger('client::Soup3GitHubClient');
 
     private readonly session: Session;

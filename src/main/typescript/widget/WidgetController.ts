@@ -6,11 +6,12 @@ import { openPrefs } from '@gnome-shell/misc/extensionUtils';
 import { main as ShellUI } from '@gnome-shell/ui';
 
 import { SettingsWrapper } from '@github-manager/settings';
-import { Disposable, EventDispatcher, Logger } from '@github-manager/utils';
+import { Disposable, EventDispatcher, Logger, lazy } from '@github-manager/utils';
 
 import { GitHubWidget } from './GitHubWidget';
 
 export class WidgetController implements Disposable {
+    @lazy
     private static readonly LOGGER: Logger = new Logger('widget::WidgetController');
 
     private readonly settings: SettingsWrapper;

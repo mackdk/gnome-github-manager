@@ -15,7 +15,7 @@ import {
 } from '@gi-types/gtk4';
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
-import { Logger } from '@github-manager/utils';
+import { Logger, lazy } from '@github-manager/utils';
 import { registerGObject } from '@github-manager/utils/gnome';
 
 import * as PreferencesController from './PreferencesController';
@@ -23,6 +23,7 @@ import { PrefsPage } from './PrefsPage';
 
 @registerGObject
 export class PrefsStack extends Stack {
+    @lazy
     private static readonly LOGGER: Logger = new Logger('ui::prefs::PrefsStack');
 
     public static metaInfo: MetaInfo = {

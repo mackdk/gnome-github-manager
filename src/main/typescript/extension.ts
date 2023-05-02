@@ -1,13 +1,14 @@
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
 import { GitHubManager } from '@github-manager/core';
-import { Logger } from '@github-manager/utils';
+import { Logger, lazy } from '@github-manager/utils';
 import { initializeTranslations } from '@github-manager/utils/locale';
 
 /**
  * Extension entry point class.
  */
 class GitHubManagerExtension {
+    @lazy
     private static readonly LOGGER: Logger = new Logger('GitHubManagerExtension');
 
     private gitHubManager?: GitHubManager;

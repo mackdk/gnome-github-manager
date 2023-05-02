@@ -1,11 +1,12 @@
 import { MemoryUse, Message, Session, URI } from '@gi-types/soup2';
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
-import { Logger } from '@github-manager/utils';
+import { Logger, lazy } from '@github-manager/utils';
 
 import { AbstractGitHubClient, HttpReponse, RequestBody } from './AbstractGitHubClient';
 
 export class Soup2GitHubClient extends AbstractGitHubClient {
+    @lazy
     private static readonly LOGGER: Logger = new Logger('client::LibSoup2GitHubClient');
 
     private readonly session: Session;
