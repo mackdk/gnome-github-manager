@@ -1,0 +1,13 @@
+{
+    "extends": "@istanbuljs/nyc-config-typescript",
+    "all": true,
+    "include": [
+        "src/main/typescript/**/*"
+    ],
+    "exclude": [
+        "build/**/*"
+    ],
+    "reporter": ["lcov"],
+    "report-dir": "build/test",
+    "temp-dir": "build/test/coverage-data"
+}
