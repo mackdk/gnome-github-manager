@@ -16,13 +16,14 @@
     "build": "yarn compile && yarn updateTranslations",
     "sync": "test -d build/dist && rsync -a ./build/dist/* ~/.local/share/gnome-shell/extensions/$(jq -r .uuid src/main/resources/metadata.json) || echo 'Compile the extension first!'",
     "deploy": "yarn build && yarn sync",
-    "test": "yarn run mocha",
+    "test": "TS_NODE_PROJECT='src/test/tsconfig.json' yarn run nyc mocha",
     "followLogs": "journalctl -f | grep \"\\[$(jq -r .name src/main/resources/metadata.json) Extension\\]\"",
     "updateTranslations": "test -d build/dist && (cd build/dist && xgettext --no-location -L JavaScript -o ../../src/main/po/gnome-github-manager.pot *.js && xgettext --no-location -L Glade -j -o ../../src/main/po/gnome-github-manager.pot ui/*.ui; sed -i 's/\"POT-Creation-Date[^\"]*\"/\"POT-Creation-Date: \\\\n\"/' ../../src/main/po/gnome-github-manager.pot) || echo 'Compile the extension first!'",
     "createZip": "test -d build/dist && (cd build/dist && zip -r ../gnome-github-manager-v$(jq -r .version ../../package.json).zip ./*) || echo 'Compile the extension first!'",
     "package": "yarn build && yarn createZip"
   },
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-typescript": "^11.0.0",
@@ -39,6 +40,7 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "^4.2.1",
     "mocha": "^10.2.0",
+    "nyc": "^15.1.0",
     "prettier": "^2.8.4",
     "rollup": "3.18.0",
     "sinon": "^15.0.4",

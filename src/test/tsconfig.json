@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@github-manager/*": ["../main/typescript/*"]
+    }
+  },
+  "include": [
+    "../main/typescript/**/*.ts",
+    "../test/stubs/**/*.ts",
+    "../test/typescript/**/*.ts",
+    "../../rollup.config.ts"
+  ]
+}
