@@ -14,6 +14,19 @@ export class EventDispatcher implements Disposable {
         this.eventListener = new Map<string, Map<number, UnknownEventListener>>();
     }
 
+    public get eventListenersMap(): ReadonlyMap<string, Map<number, EventListener<unknown[]>>> {
+        return Object.freeze({
+            entries: this.eventListener.entries.bind(this.eventListener),
+            forEach: this.eventListener.forEach.bind(this.eventListener),
+            get: this.eventListener.get.bind(this.eventListener),
+            has: this.eventListener.has.bind(this.eventListener),
+            keys: this.eventListener.keys.bind(this.eventListener),
+            size: this.eventListener.size,
+            values: this.eventListener.values.bind(this.eventListener),
+            [Symbol.iterator]: this.eventListener[Symbol.iterator].bind(this.eventListener),
+        });
+    }
+
     public addEventListener<T extends unknown[]>(event: string, listener: EventListener<T>): number {
         let eventListeners = this.eventListener.get(event);
         if (eventListeners === undefined) {
@@ -26,7 +39,17 @@ export class EventDispatcher implements Disposable {
     }
 
     public removeEventListener(event: string, listenerHandle: number): boolean {
-        return this.eventListener.get(event)?.delete(listenerHandle) ?? false;
+        const eventMap = this.eventListener.get(event);
+        if (eventMap === undefined) {
+            return false;
+        }
+
+        const result = eventMap.delete(listenerHandle);
+        if (result && eventMap.size === 0) {
+            this.eventListener.delete(event);
+        }
+
+        return result;
     }
 
     public dispose(): void {
