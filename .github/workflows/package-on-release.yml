@@ -1,4 +1,4 @@
-name: Package
+name: Create package on release
 
 on:
   release:
@@ -10,23 +10,21 @@ jobs:
     name: Package the extension for Extension Manager
     runs-on: ubuntu-latest
     steps:
-      - name: Install NodeJS 18
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
+      - name: Code Checkout
+        uses: actions/checkout@v3
 
       - name: Install translation tools
         run: sudo apt-get install -y make gettext
 
-      - name: Code Checkout
-        uses: actions/checkout@v3
-
-      - name: Install yarn
-        run: yarn --version || npm install --global yarn
+      - name: Install NodeJS 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'yarn'
 
       - name: Install the dependencies
-        run: yarn install
-      
+        run: yarn install --frozen-lockfile
+
       - name: Build and package the extension
         run: yarn package
 

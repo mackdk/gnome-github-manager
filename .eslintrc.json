@@ -30,7 +30,6 @@
     },
     "rules": {
         "prettier/prettier": "warn",
-        // Code quality
         "eqeqeq": "error",
         "no-eq-null": "error",
         "sort-imports": [ "warn", {
@@ -81,6 +80,10 @@
             "allowNullableNumber": false,
             "allowNullableEnum": false,
             "allowAny": false
+        }],
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": [ "error", {
+            "argsIgnorePattern": "^_"
         }]
     }
 }
