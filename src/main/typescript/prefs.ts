@@ -3,11 +3,13 @@ import { Builder, HeaderBar } from '@gi-types/gtk4';
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
 import { PreferencesController, PrefsStack } from '@github-manager/preferences';
+import { Logger } from '@github-manager/utils';
 import { initializeTranslations } from '@github-manager/utils/locale';
 
 export default {
     init: () => {
         initializeTranslations(`${getCurrentExtension().metadata.uuid}`);
+        Logger.initialize();
     },
 
     buildPrefsWidget: () => {

@@ -2,6 +2,8 @@ import { File } from '@gi-types/gio2';
 import { get_user_data_dir } from '@gi-types/glib2';
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
+import { formatString, readonlyMap, removeAfter as stripAfter } from './utilities';
+
 export enum LogLevel {
     TRACE,
     DEBUG,
@@ -10,10 +12,10 @@ export enum LogLevel {
     ERROR,
 }
 
-export type LoggableParameter = number | string | bigint | symbol | object | unknown;
-
 export class Logger {
     private static readonly ROOT_SCOPE: string = 'root';
+
+    private static readonly SCOPE_DEFINITION_REGEX: RegExp = /^\s*(\w+(::\w+)*)\s=\s(TRACE|DEBUG|INFO|WARN|ERROR)\s*$/;
 
     private static rootLogLevel: LogLevel = LogLevel.INFO;
     private static scopeLevelsMap: Map<string, LogLevel> = new Map<string, LogLevel>();
@@ -23,34 +25,59 @@ export class Logger {
     private readonly loggerName: string;
     private readonly logLevel: LogLevel;
 
-    static {
-        Logger.rootLogLevel = LogLevel.INFO;
-        Logger.scopeLevelsMap = new Map<string, LogLevel>();
+    public static initialize(): void {
+        Logger.resetConfiguration();
 
         const configuration = File.new_for_path(`${get_user_data_dir()}/gnome-github-manager/logging.properties`);
-        if (configuration.query_exists(null)) {
-            const [success, bytes] = configuration.load_contents(null);
-            if (success) {
-                const lines = new TextDecoder('utf-8').decode(bytes.buffer).split('\n');
-                lines.forEach((line) => {
-                    // Remove any comments
-                    if (line.includes('#')) {
-                        line = line.substring(0, line.indexOf('#'));
-                    }
+        if (!configuration.query_exists(null)) {
+            // No configuration file, nothing to do
+            return;
+        }
 
-                    if (line.match(/^\s*(\w+(::\w+)*)\s=\s(TRACE|DEBUG|INFO|WARN|ERROR)\s*$/) !== null) {
-                        const [scope, level] = line.split('=').map((s) => s.trim());
-                        if (scope === Logger.ROOT_SCOPE) {
-                            this.rootLogLevel = LogLevel[level as keyof typeof LogLevel];
-                        } else {
-                            Logger.scopeLevelsMap.set(scope, LogLevel[level as keyof typeof LogLevel]);
-                        }
+        try {
+            const [success, bytes] = configuration.load_contents(null);
+            if (!success) {
+                throw new Error('Loading data was not successfull');
+            }
+
+            const configurationFile = new TextDecoder('utf-8').decode(bytes.buffer);
+            configurationFile
+                .split('\n') // Divide into single lines
+                .map((line) => stripAfter(line, '#')) // Remove any comments
+                .filter((line) => Logger.SCOPE_DEFINITION_REGEX.exec(line) !== null) // Keep only lines that matches
+                .forEach((line) => {
+                    // Line is now in the form scope = LEVEL. Split it to extract the components
+                    const [scope, level] = line.split('=').map((s) => s.trim());
+                    if (scope === Logger.ROOT_SCOPE) {
+                        this.rootLogLevel = LogLevel[level as keyof typeof LogLevel];
+                    } else {
+                        Logger.scopeLevelsMap.set(scope, LogLevel[level as keyof typeof LogLevel]);
                     }
                 });
-            } else {
-                log(`[${Logger.EXT_PREFIX}] Logger initialization ERROR Unable to load configuration file`);
-            }
+        } catch (error) {
+            logError(error, `[${Logger.EXT_PREFIX}] Logger initialization ERROR Unable to load configuration file`);
         }
+    }
+
+    public static get rootLevel(): LogLevel {
+        return Logger.rootLogLevel;
+    }
+
+    public static set rootLevel(value: LogLevel) {
+        Logger.rootLogLevel = value;
+    }
+
+    public static setLevelForScope(scope: string, level: LogLevel): void {
+        Logger.scopeLevelsMap.set(scope, level);
+    }
+
+    public static get scopeLevelsConfiguration(): ReadonlyMap<string, LogLevel> {
+        return readonlyMap(Logger.scopeLevelsMap);
+    }
+
+    public static resetConfiguration(): void {
+        Logger.rootLogLevel = LogLevel.INFO;
+        Logger.scopeLevelsMap = new Map<string, LogLevel>();
     }
 
     private static findLogLevel(loggerName: string): LogLevel {
@@ -70,16 +97,16 @@ export class Logger {
         return Logger.rootLogLevel;
     }
 
-    public constructor(loggerName: string) {
+    public constructor(loggerName: string, logLevel?: LogLevel) {
         this.loggerName = loggerName;
-        this.logLevel = Logger.findLogLevel(loggerName);
+        this.logLevel = logLevel ?? Logger.findLogLevel(loggerName);
     }
 
     public isTraceEnabled(): boolean {
         return this.isEnabled(LogLevel.TRACE);
     }
 
-    public trace(format: string, ...args: LoggableParameter[]): void {
+    public trace(format: string, ...args: unknown[]): void {
         this.addLog(LogLevel.TRACE, format, ...args);
     }
 
@@ -87,7 +114,7 @@ export class Logger {
         return this.isEnabled(LogLevel.DEBUG);
     }
 
-    public debug(format: string, ...args: LoggableParameter[]): void {
+    public debug(format: string, ...args: unknown[]): void {
         this.addLog(LogLevel.DEBUG, format, ...args);
     }
 
@@ -95,23 +122,23 @@ export class Logger {
         return this.isEnabled(LogLevel.INFO);
     }
 
-    public info(format: string, ...args: LoggableParameter[]): void {
+    public info(format: string, ...args: unknown[]): void {
         this.addLog(LogLevel.INFO, format, ...args);
     }
 
     public isWarnEnabled(): boolean {
-        return this.isEnabled(LogLevel.DEBUG);
+        return this.isEnabled(LogLevel.WARN);
     }
 
-    public warn(format: string, ...args: LoggableParameter[]): void {
+    public warn(format: string, ...args: unknown[]): void {
         this.addLog(LogLevel.WARN, format, ...args);
     }
 
     public isErrorEnabled(): boolean {
-        return this.isEnabled(LogLevel.DEBUG);
+        return this.isEnabled(LogLevel.ERROR);
     }
 
-    public error(format: string, ...args: LoggableParameter[]): void {
+    public error(format: string, ...args: unknown[]): void {
         this.addLog(LogLevel.ERROR, format, ...args);
     }
 
@@ -119,17 +146,17 @@ export class Logger {
         return levelToCheck >= this.logLevel;
     }
 
-    private addLog(level: LogLevel, format: string, ...args: LoggableParameter[]): void {
+    private addLog(level: LogLevel, format: string, ...args: unknown[]): void {
         if (!this.isEnabled(level)) {
             return;
         }
 
-        let err: unknown | undefined = undefined;
+        let err: unknown = undefined;
         if (this.hasErrorParameter(format, args.length)) {
             err = args.pop();
         }
 
-        const message = this.format(format, ...args);
+        const message = formatString(format, ...args);
         const logMessage = `[${Logger.EXT_PREFIX}] ${this.loggerName} ${LogLevel[level]} ${message}`;
 
         if (err instanceof Error) {
@@ -149,9 +176,5 @@ export class Logger {
         }
 
         return !message.includes(`{${numArguments - 1}}`);
-    }
-
-    private format(format: string, ...args: LoggableParameter[]): string {
-        return format.replace(/{(\d+)}/g, (match: string, number: number) => args[number]?.toString() ?? match);
     }
 }

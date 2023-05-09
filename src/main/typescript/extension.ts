@@ -49,6 +49,7 @@ class GitHubManagerExtension {
 
 export default function (): GitHubManagerExtension {
     initializeTranslations(`${getCurrentExtension().metadata.uuid}`);
+    Logger.initialize();
 
     return new GitHubManagerExtension();
 }

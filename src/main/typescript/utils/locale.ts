@@ -1,9 +1,9 @@
 import { TranslationDomain, domain } from '@gettext';
 import { initTranslations } from '@gnome-shell/misc/extensionUtils';
 
-let translationDomain: TranslationDomain | undefined;
+import { formatString } from './utilities';
 
-export type FormatParameter = number | string | bigint | symbol | object | unknown;
+let translationDomain: TranslationDomain | undefined;
 
 export function initializeTranslations(extensionDomain: string): void {
     initTranslations(extensionDomain);
@@ -15,28 +15,20 @@ export function disposeTranslationDomain(): void {
     translationDomain = undefined;
 }
 
-export function _(msgId: string, ...args: FormatParameter[]): string {
+export function _(msgId: string, ...args: unknown[]): string {
     if (translationDomain === undefined) {
         throw new Error('Translation domain is not initialized. Call initializeTranslations() first.');
     }
 
     const translated = translationDomain.gettext(msgId);
-    return format(translated, args);
+    return formatString(translated, ...args);
 }
 
-export function ngettext(singularMsgId: string, pluralMsgId: string, n: number, ...args: FormatParameter[]): string {
+export function ngettext(singularMsgId: string, pluralMsgId: string, n: number, ...args: unknown[]): string {
     if (translationDomain === undefined) {
         throw new Error('Translation domain is not initialized. Call initializeTranslations() first.');
     }
 
     const translated = translationDomain.ngettext(singularMsgId, pluralMsgId, n);
-    return format(translated, args);
-}
-
-function format(template: string, args: FormatParameter[]): string {
-    if (args.length === 0) {
-        return template;
-    }
-
-    return template.replace(/{(\d+)}/g, (match: string, number: number) => args[number]?.toString() ?? match);
+    return formatString(translated, ...args);
 }
