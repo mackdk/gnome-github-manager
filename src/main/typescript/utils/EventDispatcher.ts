@@ -1,4 +1,5 @@
 import { Disposable } from './Disposable';
+import { readonlyMap } from './utilities';
 
 export type EventListener<T extends unknown[]> = (...args: T) => void;
 
@@ -15,16 +16,7 @@ export class EventDispatcher implements Disposable {
     }
 
     public get eventListenersMap(): ReadonlyMap<string, Map<number, EventListener<unknown[]>>> {
-        return Object.freeze({
-            entries: this.eventListener.entries.bind(this.eventListener),
-            forEach: this.eventListener.forEach.bind(this.eventListener),
-            get: this.eventListener.get.bind(this.eventListener),
-            has: this.eventListener.has.bind(this.eventListener),
-            keys: this.eventListener.keys.bind(this.eventListener),
-            size: this.eventListener.size,
-            values: this.eventListener.values.bind(this.eventListener),
-            [Symbol.iterator]: this.eventListener[Symbol.iterator].bind(this.eventListener),
-        });
+        return readonlyMap(this.eventListener);
     }
 
     public addEventListener<T extends unknown[]>(event: string, listener: EventListener<T>): number {
