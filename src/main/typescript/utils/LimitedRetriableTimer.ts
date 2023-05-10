@@ -9,13 +9,13 @@ export class LimitedRetriableTimer {
     @lazy
     private static readonly LOGGER: Logger = new Logger('utils::LimitedRetriableTimer');
 
+    private static readonly RETRY_INTERVALS: number[] = [60, 120, 300, 600, 900, 1800, 3600];
+
     public upperIntervalLimit?: number;
 
     public lowerIntervalLimit?: number;
 
-    public _interval: number;
-
-    public retryIntervals: number[];
+    private _interval: number;
 
     private retries: number;
 
@@ -28,7 +28,6 @@ export class LimitedRetriableTimer {
     public constructor(task: TimerTask, interval: number) {
         this.task = task;
         this._interval = interval;
-        this.retryIntervals = [60, 120, 240, 480, 960, 1920, 3600];
 
         this.retries = 0;
         this.currentInterval = this._interval;
@@ -104,7 +103,9 @@ export class LimitedRetriableTimer {
     }
 
     private scheduleNextRun(): void {
-        this.stop();
+        if (this.timerHandle !== undefined) {
+            source_remove(this.timerHandle);
+        }
 
         this.timerHandle = timeout_add_seconds(PRIORITY_DEFAULT, this.currentInterval, () => {
             this.runTaskAndSchedule();
@@ -117,8 +118,7 @@ export class LimitedRetriableTimer {
             this.currentInterval = this._interval;
             this.retries = 0;
         } else {
-            this.retries++;
-            this.currentInterval = this.retryIntervals[this.retries] ?? 3600;
+            this.currentInterval = LimitedRetriableTimer.RETRY_INTERVALS[this.retries++] ?? 3600;
         }
 
         // Limit the interval according to the limits, if specified
