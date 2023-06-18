@@ -1,4 +1,4 @@
-import { Bytes, PRIORITY_DEFAULT, Uri, free } from '@gi-types/glib2';
+import { Bytes, PRIORITY_DEFAULT, Uri } from '@gi-types/glib2';
 import { HTTP_URI_FLAGS, Message, Session } from '@gi-types/soup3';
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
@@ -35,16 +35,10 @@ export class Soup3GitHubClient extends AbstractGitHubClient {
 
         Soup3GitHubClient.LOGGER.debug('Executing {0} ON {1}', message.method, message.uri.to_string());
 
-        const responseBody = await this.session
+        const responseBody: string = await this.session
             .send_and_read_async(message, PRIORITY_DEFAULT, null)
-            .then((bytes) => bytes.unref_to_data())
-            .then((data) => {
-                try {
-                    return new TextDecoder('utf-8').decode(data.buffer);
-                } finally {
-                    free(data);
-                }
-            });
+            .then((bytes) => bytes.get_data() ?? new Uint8Array())
+            .then((data) => new TextDecoder('utf-8').decode(data));
 
         Soup3GitHubClient.LOGGER.debug('Response: {0} - Length {1}', message.statusCode, responseBody.length);
 

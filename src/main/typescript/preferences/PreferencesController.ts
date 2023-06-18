@@ -1,7 +1,6 @@
 import { CURRENT_TIME } from '@gi-types/gdk4';
 import { Pixbuf } from '@gi-types/gdkpixbuf2';
 import { ActionGroup, File, Settings, SettingsBindFlags, SimpleAction, SimpleActionGroup } from '@gi-types/gio2';
-import { free } from '@gi-types/glib2';
 import {
     AboutDialog,
     Align,
@@ -198,11 +197,7 @@ function getAdditionalExtensionInfo(filename: string): ExtensionInfo {
         throw new Error('Unable to correcly load extension-info.json');
     }
 
-    try {
-        return JSON.parse(new TextDecoder('utf-8').decode(bytes.buffer)) as ExtensionInfo;
-    } finally {
-        free(bytes);
-    }
+    return JSON.parse(new TextDecoder('utf-8').decode(bytes.buffer)) as ExtensionInfo;
 }
 
 function openUrl(url: string, dialog: Window): void {
