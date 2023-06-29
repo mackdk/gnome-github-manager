@@ -96,7 +96,7 @@ export interface GitHubClient {
 
     listThreads(showParticipatingOnly?: boolean): Promise<GitHub.Thread[]>;
     markThreadAsRead(githubNotification: GitHub.Thread): Promise<void>;
-    markAllThreadsAsRead(): Promise<void>;
+    markAllThreadsAsRead(updateDate?: Date): Promise<void>;
 
     getWebUrlForSubject(subject: GitHub.Subject): Promise<string>;
 }

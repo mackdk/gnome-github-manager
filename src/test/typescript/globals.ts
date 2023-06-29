@@ -16,6 +16,8 @@ declare global {
     export function logError(e: unknown, message: string): void;
 }
 
+global.imports = { gi: { versions: { Adw: '1', Soup: '3.0' } } };
+
 global.log = (message: string) => console.log(message);
 global.logError = (err: unknown, message: string) => {
     console.error(message);

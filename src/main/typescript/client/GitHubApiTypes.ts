@@ -11,7 +11,7 @@ export interface Thread {
     repository: Repository;
     subject: Subject;
     unread: boolean;
-    updated_at: Date;
+    updated_at: string;
     url: string;
 }
 
