@@ -17,10 +17,11 @@ export class HttpRequest {
     private _body: RequestBody | undefined;
     private readonly _headers: Map<string, string>;
 
-    public constructor(method: HttpMethod, url: string) {
+    public constructor(method: HttpMethod, url: string, body?: RequestBody, headers?: Map<string, string>) {
         this._method = method;
         this._url = url;
-        this._headers = new Map<string, string>();
+        this._body = body;
+        this._headers = headers ?? new Map<string, string>();
     }
 
     public get method(): string {

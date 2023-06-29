@@ -58,6 +58,10 @@ export class GitHubClientImpl implements GitHubClient {
         }
     }
 
+    public get httpEngine(): HttpEngine {
+        return this.engine;
+    }
+
     public async listThreads(showParticipatingOnly: boolean = false): Promise<GitHub.Thread[]> {
         const response = await this.doRequest(
             HttpMethod.GET,
@@ -79,12 +83,12 @@ export class GitHubClientImpl implements GitHubClient {
         await this.doRequest(HttpMethod.PATCH, notification.url, [HttpStatus.ResetContent, HttpStatus.NotModified]);
     }
 
-    public async markAllThreadsAsRead(): Promise<void> {
+    public async markAllThreadsAsRead(updateDate: Date = new Date()): Promise<void> {
         await this.doRequest(
             HttpMethod.PUT,
             `https://${this.baseUrl}/notifications`,
             [HttpStatus.Accepted, HttpStatus.ResetContent, HttpStatus.NotModified],
-            { last_read_at: new Date().toISOString(), read: true } as GitHub.MarkNotificationsArReadRequest
+            { last_read_at: updateDate.toISOString(), read: true } as GitHub.MarkNotificationsArReadRequest
         );
     }
 
@@ -131,12 +135,13 @@ export class GitHubClientImpl implements GitHubClient {
 
         const enforcedPollInterval = Number(header);
         if (enforcedPollInterval !== this._pollInterval) {
-            GitHubClientImpl.LOGGER.info('New polling interval enforced by GitHub {}s', enforcedPollInterval);
+            GitHubClientImpl.LOGGER.info('New polling interval enforced by GitHub {0}s', enforcedPollInterval);
             this._pollInterval = enforcedPollInterval;
         }
     }
 
     private static handleRequestError(error: unknown): never {
+        GitHubClientImpl.LOGGER.info('{0} - {1} - {2}', error, typeof error, error instanceof Object);
         if (error instanceof Error) {
             throw new ApiError(-1, 'Unable to perform API call', error);
         } else if (typeof error === 'string') {
@@ -144,7 +149,7 @@ export class GitHubClientImpl implements GitHubClient {
         }
 
         // Throw a generic error
-        throw new ApiError(-1, 'Unable to perform API call');
+        throw new ApiError(-1, `Unable to perform API call - ${error?.toString() ?? 'error undefined'}`);
     }
 
     private static validateResponseCode(response: HttpResponse, ...validStates: number[]): void {
@@ -152,13 +157,14 @@ export class GitHubClientImpl implements GitHubClient {
             const errorResponse = JSON.parse(response.body) as GitHub.BasicError;
             const message =
                 errorResponse.message ??
-                HttpStatus[response.statusCode]
-                    // insert a space between lower & upper
-                    .replace(/([a-z])([A-Z])/g, '$1 $2')
-                    // space before last upper in a sequence followed by lower
-                    .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
-                    // uppercase the first character
-                    .replace(/^./, (str: string) => str.toUpperCase());
+                'Invalid status code: ' +
+                    HttpStatus[response.statusCode]
+                        // insert a space between lower & upper
+                        .replace(/([a-z])([A-Z])/g, '$1 $2')
+                        // space before last upper in a sequence followed by lower
+                        .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
+                        // uppercase the first character
+                        .replace(/^./, (str: string) => str.toUpperCase());
 
             throw new ApiError(response.statusCode, message);
         }

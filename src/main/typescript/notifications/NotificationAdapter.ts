@@ -116,7 +116,7 @@ export class NotificationAdapter {
 
             case NotificationMode.SINGLE:
                 const updatedAtMap = new Map<string, Date>();
-                oldData.forEach((notification) => updatedAtMap.set(notification.id, notification.updated_at));
+                oldData.forEach((notification) => updatedAtMap.set(notification.id, new Date(notification.updated_at)));
 
                 return newData
                     .filter((notification) => this.isNotificationNeeded(updatedAtMap, notification))
@@ -133,7 +133,7 @@ export class NotificationAdapter {
 
     private isNotificationNeeded(updatedAtMap: Map<string, Date>, notification: GitHub.Thread): boolean {
         const lastUpdatedAt = updatedAtMap.get(notification.id);
-        return lastUpdatedAt === undefined || notification.updated_at > lastUpdatedAt;
+        return lastUpdatedAt === undefined || new Date(notification.updated_at) > lastUpdatedAt;
     }
 
     private buildProjectNotification(data: GitHub.Thread): UINotification {

@@ -28,3 +28,17 @@ export function source_remove(handle: number): boolean {
 
     return false;
 }
+
+export class Uri {
+    public static parse(_uri_string: string, _flags: number): Uri {
+        return new Uri();
+    }
+}
+
+export class Bytes {
+    public constructor(_data?: Uint8Array) {}
+
+    public get_data(): Uint8Array {
+        return new Uint8Array();
+    }
+}
