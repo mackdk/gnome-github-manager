@@ -11,3 +11,36 @@ export class File {
         return [false, new Uint8Array()];
     }
 }
+
+export type SettingsCallback = (_source: Settings, key: string) => void;
+
+export class Settings {
+    private callback?: SettingsCallback;
+
+    public connect(signal: string, callback: SettingsCallback): number {
+        if (signal === 'changed') {
+            this.callback = callback;
+        }
+        return 0;
+    }
+
+    public disconnect(_id: number): void {}
+
+    public get_string(_key: string): string {
+        return `value`;
+    }
+
+    public get_boolean(_key: string): boolean {
+        return true;
+    }
+
+    public get_int(_key: string): number {
+        return 1;
+    }
+
+    public emit(signal: string, key: string): void {
+        if (signal === 'changed' && this.callback !== undefined) {
+            this.callback(this, key);
+        }
+    }
+}
