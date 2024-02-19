@@ -32,11 +32,9 @@ export class MarkAsReadAction implements NotificationAction {
     }
 
     private readSingle(notification: GitHub.Thread): void {
-        this.gitHubClient
-            .markThreadAsRead(notification)
-            .then(() => {
-                return this.eventDispatcher.emit('notificationRead', notification.id);
-            })
+        void Promise.resolve()
+            .then(() => this.gitHubClient.markThreadAsRead(notification))
+            .then(() => this.eventDispatcher.emit('notificationRead', notification.id))
             .catch((error) => {
                 if (error instanceof ApiError) {
                     MarkAsReadAction.LOGGER.error(
@@ -53,11 +51,9 @@ export class MarkAsReadAction implements NotificationAction {
     }
 
     private readAll(): void {
-        this.gitHubClient
-            .markAllThreadsAsRead()
-            .then(() => {
-                return this.eventDispatcher.emit('allNotificationsRead');
-            })
+        void Promise.resolve()
+            .then(() => this.gitHubClient.markAllThreadsAsRead())
+            .then(() => this.eventDispatcher.emit('allNotificationsRead'))
             .catch((error) => {
                 if (error instanceof ApiError) {
                     MarkAsReadAction.LOGGER.error(

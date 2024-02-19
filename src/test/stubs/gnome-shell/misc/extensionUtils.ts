@@ -1,3 +1,5 @@
+import { Settings } from '@gi-types/gio2';
+
 export class ExtensionMetadata {
     uuid: string = 'e1f0a5eb-a65b-4dff-a0c2-ba024ac7ea3a';
     name: string = 'TestSuite';
@@ -27,4 +29,10 @@ export function getCurrentExtension(): Extension {
     const ext = new Extension();
     ext.metadata.name = 'TestSuite';
     return ext;
+};
+
+export function openPrefs(): void {};
+
+export function getSettings(name?: string): Settings {
+    return new Settings();
 };
