@@ -3,8 +3,10 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "@test-suite/*": ["typescript/*"],
       "@github-manager/*": ["../main/typescript/*"],
       "@gnome-shell/*": ["stubs/gnome-shell/*"],
+      "@gi-types/*": ["stubs/gi-types/*"],
       "@gettext": ["stubs/gettext"]
     }
   },
