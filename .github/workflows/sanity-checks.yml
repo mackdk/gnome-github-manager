@@ -29,7 +29,7 @@ jobs:
 
       - name: Install the dependencies
         run: yarn install --frozen-lockfile
-      
+
       - name: Analyse source code with ESLint
         run: yarn lint
 
@@ -61,14 +61,49 @@ jobs:
           name: extension-archive
           path: build/dist/**/*
 
+  testing:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v3
+
+      - name: Install translation tools
+        run: sudo apt-get install -y make gettext
+
+      - name: Install NodeJS 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'yarn'
+
+      - name: Install the dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Ruinning the test suite
+        run: yarn test
+
+      - name: Upload test coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: build/test/lcov.info
+
   sonarcloud:
     name: Static analysis with SonarCloud
     runs-on: ubuntu-latest
+    needs: testing
     steps:
       - name: Code Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - name: Download test coverage report
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage-report
+          path: build/test
 
       - name: Perform SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2.1.1
