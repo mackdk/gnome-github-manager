@@ -49,6 +49,10 @@
                     "group": "internal"
                 },
                 {
+                    "pattern": "@test-suite/**",
+                    "group": "internal"
+                },
+                {
                     "pattern": "@gi-types/**",
                     "group": "external"
                 },

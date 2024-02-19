@@ -1,7 +1,7 @@
 export {};
 
 declare global {
-    // eslint-disable-next-line no-var
+    /* eslint-disable no-var -- Var is needed to add stuff to node global */
     export var imports: {
         gi: {
             versions: {
@@ -10,9 +10,10 @@ declare global {
             };
         };
     };
+    /* eslint-enable no-var */
 
     export function log(message: string): void;
-    export function logError(e: Error | string | unknown, message: string): void;
+    export function logError(e: unknown, message: string): void;
 }
 
 declare module '@gi-types/gobject2' {
