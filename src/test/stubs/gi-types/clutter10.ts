@@ -1,0 +1,1 @@
+export let CURRENT_TIME: number = new Date().getTime()

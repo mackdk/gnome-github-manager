@@ -35,8 +35,8 @@ export class OpenAction implements NotificationAction {
     }
 
     private openSingle(notification: GitHub.Thread): void {
-        this.gitHubClient
-            .getWebUrlForSubject(notification.subject)
+        void Promise.resolve()
+            .then(() => this.gitHubClient.getWebUrlForSubject(notification.subject))
             .then((url) => show_uri(null, url, CURRENT_TIME))
             .then(() => this.eventDispatcher.emit('notificationRead', notification.id))
             .catch((error) => {
