@@ -1,0 +1,77 @@
+[
+    {
+        "id": "6801720895",
+        "last_read_at": "2023-06-18T13:30:15Z",
+        "reason": "ci_activity",
+        "repository": {
+            "html_url": "https://github.com/mackdk/gnome-github-manager",
+            "id": 534557096,
+            "node_id": "R_kgDOH9yxqA",
+            "name": "gnome-github-manager",
+            "owner": {
+                "id": 2292684,
+                "node_id": "MDQ6VXNlcjIyOTI2ODQ=",
+                "login": "mackdk",
+                "avatar_url": "https://avatars.githubusercontent.com/u/2292684?v=4"
+            }
+        },
+        "subject": {
+            "type": "CheckSuite",
+            "title": "Sanity checks workflow run failed for unit-testing branch",
+            "url": null
+        },
+        "unread": true,
+        "updated_at": "2023-06-18T11:24:27Z",
+        "url": "https://api.github.com/notifications/threads/6801720895"
+    },
+    {
+        "id": "6716405570",
+        "last_read_at": "2023-06-18T13:13:40Z",
+        "reason": "author",
+        "repository": {
+            "html_url": "https://github.com/uyuni-project/uyuni",
+            "id": 143291989,
+            "node_id": "MDEwOlJlcG9zaXRvcnkxNDMyOTE5ODk=",
+            "name": "uyuni",
+            "owner": {
+                "id": 39272261,
+                "node_id": "MDEyOk9yZ2FuaXphdGlvbjM5MjcyMjYx",
+                "login": "uyuni-project",
+                "avatar_url": "https://avatars.githubusercontent.com/u/39272261?v=4"
+            }
+       },
+        "subject": {
+            "type": "PullRequest",
+            "title": "Remove wrong dependencies from classpath",
+            "url": "https://api.github.com/repos/uyuni-project/uyuni/pulls/7122"
+        },
+        "unread": true,
+        "updated_at": "2023-06-12T07:53:11Z",
+        "url": "https://api.github.com/notifications/threads/6716405570"
+    },
+    {
+        "id": "5548680949",
+        "last_read_at": "2023-06-18T10:25:40Z",
+        "reason": "subscribed",
+        "repository": {
+            "html_url": "https://github.com/uyuni-project/uyuni-docs",
+            "id": 147513059,
+            "node_id": "MDEwOlJlcG9zaXRvcnkxNDc1MTMwNTk=",
+            "name": "uyuni-docs",
+            "owner": {
+                "id": 39272261,
+                "node_id": "MDEyOk9yZ2FuaXphdGlvbjM5MjcyMjYx",
+                "login": "uyuni-project",
+                "avatar_url": "https://avatars.githubusercontent.com/u/39272261?v=4"
+            }
+        },
+        "subject": {
+            "type": "PullRequest",
+            "title": "explain using PTFs in SUSE Manager / Uyuni",
+            "url": "https://api.github.com/repos/uyuni-project/uyuni-docs/pulls/2066"
+        },
+        "unread": true,
+        "updated_at": "2023-03-01T15:36:07Z",
+        "url": "https://api.github.com/notifications/threads/5548680949"
+    }
+]

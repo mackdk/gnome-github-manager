@@ -114,20 +114,25 @@ export class NotificationAdapter {
             case NotificationMode.NONE:
                 return [];
 
-            case NotificationMode.SINGLE:
+            case NotificationMode.SINGLE: {
                 const updatedAtMap = new Map<string, Date>();
                 oldData.forEach((notification) => updatedAtMap.set(notification.id, new Date(notification.updated_at)));
 
                 return newData
                     .filter((notification) => this.isNotificationNeeded(updatedAtMap, notification))
                     .map((notification) => this.buildProjectNotification(notification));
+            }
 
-            case NotificationMode.DIGEST:
-                if (oldData.length >= newData.length) {
+            case NotificationMode.DIGEST: {
+                const oldIds = oldData.map((notification) => notification.id);
+                const newNotifications = newData.filter((notification) => !oldIds.includes(notification.id));
+
+                if (newNotifications.length === 0) {
                     return [];
                 }
 
                 return [this.buildDigestNotification(newData.length)];
+            }
         }
     }
 

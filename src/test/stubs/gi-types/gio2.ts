@@ -44,3 +44,16 @@ export class Settings {
         }
     }
 }
+
+export class IconPrototype {
+    public constructor() {}
+}
+export class Icon extends IconPrototype {
+    public constructor() {
+        super();
+    }
+}
+
+export function icon_new_for_string(_str: string): Icon {
+    return new Icon();
+}

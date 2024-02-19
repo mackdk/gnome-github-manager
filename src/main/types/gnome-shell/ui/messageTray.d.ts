@@ -17,6 +17,10 @@ export interface NotificationProperties {
 export class Notification extends GObject {
     public constructor(source: Source, title: string, banner: string, params?: Partial<NotificationProperties>);
 
+    public title: string;
+
+    public banner: string;
+
     public source: Source;
 
     public addAction(label: string, callback: () => void): void;

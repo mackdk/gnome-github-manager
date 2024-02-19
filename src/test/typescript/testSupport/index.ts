@@ -4,7 +4,7 @@ import callsites from 'callsites';
 
 import { HttpEngine, HttpRequest, HttpResponse } from '@github-manager/client/Http';
 
-// Simple do-nothing HttpEngine implementation for unit tests
+// Simple do-nothing HttpEngine implementation
 export class HttpEngineStup implements HttpEngine {
     public send(_request: HttpRequest): Promise<HttpResponse> {
         return Promise.resolve(new HttpResponse(200, 0));
