@@ -1,4 +1,4 @@
-import { Settings } from '@gi-types/gio2';
+import Gio from '@girs/gio-2.0';
 
 export class ExtensionMetadata {
     uuid: string = 'e1f0a5eb-a65b-4dff-a0c2-ba024ac7ea3a';
@@ -33,6 +33,6 @@ export function getCurrentExtension(): Extension {
 
 export function openPrefs(): void {};
 
-export function getSettings(name?: string): Settings {
-    return new Settings();
+export function getSettings(name?: string): Gio.Settings {
+    return new Gio.Settings();
 };

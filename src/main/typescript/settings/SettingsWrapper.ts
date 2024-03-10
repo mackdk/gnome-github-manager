@@ -1,4 +1,4 @@
-import { Settings } from '@gi-types/gio2';
+import Gio from '@girs/gio-2.0';
 
 import { Disposable, EventDispatcher } from '@github-manager/utils';
 
@@ -9,9 +9,9 @@ export class SettingsWrapper implements Disposable {
 
     private readonly eventDispatcher: EventDispatcher;
 
-    private readonly settings: Settings;
+    private readonly settings: Gio.Settings;
 
-    public constructor(settings: Settings, eventDispatcher: EventDispatcher) {
+    public constructor(settings: Gio.Settings, eventDispatcher: EventDispatcher) {
         this.settings = settings;
         this.eventDispatcher = eventDispatcher;
 
@@ -24,11 +24,11 @@ export class SettingsWrapper implements Disposable {
     }
 
     public get domain(): string {
-        return this.settings.get_string('domain');
+        return this.settings.get_string('domain') ?? 'github.com';
     }
 
     public get token(): string {
-        return this.settings.get_string('token');
+        return this.settings.get_string('token') ?? '';
     }
 
     public get hideNotificationCount(): boolean {
@@ -63,7 +63,7 @@ export class SettingsWrapper implements Disposable {
         return SettingsWrapper.mapIntToEnum(storedValue, NotificationActionType, NotificationActionType.NONE);
     }
 
-    private onChange(source: Settings, key: string): void {
+    private onChange(source: Gio.Settings, key: string): void {
         if (this.settings !== source) {
             return;
         }

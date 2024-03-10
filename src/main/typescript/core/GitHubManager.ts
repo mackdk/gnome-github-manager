@@ -1,4 +1,4 @@
-import { Icon, icon_new_for_string } from '@gi-types/gio2';
+import Gio from '@girs/gio-2.0';
 import { getCurrentExtension, getSettings } from '@gnome-shell/misc/extensionUtils';
 
 import { NotificationController } from '@github-manager/notifications';
@@ -10,7 +10,7 @@ export class GitHubManager implements Disposable {
     @lazy
     private static readonly LOGGER: Logger = new Logger('core::GitHubManager');
 
-    private readonly githubIcon: Icon;
+    private readonly githubIcon: Gio.Icon;
 
     private readonly eventDispatcher: EventDispatcher;
 
@@ -23,7 +23,7 @@ export class GitHubManager implements Disposable {
     public constructor() {
         GitHubManager.LOGGER.trace('Building and wiring components');
 
-        this.githubIcon = icon_new_for_string(`${getCurrentExtension().path}/github.svg`);
+        this.githubIcon = Gio.icon_new_for_string(`${getCurrentExtension().path}/github.svg`);
 
         this.eventDispatcher = new EventDispatcher();
         this.settings = new SettingsWrapper(getSettings(), this.eventDispatcher);

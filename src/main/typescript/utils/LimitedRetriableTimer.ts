@@ -1,4 +1,4 @@
-import { PRIORITY_DEFAULT, source_remove, timeout_add_seconds } from '@gi-types/glib2';
+import GLib from '@girs/glib-2.0';
 
 import { Logger } from './Logger';
 import { lazy } from './utilities';
@@ -49,7 +49,7 @@ export class LimitedRetriableTimer {
             this.runTaskAndSchedule();
         } else {
             // Otherwise schedule the first execution
-            this.timerHandle = timeout_add_seconds(PRIORITY_DEFAULT, initialDelay, () => {
+            this.timerHandle = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, initialDelay, () => {
                 this.runTaskAndSchedule();
                 return false;
             });
@@ -62,7 +62,7 @@ export class LimitedRetriableTimer {
         }
 
         LimitedRetriableTimer.LOGGER.debug('Timer is stopped');
-        source_remove(this.timerHandle);
+        GLib.source_remove(this.timerHandle);
         this.timerHandle = undefined;
         this.retries = 0;
     }
@@ -104,10 +104,10 @@ export class LimitedRetriableTimer {
 
     private scheduleNextRun(): void {
         if (this.timerHandle !== undefined) {
-            source_remove(this.timerHandle);
+            GLib.source_remove(this.timerHandle);
         }
 
-        this.timerHandle = timeout_add_seconds(PRIORITY_DEFAULT, this.currentInterval, () => {
+        this.timerHandle = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, this.currentInterval, () => {
             this.runTaskAndSchedule();
             return false;
         });

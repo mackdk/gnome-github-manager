@@ -6,7 +6,7 @@
       "@test-suite/*": ["typescript/*"],
       "@github-manager/*": ["../main/typescript/*"],
       "@gnome-shell/*": ["stubs/gnome-shell/*"],
-      "@gi-types/*": ["stubs/gi-types/*"],
+      "@girs/*": ["stubs/girs/*"],
       "@gettext": ["stubs/gettext"]
     }
   },

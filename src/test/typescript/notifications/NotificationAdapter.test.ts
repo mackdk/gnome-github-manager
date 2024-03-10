@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 
-import { Icon } from '@gi-types/gio2';
+import Gio from '@girs/gio-2.0';
 import { testResource } from '@test-suite/testSupport';
 import { assert } from 'chai';
 
@@ -12,7 +12,7 @@ import { disposeTranslationDomain, initializeTranslations } from '@github-manage
 import '@test-suite/globals';
 
 describe('NotificationAdapter', () => {
-    const digestIcon = new Icon();
+    const digestIcon = new Gio.Icon();
 
     let adapter: NotificationAdapter;
     let threads: GitHub.Thread[];

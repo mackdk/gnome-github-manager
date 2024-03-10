@@ -1,28 +1,28 @@
-import { ActorAlign } from '@gi-types/clutter10';
-import { Icon as GioIcon } from '@gi-types/gio2';
-import { MetaInfo, ParamFlags, ParamSpec } from '@gi-types/gobject2';
-import { BoxLayout, Icon, Label } from '@gi-types/st1';
+import Clutter from '@girs/clutter-10';
+import Gio from '@girs/gio-2.0';
+import GObject from '@girs/gobject-2.0';
+import St from '@girs/st-1.0';
 
-import { registerGObject } from '@github-manager/utils/gnome';
+import { GObjectMetaInfo, registerGObject } from '@github-manager/utils/gnome';
 
 @registerGObject
-export class GitHubWidget extends BoxLayout {
-    public static readonly metaInfo: MetaInfo = {
+export class GitHubWidget extends St.BoxLayout {
+    public static readonly metaInfo: GObjectMetaInfo = {
         GTypeName: 'GitHubWidget',
         Properties: {
-            text: ParamSpec.string('text', 'Text', 'The text of the widget', ParamFlags.READWRITE, ''),
-            textVisible: ParamSpec.boolean(
+            text: GObject.ParamSpec.string('text', 'Text', 'The text of the widget', GObject.ParamFlags.READWRITE, ''),
+            textVisible: GObject.ParamSpec.boolean(
                 'text-visible',
                 'Text Visible',
                 'The visibility of the text next to the widget',
-                ParamFlags.READWRITE,
+                GObject.ParamFlags.READWRITE,
                 true
             ),
         },
     };
 
     public get text(): string {
-        return this.label.text;
+        return this.label.text ?? '';
     }
 
     public set text(value: string) {
@@ -47,11 +47,11 @@ export class GitHubWidget extends BoxLayout {
         this.notify('text-visible');
     }
 
-    private readonly icon: Icon;
+    private readonly icon: St.Icon;
 
-    private readonly label: Label;
+    private readonly label: St.Label;
 
-    public constructor(defaultIcon: GioIcon, initialText: string = '') {
+    public constructor(defaultIcon: Gio.Icon, initialText: string = '') {
         super({
             styleClass: 'panel-button github-widget',
             reactive: true,
@@ -60,15 +60,15 @@ export class GitHubWidget extends BoxLayout {
             visible: true,
         });
 
-        this.icon = new Icon({
+        this.icon = new St.Icon({
             styleClass: 'system-status-icon widget-icon',
             gicon: defaultIcon,
         });
 
-        this.label = new Label({
+        this.label = new St.Label({
             text: initialText,
             styleClass: 'system-status-icon widget-label',
-            yAlign: ActorAlign.CENTER,
+            yAlign: Clutter.ActorAlign.CENTER,
             yExpand: true,
         });
 

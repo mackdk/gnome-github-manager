@@ -1,4 +1,4 @@
-import { File, Settings } from '@gi-types/gio2';
+import Gio from '@girs/gio-2.0';
 
 export interface ExtensionMetadata {
     uuid: string;
@@ -15,7 +15,7 @@ export interface Extension {
     metadata: ExtensionMetadata;
     uuid: string;
     type: number;
-    dir: File;
+    dir: Gio.File;
     path: string;
     error: string;
     hasPrefs: boolean;
@@ -27,4 +27,4 @@ export interface Extension {
 export function initTranslations(domain: string): void;
 export function openPrefs(): void;
 export function getCurrentExtension(): Extension;
-export function getSettings(name?: string): Settings;
+export function getSettings(name?: string): Gio.Settings;

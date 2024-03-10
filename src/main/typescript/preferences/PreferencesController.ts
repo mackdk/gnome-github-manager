@@ -1,26 +1,7 @@
-import { CURRENT_TIME } from '@gi-types/gdk4';
-import { Pixbuf } from '@gi-types/gdkpixbuf2';
-import { ActionGroup, File, Settings, SettingsBindFlags, SimpleAction, SimpleActionGroup } from '@gi-types/gio2';
-import {
-    AboutDialog,
-    Align,
-    ButtonsType,
-    DropDown,
-    Entry,
-    HeaderBar,
-    Image,
-    License,
-    MessageDialog,
-    MessageType,
-    PasswordEntry,
-    ResponseType,
-    SpinButton,
-    StringList,
-    Switch,
-    Widget,
-    Window,
-    show_uri,
-} from '@gi-types/gtk4';
+import Gdk from '@girs/gdk-4.0';
+import Pixbuf from '@girs/gdkpixbuf-2.0';
+import Gio from '@girs/gio-2.0';
+import Gtk from '@girs/gtk-4.0';
 import { getCurrentExtension, getSettings } from '@gnome-shell/misc/extensionUtils';
 
 import { Logger } from '@github-manager/utils';
@@ -46,42 +27,42 @@ interface ExtensionInfo {
     translators: Record<string, string[]>;
 }
 
-export function createAndBindWidget(widgetType: string, _widgetParameters: string, settingKey?: string): Widget {
-    let widget: Widget, bindProperty: string;
+export function createAndBindWidget(widgetType: string, _widgetParameters: string, settingKey?: string): Gtk.Widget {
+    let widget: Gtk.Widget, bindProperty: string;
     if (widgetType === 'GtkPasswordEntry') {
-        widget = new PasswordEntry({ showPeekIcon: true });
+        widget = new Gtk.PasswordEntry({ showPeekIcon: true });
         bindProperty = 'text';
     } else if (widgetType === 'GtkSwitch') {
-        widget = new Switch({ halign: Align.END });
+        widget = new Gtk.Switch({ halign: Gtk.Align.END });
         bindProperty = 'state';
     } else if (widgetType === 'GtkSpinButton') {
         const params = JSON.parse(_widgetParameters) as Partial<SpinButtonParameters>;
-        widget = SpinButton.new_with_range(params.min ?? 0, params.max ?? 100, params.step ?? 1);
+        widget = Gtk.SpinButton.new_with_range(params.min ?? 0, params.max ?? 100, params.step ?? 1);
         bindProperty = 'value';
     } else if (widgetType === 'GtkDropDown') {
         const params = JSON.parse(_widgetParameters) as Partial<DropDownParameters>;
-        widget = new DropDown({ model: StringList.new(params.items ?? []) });
+        widget = new Gtk.DropDown({ model: Gtk.StringList.new(params.items ?? []) });
 
         bindProperty = 'selected';
     } else {
-        widget = new Entry();
+        widget = new Gtk.Entry();
         bindProperty = 'text';
     }
 
     // Align the widget
-    widget.set_valign(Align.CENTER);
+    widget.set_valign(Gtk.Align.CENTER);
     widget.set_hexpand(true);
     widget.set_vexpand(false);
 
     if (settingKey !== undefined && settingKey !== '') {
-        getSettings().bind(settingKey, widget, bindProperty, SettingsBindFlags.DEFAULT);
+        getSettings().bind(settingKey, widget, bindProperty, Gio.SettingsBindFlags.DEFAULT);
     }
 
     return widget;
 }
 
-export function buildActionGroupFor(dialog: Window): ActionGroup {
-    const actionGroup = new SimpleActionGroup();
+export function buildActionGroupFor(dialog: Gtk.Window): Gio.ActionGroup {
+    const actionGroup = new Gio.SimpleActionGroup();
     const baseUrl = extension.metadata.url;
 
     addActionToGroup(actionGroup, 'resetToDefault', () => resetToDefault(dialog));
@@ -96,7 +77,7 @@ export function buildActionGroupFor(dialog: Window): ActionGroup {
     return actionGroup;
 }
 
-export function addMenuButton(header: HeaderBar, menu: Widget): void {
+export function addMenuButton(header: Gtk.HeaderBar, menu: Gtk.Widget): void {
     try {
         // Try to set the menu button according to the title bar setting
         const buttonLayout = getSettings('org.gnome.desktop.wm.preferences').get_string('button-layout');
@@ -111,29 +92,29 @@ export function addMenuButton(header: HeaderBar, menu: Widget): void {
     }
 }
 
-function addActionToGroup(actionGroup: SimpleActionGroup, name: string, callback: () => void): void {
-    const action = new SimpleAction({ name: name });
+function addActionToGroup(actionGroup: Gio.SimpleActionGroup, name: string, callback: () => void): void {
+    const action = new Gio.SimpleAction({ name: name });
     action.connect('activate', callback);
     actionGroup.add_action(action);
 }
 
-function resetToDefault(dialog: Window): void {
-    const confirmation: MessageDialog = new MessageDialog({
+function resetToDefault(dialog: Gtk.Window): void {
+    const confirmation: Gtk.MessageDialog = new Gtk.MessageDialog({
         transientFor: dialog,
-        buttons: ButtonsType.YES_NO,
-        messageType: MessageType.QUESTION,
+        buttons: Gtk.ButtonsType.YES_NO,
+        messageType: Gtk.MessageType.QUESTION,
         modal: true,
-        destroy_with_parent: true,
+        destroyWithParent: true,
         text: _('Are you sure you want to reset all settings?'),
         secondaryText: _('All the customizations made will be lost. This operation cannot be undone.'),
     });
 
-    confirmation.get_widget_for_response(ResponseType.YES)?.add_css_class('destructive-action');
-    confirmation.set_default_response(ResponseType.NO);
+    confirmation.get_widget_for_response(Gtk.ResponseType.YES)?.add_css_class('destructive-action');
+    confirmation.set_default_response(Gtk.ResponseType.NO);
 
-    confirmation.connect('response', (_source, response) => {
-        if (response === ResponseType.YES) {
-            const settings: Settings = getSettings();
+    confirmation.connect('response', (_source: Gtk.MessageDialog, response: number) => {
+        if (response === Gtk.ResponseType.YES) {
+            const settings: Gio.Settings = getSettings();
             settings.list_keys().forEach((key) => {
                 const defaultValue = settings.get_default_value(key);
                 if (defaultValue !== null) {
@@ -148,15 +129,15 @@ function resetToDefault(dialog: Window): void {
     confirmation.present();
 }
 
-function about(dialog: Window): void {
+function about(dialog: Gtk.Window): void {
     try {
-        const githubIcon = Pixbuf.new_from_file_at_scale(`${extension.path}/github.svg`, -1, 128, true);
-        const paintableLogo = Image.new_from_pixbuf(githubIcon).get_paintable();
+        const githubIcon = Pixbuf.Pixbuf.new_from_file_at_scale(`${extension.path}/github.svg`, -1, 128, true);
+        const paintableLogo = Gtk.Image.new_from_pixbuf(githubIcon).get_paintable();
 
         const extensionInfo = getAdditionalExtensionInfo('extension-info.json');
         const translatorsMap = new Map<string, string[]>(Object.entries(extensionInfo.translators));
 
-        const aboutDialog = new AboutDialog({
+        const aboutDialog = new Gtk.AboutDialog({
             transientFor: dialog,
             modal: true,
             authors: extensionInfo.authors,
@@ -169,9 +150,9 @@ function about(dialog: Window): void {
             translatorCredits: Array.from(translatorsMap.entries())
                 .map(([lang, translators]) => `${lang}:\n\t${translators.join('\n\t')}`)
                 .join('\n\n'),
-            licenseType: License.GPL_2_0,
+            licenseType: Gtk.License.GPL_2_0,
             website: extension.metadata.url,
-            website_label: _('Source code on GitHub'),
+            websiteLabel: _('Source code on GitHub'),
         });
 
         if (paintableLogo !== null) {
@@ -181,7 +162,7 @@ function about(dialog: Window): void {
         aboutDialog.set_system_information(null);
 
         const titleBar = aboutDialog.get_titlebar();
-        if (titleBar instanceof HeaderBar) {
+        if (titleBar instanceof Gtk.HeaderBar) {
             titleBar.get_title_widget()?.set_visible(true);
         }
 
@@ -192,7 +173,7 @@ function about(dialog: Window): void {
 }
 
 function getAdditionalExtensionInfo(filename: string): ExtensionInfo {
-    const [success, bytes] = File.new_for_path(`${extension.path}/${filename}`).load_contents(null);
+    const [success, bytes] = Gio.File.new_for_path(`${extension.path}/${filename}`).load_contents(null);
     if (!success) {
         throw new Error('Unable to correcly load extension-info.json');
     }
@@ -200,6 +181,6 @@ function getAdditionalExtensionInfo(filename: string): ExtensionInfo {
     return JSON.parse(new TextDecoder('utf-8').decode(bytes.buffer)) as ExtensionInfo;
 }
 
-function openUrl(url: string, dialog: Window): void {
-    show_uri(dialog, url, CURRENT_TIME);
+function openUrl(url: string, dialog: Gtk.Window): void {
+    Gtk.show_uri(dialog, url, Gdk.CURRENT_TIME);
 }

@@ -1,1 +1,0 @@
-export function show_uri(parent: Window | null, uri: string, timestamp: number): void {}
