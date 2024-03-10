@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 
-import { HttpEngineStup, testResource } from '@test-suite/testSupport';
+import { HttpEngineStub, testResource } from '@test-suite/testSupport';
 import { assert } from 'chai';
 import { stub } from 'sinon';
 
@@ -44,7 +44,7 @@ describe('GitHubClientImpl', () => {
 
     beforeEach(() => {
         // Default implementation to allow stubbing
-        engineStub = new HttpEngineStup();
+        engineStub = new HttpEngineStub();
     });
 
     it('initializes the properties correctly', () => {

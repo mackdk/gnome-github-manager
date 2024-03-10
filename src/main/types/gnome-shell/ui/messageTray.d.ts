@@ -1,20 +1,20 @@
-import { Actor } from '@gi-types/clutter10';
-import { Icon } from '@gi-types/gio2';
-import { DateTime } from '@gi-types/glib2';
-import { Object as GObject } from '@gi-types/gobject2';
-import { Button, Widget } from '@gi-types/st1';
+import Clutter from '@girs/clutter-10';
+import Gio from '@girs/gio-2.0';
+import GLib from '@girs/glib-2.0';
+import GObject from '@girs/gobject-2.0';
+import St from '@girs/st-1.0';
 
 export interface NotificationProperties {
-    gicon: Icon;
-    secondaryGIcon: Icon;
+    gicon: Gio.Icon;
+    secondaryGIcon: Gio.Icon;
     bannerMarkup: boolean;
     clear: boolean;
-    datetime: DateTime;
+    datetime: GLib.DateTime;
     soundName: string;
     soundFile: string;
 }
 
-export class Notification extends GObject {
+export class Notification extends GObject.Object {
     public constructor(source: Source, title: string, banner: string, params?: Partial<NotificationProperties>);
 
     public title: string;
@@ -33,18 +33,18 @@ export class Notification extends GObject {
 
 // NotificationBanner actually extends Calendar.NotificationMessage but it's not needed for this project
 export class NotificationBanner {
-    public addButton(button: Button, callback: () => void): Button;
-    public addAction(label: string, callback: () => void): Button;
+    public addButton(button: St.Button, callback: () => void): St.Button;
+    public addAction(label: string, callback: () => void): St.Button;
 }
 
-export class Source extends GObject {
+export class Source extends GObject.Object {
     public notifications: Notification[];
 
     public constructor(title: string, iconName: string);
 
     public open(): void;
     public destroy(reson?: string): void;
-    public getIcon(): Icon;
+    public getIcon(): Gio.Icon;
 
     public showNotification(notification: Notification): void;
     public pushNotification(notification: Notification): void;
@@ -56,7 +56,7 @@ export class SystemNotificationSource extends Source {
     public constructor();
 }
 
-export interface MessageTray extends Widget {
+export interface MessageTray extends St.Widget {
     add(source: Source): void;
-    contains(source: Source | Actor): boolean;
+    contains(source: Source | Clutter.Actor): boolean;
 }

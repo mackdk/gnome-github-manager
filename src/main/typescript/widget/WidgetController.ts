@@ -1,7 +1,7 @@
-import { CURRENT_TIME } from '@gi-types/clutter10';
-import { BUTTON_PRIMARY, BUTTON_SECONDARY, ButtonEvent } from '@gi-types/gdk4';
-import { Icon as GioIcon } from '@gi-types/gio2';
-import { show_uri } from '@gi-types/gtk4';
+import Clutter from '@girs/clutter-10';
+import Gdk from '@girs/gdk-4.0';
+import Gio from '@girs/gio-2.0';
+import Gtk from '@girs/gtk-4.0';
 import { openPrefs } from '@gnome-shell/misc/extensionUtils';
 import { main as ShellUI } from '@gnome-shell/ui';
 
@@ -20,10 +20,10 @@ export class WidgetController implements Disposable {
 
     private readonly buttonPressId: number;
 
-    public constructor(settings: SettingsWrapper, eventDispatcher: EventDispatcher, githubIcon: GioIcon) {
+    public constructor(settings: SettingsWrapper, eventDispatcher: EventDispatcher, githubIcon: Gio.Icon) {
         this.settings = settings;
         this.widget = new GitHubWidget(githubIcon, '0');
-        this.buttonPressId = this.widget.connect('button-press-event', (_: this, event: ButtonEvent) =>
+        this.buttonPressId = this.widget.connect('button-press-event', (_: this, event: Gdk.ButtonEvent) =>
             this.handleButtonPress(event)
         );
 
@@ -62,21 +62,21 @@ export class WidgetController implements Disposable {
         this.widget.text = text;
     }
 
-    private handleButtonPress(event: ButtonEvent): void {
+    private handleButtonPress(event: Gdk.ButtonEvent): void {
         switch (event.get_button()) {
-            case BUTTON_PRIMARY:
+            case Gdk.BUTTON_PRIMARY:
                 try {
                     let url = `https://${this.settings.domain}/notifications`;
                     if (this.settings.showParticipatingOnly) {
                         url = url.concat('/participating');
                     }
 
-                    show_uri(null, url, CURRENT_TIME);
+                    Gtk.show_uri(null, url, Clutter.CURRENT_TIME);
                 } catch (e) {
                     WidgetController.LOGGER.error('Cannot open uri', e);
                 }
                 break;
-            case BUTTON_SECONDARY:
+            case Gdk.BUTTON_SECONDARY:
                 openPrefs();
                 break;
         }

@@ -1,4 +1,4 @@
-import { Icon } from '@gi-types/gio2';
+import Gio from '@girs/gio-2.0';
 
 export class Source {
     public notifications: Notification[];
@@ -7,8 +7,8 @@ export class Source {
         this.notifications = [];
     }
 
-    public getIcon(): Icon {
-        return new Icon();
+    public getIcon(): Gio.Icon {
+        return new Gio.Icon();
     }
 
     public open(): void {}

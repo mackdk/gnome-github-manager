@@ -1,5 +1,5 @@
-import { File } from '@gi-types/gio2';
-import * as GLib2 from '@gi-types/glib2';
+import Gio from '@girs/gio-2.0';
+import GLib from '@girs/glib-2.0';
 import { assert } from 'chai';
 import { SinonSpy, SinonStub, spy, stub } from 'sinon';
 
@@ -11,8 +11,8 @@ describe('Logger', () => {
     let logSpy: SinonSpy<[message: string], void>;
     let logErrorSpy: SinonSpy<[e: unknown, message: string], void>;
 
-    const getUserDataDirStub: SinonStub<[], string> = stub(GLib2, 'get_user_data_dir');
-    const newForPathStub: SinonStub<[path: string], File> = stub(File, 'new_for_path');
+    const getUserDataDirStub: SinonStub<[], string> = stub(GLib, 'get_user_data_dir');
+    const newForPathStub: SinonStub<[path: string], Gio.File> = stub(Gio.File, 'new_for_path');
 
     before(() => {
         logSpy = spy(globalThis, 'log');
@@ -143,7 +143,7 @@ describe('Logger', () => {
     });
 
     it('uses default configuration when initializing with no configuration file', () => {
-        const configurationFileStub = stub(new File());
+        const configurationFileStub = stub(new Gio.File());
 
         getUserDataDirStub.returns('.');
         newForPathStub.returns(configurationFileStub);
@@ -156,7 +156,7 @@ describe('Logger', () => {
     });
 
     it('can load configuration file', () => {
-        const configurationFileStub = stub(new File());
+        const configurationFileStub = stub(new Gio.File());
         const configurationFile = `
 root = WARN
 
@@ -169,7 +169,7 @@ test::core = DEBUG
         getUserDataDirStub.returns('.');
         newForPathStub.returns(configurationFileStub);
         configurationFileStub.query_exists.returns(true);
-        configurationFileStub.load_contents.returns([true, new TextEncoder().encode(configurationFile)]);
+        configurationFileStub.load_contents.returns([true, new TextEncoder().encode(configurationFile), null]);
 
         Logger.initialize();
 
@@ -181,14 +181,14 @@ test::core = DEBUG
     });
 
     it('ignores errors while parsing the configuration file', () => {
-        const configurationFileStub = stub(new File());
+        const configurationFileStub = stub(new Gio.File());
 
         getUserDataDirStub.returns('.');
         newForPathStub.returns(configurationFileStub);
         configurationFileStub.query_exists.returns(true);
 
         // First case, load_content return false
-        configurationFileStub.load_contents.returns([false, new Uint8Array()]);
+        configurationFileStub.load_contents.returns([false, new Uint8Array(), null]);
 
         Logger.initialize();
 

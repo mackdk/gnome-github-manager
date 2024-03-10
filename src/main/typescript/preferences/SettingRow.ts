@@ -1,58 +1,58 @@
-import { ActionRow } from '@gi-types/adw1';
-import { MetaInfo, ParamFlags, ParamSpec } from '@gi-types/gobject2';
-import { Widget } from '@gi-types/gtk4';
+import Adw from '@girs/adw-1';
+import GObject from '@girs/gobject-2.0';
+import Gtk from '@girs/gtk-4.0';
 
-import { registerGObject } from '@github-manager/utils/gnome';
+import { GObjectMetaInfo, registerGObject } from '@github-manager/utils/gnome';
 
 import * as PreferencesController from './PreferencesController';
 
-export interface SettingRowConstructorProperties extends ActionRow.ConstructorProperties {
+export interface SettingRowConstructorProperties extends Adw.ActionRow.ConstructorProps {
     widgetType: string;
     widgetParameters: string;
     setting: string;
-    prefix: Widget;
-    suffix: Widget;
+    prefix: Gtk.Widget;
+    suffix: Gtk.Widget;
 }
 
 @registerGObject
-export class SettingRow extends ActionRow {
-    public static readonly metaInfo: MetaInfo = {
+export class SettingRow extends Adw.ActionRow {
+    public static readonly metaInfo: GObjectMetaInfo = {
         GTypeName: 'SettingRow',
         Properties: {
-            widgetType: ParamSpec.string(
+            widgetType: GObject.ParamSpec.string(
                 'widget-type',
                 'Type of widget',
                 'The widget to use to edit this setting',
-                ParamFlags.READWRITE,
+                GObject.ParamFlags.READWRITE,
                 'GktEntry'
             ),
-            widgetParameters: ParamSpec.string(
+            widgetParameters: GObject.ParamSpec.string(
                 'widget-parameters',
                 'Widget parameters',
                 'Additional parameter to build the widget',
-                ParamFlags.READWRITE,
+                GObject.ParamFlags.READWRITE,
                 '{}'
             ),
-            setting: ParamSpec.string(
+            setting: GObject.ParamSpec.string(
                 'setting-key',
                 'The setting key',
                 'The key of the setting controlled by this widget',
-                ParamFlags.READWRITE,
+                GObject.ParamFlags.READWRITE,
                 ''
             ),
-            prefix: ParamSpec.object(
+            prefix: GObject.ParamSpec.object(
                 'prefix',
                 'Prefix widget',
                 'Widget at the beginning of the setting row',
-                ParamFlags.READWRITE,
-                Widget.$gtype
+                GObject.ParamFlags.READWRITE,
+                Gtk.Widget.$gtype
             ),
-            suffix: ParamSpec.object(
+            suffix: GObject.ParamSpec.object(
                 'suffix',
                 'Suffix widget',
                 'Widget at the end of the setting row',
-                ParamFlags.READWRITE,
-                Widget.$gtype
+                GObject.ParamFlags.READWRITE,
+                Gtk.Widget.$gtype
             ),
         },
     };
@@ -60,8 +60,8 @@ export class SettingRow extends ActionRow {
     private _widgetType: string;
     private _widgetParameters: string;
     private _settingKey: string;
-    private _prefix?: Widget;
-    private _suffix?: Widget;
+    private _prefix?: Gtk.Widget;
+    private _suffix?: Gtk.Widget;
 
     public constructor(params?: Partial<SettingRowConstructorProperties>) {
         super(params);
@@ -133,11 +133,11 @@ export class SettingRow extends ActionRow {
         this.notify('setting-key');
     }
 
-    public get prefix(): Widget | undefined {
+    public get prefix(): Gtk.Widget | undefined {
         return this._prefix;
     }
 
-    public set prefix(value: Widget | undefined) {
+    public set prefix(value: Gtk.Widget | undefined) {
         if (this._prefix === value) {
             return;
         }
@@ -146,11 +146,11 @@ export class SettingRow extends ActionRow {
         this.notify('prefix');
     }
 
-    public get suffix(): Widget | undefined {
+    public get suffix(): Gtk.Widget | undefined {
         return this._suffix;
     }
 
-    public set suffix(value: Widget | undefined) {
+    public set suffix(value: Gtk.Widget | undefined) {
         if (this._suffix === value) {
             return;
         }

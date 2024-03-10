@@ -1,36 +1,36 @@
-import { File } from '@gi-types/gio2';
-import { Object as GObject, MetaInfo, ParamFlags, ParamSpec } from '@gi-types/gobject2';
-import { Box, Buildable, Builder, ListBox, Widget } from '@gi-types/gtk4';
+import Gio from '@girs/gio-2.0';
+import GObject from '@girs/gobject-2.0';
+import Gtk from '@girs/gtk-4.0';
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
-import { registerGObject } from '@github-manager/utils/gnome';
+import { GObjectMetaInfo, registerGObject } from '@github-manager/utils/gnome';
 
 import { PrefsRow } from './PrefsRow';
 
-export interface PrefsGroupConstructorProperties extends Box.ConstructorProperties {
+export interface PrefsGroupConstructorProperties extends Gtk.Box.ConstructorProps {
     label: string;
 }
 
 @registerGObject
-export class PrefsGroup extends Box {
-    public static readonly metaInfo: MetaInfo = {
+export class PrefsGroup extends Gtk.Box {
+    public static readonly metaInfo: GObjectMetaInfo = {
         GTypeName: 'PrefsGroup',
-        Template: File.new_for_path(`${getCurrentExtension().path}/ui/PrefsGroup.ui`).get_uri(),
+        Template: Gio.File.new_for_path(`${getCurrentExtension().path}/ui/PrefsGroup.ui`).get_uri() ?? undefined,
         Properties: {
-            label: ParamSpec.string(
+            label: GObject.ParamSpec.string(
                 'label',
                 'Label',
                 'Label display for the input widget of this pref',
-                ParamFlags.READWRITE,
+                GObject.ParamFlags.READWRITE,
                 ''
             ),
         },
         InternalChildren: ['rows'],
-        Implements: [Buildable],
+        Implements: [Gtk.Buildable],
     };
 
     private _label: string;
-    private _rows?: ListBox;
+    private _rows?: Gtk.ListBox;
     private prefsRows: PrefsRow[];
 
     public constructor(params?: Partial<PrefsGroupConstructorProperties>) {
@@ -40,10 +40,10 @@ export class PrefsGroup extends Box {
         this._label = params?.label ?? '';
     }
 
-    public vfunc_add_child(builder: Builder, child: GObject, type?: string | null | undefined): void {
+    public vfunc_add_child(builder: Gtk.Builder, child: GObject.Object, type: string | null): void {
         if (child instanceof PrefsRow) {
             this.appendRow(child);
-        } else if (child instanceof Widget) {
+        } else if (child instanceof Gtk.Widget) {
             super.append(child);
         } else {
             super.vfunc_add_child(builder, child, type);

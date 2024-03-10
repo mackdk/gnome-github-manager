@@ -1,4 +1,4 @@
-import { Icon, icon_new_for_string } from '@gi-types/gio2';
+import Gio from '@girs/gio-2.0';
 import { Source, Notification as UINotification } from '@gnome-shell/ui/messageTray';
 
 import { GitHub } from '@github-manager/client';
@@ -10,15 +10,15 @@ import { NotificationAction } from './actions/NotificationAction';
 
 @registerGObject
 class DigestSource extends Source {
-    private readonly icon: Icon;
+    private readonly icon: Gio.Icon;
 
-    public constructor(icon: Icon) {
+    public constructor(icon: Gio.Icon) {
         super('Github Notifications', '');
 
         this.icon = icon;
     }
 
-    public getIcon(): Icon {
+    public getIcon(): Gio.Icon {
         return this.icon;
     }
 
@@ -30,7 +30,7 @@ class DigestSource extends Source {
 @registerGObject
 class ProjectSource extends Source {
     private readonly avatarUrl: string;
-    private icon?: Icon;
+    private icon?: Gio.Icon;
 
     public constructor(projectName: string, avatarUrl: string) {
         super(projectName, '');
@@ -38,9 +38,9 @@ class ProjectSource extends Source {
         this.avatarUrl = avatarUrl;
     }
 
-    public getIcon(): Icon {
+    public getIcon(): Gio.Icon {
         if (this.icon === undefined) {
-            this.icon = icon_new_for_string(this.avatarUrl);
+            this.icon = Gio.icon_new_for_string(this.avatarUrl);
         }
 
         return this.icon;
@@ -60,11 +60,11 @@ export class NotificationAdapter {
 
     private _secondaryAction?: NotificationAction;
 
-    private readonly digestIcon: Icon;
+    private readonly digestIcon: Gio.Icon;
 
     public constructor(
         notificationMode: NotificationMode,
-        digestIcon: Icon,
+        digestIcon: Gio.Icon,
         activateAction?: NotificationAction,
         primaryAction?: NotificationAction,
         secondaryAction?: NotificationAction

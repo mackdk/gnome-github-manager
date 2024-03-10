@@ -1,4 +1,4 @@
-import { Widget } from "@gi-types/st1";
+import St from '@girs/st-1.0';
 
 export class ButtonBox {}
 
@@ -8,5 +8,5 @@ export class Button extends ButtonBox {
         super();
     }
 
-    public add_actor(widget: Widget): void {}
+    public add_actor(widget: St.Widget): void {}
 }

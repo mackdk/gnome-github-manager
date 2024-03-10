@@ -1,6 +1,5 @@
 {
     "env": {
-        "commonjs": true,
         "es2022": true
     },
     "extends": [
@@ -53,7 +52,7 @@
                     "group": "internal"
                 },
                 {
-                    "pattern": "@gi-types/**",
+                    "pattern": "@girs/**",
                     "group": "external"
                 },
                 {

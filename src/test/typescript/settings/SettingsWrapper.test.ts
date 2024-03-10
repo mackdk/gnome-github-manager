@@ -1,4 +1,4 @@
-import { Settings } from '@gi-types/gio2';
+import Gio from '@girs/gio-2.0';
 import { assert } from 'chai';
 import { SinonSpy, SinonStub, match, spy, stub } from 'sinon';
 
@@ -6,16 +6,16 @@ import { NotificationActionType, NotificationMode } from '@github-manager/settin
 import { SettingsWrapper } from '@github-manager/settings/SettingsWrapper';
 import { EventDispatcher } from '@github-manager/utils/EventDispatcher';
 
-type SettingsConnectParameters = [signal: string, callback: (_source: Settings, key: string) => void];
+type SettingsConnectParameters = [signal: string, callback: (_source: Gio.Settings, key: string) => void];
 
 describe('SettingsWrapper', () => {
     let eventDispatcher: EventDispatcher;
-    let settings: Settings;
+    let settings: Gio.Settings;
 
     beforeEach(() => {
         // Default implementation to allow stubbing
         eventDispatcher = new EventDispatcher();
-        settings = new Settings();
+        settings = new Gio.Settings();
     });
 
     it('can send event when change is triggered', () => {

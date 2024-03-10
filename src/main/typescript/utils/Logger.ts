@@ -1,5 +1,5 @@
-import { File } from '@gi-types/gio2';
-import { get_user_data_dir } from '@gi-types/glib2';
+import Gio from '@girs/gio-2.0';
+import GLib from '@girs/glib-2.0';
 import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
 import { formatString, readonlyMap, removeAfter as stripAfter } from './utilities';
@@ -28,14 +28,14 @@ export class Logger {
     public static initialize(): void {
         Logger.resetConfiguration();
 
-        const configuration = File.new_for_path(`${get_user_data_dir()}/gnome-github-manager/logging.properties`);
-        if (!configuration.query_exists(null)) {
+        const config = Gio.File.new_for_path(`${GLib.get_user_data_dir()}/gnome-github-manager/logging.properties`);
+        if (!config.query_exists(null)) {
             // No configuration file, nothing to do
             return;
         }
 
         try {
-            const [success, bytes] = configuration.load_contents(null);
+            const [success, bytes] = config.load_contents(null);
             if (!success) {
                 throw new Error('Loading data was not successfull');
             }

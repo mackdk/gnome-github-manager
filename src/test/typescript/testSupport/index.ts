@@ -7,7 +7,7 @@ import { GitHubClient } from '@github-manager/client/GitHubClient';
 import { HttpEngine, HttpRequest, HttpResponse } from '@github-manager/client/Http';
 
 // Simple do-nothing HttpEngine implementation
-export class HttpEngineStup implements HttpEngine {
+export class HttpEngineStub implements HttpEngine {
     public send(_request: HttpRequest): Promise<HttpResponse> {
         return Promise.resolve(new HttpResponse(200, 0));
     }

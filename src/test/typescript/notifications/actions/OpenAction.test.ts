@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 
-import * as Gtk4 from '@gi-types/gtk4';
+import Gtk from '@girs/gtk-4.0';
 import { GitHubClientStub, assertWithRetries, testResource } from '@test-suite/testSupport';
 import { assert } from 'chai';
 import { SinonSpy, spy, stub } from 'sinon';
@@ -17,13 +17,13 @@ describe('Open Action', () => {
     let githubClient: GitHubClient;
     let eventDispatcher: EventDispatcher;
 
-    let showUriSpy: SinonSpy<[parent: Window | null, uri: string, timestamp: number], void>;
+    let showUriSpy: SinonSpy<[parent: Gtk.Window | null, uri: string, timestamp: number], void>;
 
     before(() => {
         const scenarioJSON = readFileSync(testResource('../notifications.json'), { encoding: 'utf-8' });
         thread = (JSON.parse(scenarioJSON) as GitHub.Thread[])[0];
 
-        showUriSpy = spy(Gtk4, 'show_uri');
+        showUriSpy = spy(Gtk, 'show_uri');
     });
 
     beforeEach(() => {

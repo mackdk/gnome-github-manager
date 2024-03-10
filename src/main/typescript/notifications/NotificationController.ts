@@ -1,4 +1,4 @@
-import { Icon } from '@gi-types/gio2';
+import Gio from '@girs/gio-2.0';
 import { main as ShellUI } from '@gnome-shell/ui';
 import { Notification } from '@gnome-shell/ui/messageTray';
 
@@ -25,7 +25,7 @@ export class NotificationController {
 
     private notifications: GitHub.Thread[];
 
-    public constructor(settings: SettingsWrapper, eventDispatcher: EventDispatcher, gitHubIcon: Icon) {
+    public constructor(settings: SettingsWrapper, eventDispatcher: EventDispatcher, gitHubIcon: Gio.Icon) {
         this.settings = settings;
         this.eventDispatcher = eventDispatcher;
 
