@@ -24,7 +24,7 @@ const metadata: ExtensionMetadata = JSON.parse(data) as ExtensionMetadata;
 
 const globals = {
     // Dirty hack to make class that require Adwaita to work even in Gnome < 42
-    '@girs/adw-1': 'imports.gi.versions.Adw ? imports.gi.Adw : { ActionRow: imports.gi.Gtk.Widget }',
+    '@girs/adw-1': 'imports.gi.Adw',
     '@girs/clutter-10': 'imports.gi.Clutter',
     '@girs/gdk-4.0': 'imports.gi.Gdk',
     '@girs/gdkpixbuf-2.0': 'imports.gi.GdkPixbuf',
