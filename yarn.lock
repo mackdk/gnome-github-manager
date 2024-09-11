@@ -636,16 +636,6 @@
     "@girs/harfbuzz-0.0" "^8.5.0-4.0.0-beta.15"
     "@girs/pango-1.0" "^1.54.0-4.0.0-beta.15"
 
-"@girs/soup-2.4@^2.74.3-4.0.0-beta.15":
-  version "2.74.3-4.0.0-beta.15"
-  resolved "https://registry.yarnpkg.com/@girs/soup-2.4/-/soup-2.4-2.74.3-4.0.0-beta.15.tgz#9f0537da398faf5245f1b67d74456dce8d56873a"
-  integrity sha512-wY5tAxv+MN59UtgPBGrQtmDSrmKizv96sCA1cbI8Pfd/XnN6XjuVTMPfbgKM2jcu6i8BmgbJZVNCF/485No5Dg==
-  dependencies:
-    "@girs/gio-2.0" "^2.80.3-4.0.0-beta.15"
-    "@girs/gjs" "^4.0.0-beta.15"
-    "@girs/glib-2.0" "^2.80.3-4.0.0-beta.15"
-    "@girs/gobject-2.0" "^2.80.3-4.0.0-beta.15"
-
 "@girs/soup-3.0@^3.4.4-4.0.0-beta.15":
   version "3.4.4-4.0.0-beta.15"
   resolved "https://registry.yarnpkg.com/@girs/soup-3.0/-/soup-3.0-3.4.4-4.0.0-beta.15.tgz#335bd235c0897662bcea857d5b0d9cff3e831426"
