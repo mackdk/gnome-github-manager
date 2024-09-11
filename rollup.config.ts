@@ -32,7 +32,6 @@ const globals = {
     '@girs/glib-2.0': 'imports.gi.GLib',
     '@girs/gobject-2.0': 'imports.gi.GObject',
     '@girs/gtk-4.0': 'imports.gi.Gtk',
-    '@girs/soup-2.4': 'imports.gi.Soup',
     '@girs/soup-3.0': 'imports.gi.Soup',
     '@girs/st-1.0': 'imports.gi.St',
     '@gnome-shell/misc/extensionUtils': 'imports.misc.extensionUtils',

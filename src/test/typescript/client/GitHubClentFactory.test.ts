@@ -2,21 +2,11 @@ import { assert } from 'chai';
 
 import * as GitHubClientFactory from '@github-manager/client/GitHubClientFactory';
 import { GitHubClientImpl } from '@github-manager/client/GitHubClientImpl';
-import { Soup2HttpEngine } from '@github-manager/client/Soup2HttpEngine';
 import { Soup3HttpEngine } from '@github-manager/client/Soup3HttpEngine';
 
 import '@test-suite/globals';
 
 describe('GitHubClientFactory', () => {
-    it('can create client for Soup 2', () => {
-        imports.gi.versions.Soup = '2.4';
-
-        const client = GitHubClientFactory.newClient('my-domain', 'my-token');
-
-        assert.instanceOf(client, GitHubClientImpl);
-        assert.instanceOf((client as GitHubClientImpl).httpEngine, Soup2HttpEngine);
-    });
-
     it('can create client for Soup 3', () => {
         imports.gi.versions.Soup = '3.0';
 
