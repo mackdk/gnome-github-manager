@@ -142,64 +142,6 @@ export class CodeAdapter {
         };
     }
 
-    public afterCompilation(context: ts.TransformationContext): ts.Transformer<ts.SourceFile> {
-        return (sourceFile) => {
-            let className: string | undefined;
-            const nodeFactory = context.factory;
-
-            const constructorBodyVisitor = (node: ts.Node): ts.Node => {
-                if (
-                    ts.isExpressionStatement(node) &&
-                    ts.isCallExpression(node.expression) &&
-                    node.expression.expression.kind === ts.SyntaxKind.SuperKeyword
-                ) {
-                    // Return a call to super._init() with the same arguments
-                    return nodeFactory.createExpressionStatement(
-                        nodeFactory.createCallExpression(
-                            nodeFactory.createPropertyAccessExpression(nodeFactory.createSuper(), '_init'),
-                            node.expression.typeArguments,
-                            node.expression.arguments
-                        )
-                    );
-                }
-
-                return node;
-            };
-
-            const gobjectClassVisitor = (node: ts.Node): ts.Node | undefined => {
-                if (ts.isConstructorDeclaration(node)) {
-                    // Replace the constructor declaration with a _init() with the same argoment
-                    return nodeFactory.createMethodDeclaration(
-                        node.modifiers,
-                        node.asteriskToken,
-                        '_init',
-                        node.questionToken,
-                        node.typeParameters,
-                        node.parameters,
-                        node.type,
-                        // Visit each child to replace any super constrcutor reference
-                        ts.visitEachChild(node.body, constructorBodyVisitor, context)
-                    );
-                }
-
-                return node;
-            };
-
-            const visitor = (node: ts.Node): ts.Node => {
-                if (ts.isClassDeclaration(node) || ts.isClassExpression(node)) {
-                    className = node.name?.getText();
-                    if (className !== undefined && this.gobjects.includes(className)) {
-                        return ts.visitEachChild(node, gobjectClassVisitor, context);
-                    }
-                }
-
-                return ts.visitEachChild(node, visitor, context);
-            };
-
-            return ts.visitNode(sourceFile, visitor);
-        };
-    }
-
     private isDecorated(node: ts.ClassDeclaration | ts.PropertyDeclaration, decorator: string): boolean {
         const decorators = ts.getDecorators(node) ?? [];
         if (decorators.length === 0) {
