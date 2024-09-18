@@ -54,14 +54,6 @@
                 {
                     "pattern": "@girs/**",
                     "group": "external"
-                },
-                {
-                    "pattern": "@gnome-shell/**",
-                    "group": "external"
-                },
-                {
-                    "pattern": "@gettext",
-                    "group": "external"
                 }
             ]
         }],

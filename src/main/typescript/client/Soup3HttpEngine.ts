@@ -1,5 +1,5 @@
-import GLib from '@girs/glib-2.0';
 import Gio from '@girs/gio-2.0';
+import GLib from '@girs/glib-2.0';
 import Soup from '@girs/soup-3.0';
 
 import { HttpEngine, HttpRequest, HttpResponse } from './Http';

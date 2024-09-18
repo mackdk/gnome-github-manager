@@ -1,10 +1,15 @@
 import Gio from '@girs/gio-2.0';
-import { Source, Notification as UINotification } from '@gnome-shell/ui/messageTray';
+import { gettext as _, ngettext } from '@girs/gnome-shell/dist/extensions/extension';
+import {
+    NotificationDestroyedReason,
+    Source,
+    Notification as UINotification,
+} from '@girs/gnome-shell/dist/ui/messageTray';
 
 import { GitHub } from '@github-manager/client';
 import { NotificationMode } from '@github-manager/settings';
+import { formatString } from '@github-manager/utils';
 import { registerGObject } from '@github-manager/utils/gnome';
-import { _, ngettext } from '@github-manager/utils/locale';
 
 import { NotificationAction } from './actions/NotificationAction';
 
@@ -23,7 +28,7 @@ class DigestSource extends Source {
     }
 
     public open(): void {
-        this.destroy();
+        this.destroy(NotificationDestroyedReason.DISMISSED);
     }
 }
 
@@ -47,7 +52,7 @@ class ProjectSource extends Source {
     }
 
     public open(): void {
-        this.destroy();
+        this.destroy(NotificationDestroyedReason.DISMISSED);
     }
 }
 
@@ -157,10 +162,8 @@ export class NotificationAdapter {
         const notification = new UINotification(
             new DigestSource(this.digestIcon),
             _('Github Notifications'),
-            ngettext(
-                'You have one new notification.',
-                'You have {0} new notifications.',
-                notificationCount,
+            formatString(
+                ngettext('You have one new notification.', 'You have {0} new notifications.', notificationCount),
                 notificationCount
             )
         );
@@ -171,7 +174,7 @@ export class NotificationAdapter {
     }
 
     private setupCommonNotificationProperties(notification: UINotification, data?: GitHub.Thread): void {
-        notification.setTransient(false);
+        notification.isTransient = false;
         if (this._activateAction !== undefined) {
             const action = this._activateAction;
             notification.connect('activated', () => action.execute(data));

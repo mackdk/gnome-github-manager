@@ -1,6 +1,7 @@
+import { gettext as _ } from '@girs/gnome-shell/dist/extensions/extension';
+
 import { ApiError, GitHub, GitHubClient } from '@github-manager/client';
 import { EventDispatcher, Logger, lazy } from '@github-manager/utils';
-import { _ } from '@github-manager/utils/locale';
 
 import { NotificationAction } from './NotificationAction';
 

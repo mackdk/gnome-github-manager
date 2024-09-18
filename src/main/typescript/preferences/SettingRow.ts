@@ -2,6 +2,7 @@ import '@girs/gjs';
 import '@girs/gjs/dom';
 
 import Adw from '@girs/adw-1';
+import { ExtensionPreferences } from '@girs/gnome-shell/dist/extensions/prefs';
 import GObject from '@girs/gobject-2.0';
 import Gtk from '@girs/gtk-4.0';
 
@@ -9,7 +10,7 @@ import { GObjectMetaInfo, registerGObject } from '@github-manager/utils/gnome';
 
 import * as PreferencesController from './PreferencesController';
 
-export interface SettingRowConstructorProperties extends Adw.ActionRow.ConstructorProps {
+export interface SettingRowConstructorProperties extends Adw.ActionRow.ConstructorProperties {
     widgetType: string;
     widgetParameters: string;
     setting: string;
@@ -47,7 +48,6 @@ export class SettingRow extends Adw.ActionRow {
                 'prefix',
                 'Prefix widget',
                 'Widget at the beginning of the setting row',
-                // @ts-ignore
                 GObject.ParamFlags.READWRITE,
                 Gtk.Widget.$gtype
             ),
@@ -55,7 +55,6 @@ export class SettingRow extends Adw.ActionRow {
                 'suffix',
                 'Suffix widget',
                 'Widget at the end of the setting row',
-                // @ts-ignore
                 GObject.ParamFlags.READWRITE,
                 Gtk.Widget.$gtype
             ),
@@ -84,6 +83,7 @@ export class SettingRow extends Adw.ActionRow {
         const widget = PreferencesController.createAndBindWidget(
             this._widgetType,
             this._widgetParameters,
+            ExtensionPreferences.lookupByUUID('github-manager@mackdk-on-github')?.getSettings(),
             this._settingKey
         );
 

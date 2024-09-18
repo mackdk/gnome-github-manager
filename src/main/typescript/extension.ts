@@ -1,17 +1,22 @@
-import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
+import { Extension, ExtensionMetadata } from '@girs/gnome-shell/dist/extensions/extension';
 
 import { GitHubManager } from '@github-manager/core';
 import { Logger, lazy } from '@github-manager/utils';
-import { initializeTranslations } from '@github-manager/utils/locale';
 
 /**
  * Extension entry point class.
  */
-class GitHubManagerExtension {
+export default class GitHubManagerExtension extends Extension {
     @lazy
     private static readonly LOGGER: Logger = new Logger('GitHubManagerExtension');
 
     private gitHubManager?: GitHubManager;
+
+    public constructor(metadata: ExtensionMetadata) {
+        super(metadata);
+
+        Logger.initialize(metadata.name);
+    }
 
     public enable(): void {
         if (this.gitHubManager !== undefined) {
@@ -21,7 +26,7 @@ class GitHubManagerExtension {
 
         try {
             GitHubManagerExtension.LOGGER.debug('Inizializing extension at {0}', new Date().toISOString());
-            this.gitHubManager = new GitHubManager();
+            this.gitHubManager = new GitHubManager(this.metadata.name, this.path, this.getSettings());
             this.gitHubManager.start();
         } catch (err) {
             GitHubManagerExtension.LOGGER.error('Unexpected error while enabling extension', err);
@@ -45,11 +50,4 @@ class GitHubManagerExtension {
             this.gitHubManager = undefined;
         }
     }
-}
-
-export default function (): GitHubManagerExtension {
-    initializeTranslations(`${getCurrentExtension().metadata.uuid}`);
-    Logger.initialize();
-
-    return new GitHubManagerExtension();
 }

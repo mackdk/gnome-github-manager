@@ -1,9 +1,9 @@
-import Clutter from '@girs/clutter-10';
+import Clutter from '@girs/clutter-13';
 import Gdk from '@girs/gdk-4.0';
 import Gio from '@girs/gio-2.0';
+import { Extension } from '@girs/gnome-shell/dist/extensions/extension';
+import * as ShellUI from '@girs/gnome-shell/dist/ui/main';
 import Gtk from '@girs/gtk-4.0';
-import { openPrefs } from '@gnome-shell/misc/extensionUtils';
-import { main as ShellUI } from '@gnome-shell/ui';
 
 import { SettingsWrapper } from '@github-manager/settings';
 import { Disposable, EventDispatcher, Logger, lazy } from '@github-manager/utils';
@@ -34,22 +34,12 @@ export class WidgetController implements Disposable {
     }
 
     public show(): boolean {
-        const container = ShellUI.panel._rightBox;
-        if (container.contains(this.widget)) {
-            return false;
-        }
-
-        container.insert_child_at_index(this.widget, 0);
+        ShellUI.panel.addToStatusArea('GithubManager', this.widget, 0, 'right');
         return true;
     }
 
     public hide(): boolean {
-        const container = ShellUI.panel._rightBox;
-        if (container.contains(this.widget)) {
-            container.remove_child(this.widget);
-            return true;
-        }
-
+        this.widget.visible = false;
         return false;
     }
 
@@ -77,7 +67,7 @@ export class WidgetController implements Disposable {
                 }
                 break;
             case Gdk.BUTTON_SECONDARY:
-                openPrefs();
+                this.openPreferences();
                 break;
         }
     }
@@ -87,6 +77,7 @@ export class WidgetController implements Disposable {
     }
 
     private settingChanged(setting: string): void {
+        WidgetController.LOGGER.debug("Attempting to change setting '{0}'", setting);
         switch (setting) {
             case 'hide-notification-count':
                 this.updateButtonVisibility();
@@ -106,5 +97,15 @@ export class WidgetController implements Disposable {
 
     private updateButtonVisibility(): void {
         this.widget.textVisible = !this.settings.hideNotificationCount;
+    }
+
+    private openPreferences(): void {
+        const extension = Extension.lookupByUUID('github-manager@mackdk-on-github');
+        if (extension === null) {
+            WidgetController.LOGGER.error('Cannot open preferences: unable to retrieve extension');
+            return;
+        }
+
+        extension.openPreferences();
     }
 }

@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2021",
+    "target": "ES2022",
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -18,9 +18,7 @@
     "skipLibCheck": true,
     "incremental": true,
     "paths": {
-      "@github-manager/*": ["main/typescript/*"],
-      "@gnome-shell/*": ["main/types/gnome-shell/*"],
-      "@gettext": ["main/types/gettext/"]
+      "@github-manager/*": ["main/typescript/*"]
     }
   },
   "include": [

@@ -1,6 +1,5 @@
 import Gio from '@girs/gio-2.0';
 import GLib from '@girs/glib-2.0';
-import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
 
 import { formatString, readonlyMap, removeAfter as stripAfter } from './utilities';
 
@@ -17,16 +16,22 @@ export class Logger {
 
     private static readonly SCOPE_DEFINITION_REGEX: RegExp = /^\s*(\w+(::\w+)*)\s=\s(TRACE|DEBUG|INFO|WARN|ERROR)\s*$/;
 
+    private static readonly DEFAULT_DOMAIN: string = 'DefaultDomain';
+
     private static rootLogLevel: LogLevel = LogLevel.INFO;
     private static scopeLevelsMap: Map<string, LogLevel> = new Map<string, LogLevel>();
 
-    private static EXT_PREFIX: string = `${getCurrentExtension().metadata.name} Extension`;
+    private static domainName: string = Logger.DEFAULT_DOMAIN;
 
     private readonly loggerName: string;
     private readonly logLevel: LogLevel;
 
-    public static initialize(): void {
+    public static initialize(domain?: string): void {
         Logger.resetConfiguration();
+
+        if (domain !== undefined) {
+            Logger.domainName = domain;
+        }
 
         const config = Gio.File.new_for_path(`${GLib.get_user_data_dir()}/gnome-github-manager/logging.properties`);
         if (!config.query_exists(null)) {
@@ -55,7 +60,19 @@ export class Logger {
                     }
                 });
         } catch (error) {
-            logError(error, `[${Logger.EXT_PREFIX}] Logger initialization ERROR Unable to load configuration file`);
+            logError(error, `[${Logger.domainName}] Logger initialization error while loading configuration file`);
+        }
+    }
+
+    public static get domain(): string {
+        return Logger.domainName;
+    }
+
+    public static set domain(value: string | undefined) {
+        if (value !== undefined) {
+            this.domainName = value;
+        } else {
+            this.domainName = Logger.DEFAULT_DOMAIN;
         }
     }
 
@@ -157,7 +174,7 @@ export class Logger {
         }
 
         const message = formatString(format, ...args);
-        const logMessage = `[${Logger.EXT_PREFIX}] ${this.loggerName} ${LogLevel[level]} ${message}`;
+        const logMessage = `[${Logger.domainName}] ${this.loggerName} ${LogLevel[level]} ${message}`;
 
         if (err instanceof Error) {
             logError(err, logMessage);
