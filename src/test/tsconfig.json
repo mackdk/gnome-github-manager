@@ -5,15 +5,12 @@
     "paths": {
       "@test-suite/*": ["typescript/*"],
       "@github-manager/*": ["../main/typescript/*"],
-      "@gnome-shell/*": ["stubs/gnome-shell/*"],
-      "@girs/*": ["stubs/girs/*"],
-      "@gettext": ["stubs/gettext"]
+      "@girs/*": ["stubs/girs/*"]
     }
   },
   "include": [
     "../main/typescript/**/*.ts",
     "../test/stubs/**/*.ts",
-    "../test/typescript/**/*.ts",
-    "../../rollup.config.ts"
+    "../test/typescript/**/*.ts"
   ]
 }

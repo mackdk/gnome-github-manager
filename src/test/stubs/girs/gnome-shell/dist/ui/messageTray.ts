@@ -1,5 +1,12 @@
 import Gio from '@girs/gio-2.0';
 
+export enum NotificationDestroyedReason {
+    EXPIRED = 1,
+    DISMISSED = 2,
+    SOURCE_CLOSED = 3,
+    REPLACED = 4,
+}
+
 export class Source {
     public notifications: Notification[];
 
@@ -13,10 +20,12 @@ export class Source {
 
     public open(): void {}
 
-    public destroy(reson?: string): void {}
+    public destroy(reson: NotificationDestroyedReason): void {}
 }
 
 export class Notification {
+
+    public isTransient: boolean;
 
     public title: string;
 
@@ -28,9 +37,8 @@ export class Notification {
         this.source = source;
         this.title = title;
         this.banner = banner;
+        this.isTransient = false;
     }
-
-    public setTransient(_state: boolean): void {}
 
     public connect(_id: string, _callback: () => void): number {
         return 0;

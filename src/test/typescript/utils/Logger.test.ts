@@ -17,6 +17,7 @@ describe('Logger', () => {
     before(() => {
         logSpy = spy(globalThis, 'log');
         logErrorSpy = spy(globalThis, 'logError');
+        Logger.domain = 'TestSuite';
     });
 
     beforeEach(() => {
@@ -105,9 +106,7 @@ describe('Logger', () => {
         logger.warn('Log entry with an error', error);
         assert.isTrue(logSpy.notCalled);
         assert.isTrue(logErrorSpy.calledOnce);
-        assert.isTrue(
-            logErrorSpy.calledWithExactly(error, '[TestSuite Extension] Logger.test WARN Log entry with an error')
-        );
+        assert.isTrue(logErrorSpy.calledWithExactly(error, '[TestSuite] Logger.test WARN Log entry with an error'));
 
         // Error argument with other format arguments
         logger.error('Unable to get item #{0} due to {1}', 65, 'E_DUPLICATE_KEY', error);
@@ -116,7 +115,7 @@ describe('Logger', () => {
         assert.isTrue(
             logErrorSpy.calledWithExactly(
                 error,
-                '[TestSuite Extension] Logger.test ERROR Unable to get item #65 due to E_DUPLICATE_KEY'
+                '[TestSuite] Logger.test ERROR Unable to get item #65 due to E_DUPLICATE_KEY'
             )
         );
 
@@ -126,7 +125,7 @@ describe('Logger', () => {
         assert.isTrue(logErrorSpy.calledTwice);
         assert.isTrue(
             logSpy.calledWithExactly(
-                '[TestSuite Extension] Logger.test ERROR Unable to get item #65 due to E_DUPLICATE_KEY - Error text'
+                '[TestSuite] Logger.test ERROR Unable to get item #65 due to E_DUPLICATE_KEY - Error text'
             )
         );
 
@@ -137,7 +136,7 @@ describe('Logger', () => {
         assert.isTrue(logErrorSpy.calledTwice);
         assert.isTrue(
             logSpy.calledWithExactly(
-                '[TestSuite Extension] Logger.test ERROR Unable to get item #65 due to E_DUPLICATE_KEY - Additional object of type object: Error in object'
+                '[TestSuite] Logger.test ERROR Unable to get item #65 due to E_DUPLICATE_KEY - Additional object of type object: Error in object'
             )
         );
     });
@@ -149,7 +148,7 @@ describe('Logger', () => {
         newForPathStub.returns(configurationFileStub);
         configurationFileStub.query_exists.returns(false);
 
-        Logger.initialize();
+        Logger.initialize('my-extension');
 
         assert.equal(Logger.rootLevel, LogLevel.INFO);
         assert.equal(Logger.scopeLevelsConfiguration.size, 0);

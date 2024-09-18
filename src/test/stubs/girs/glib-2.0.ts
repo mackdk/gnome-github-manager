@@ -43,6 +43,8 @@ export namespace GLib {
             return new Uint8Array();
         }
     }
+
+    export class DateTime {}
 }
 
 export default GLib;
