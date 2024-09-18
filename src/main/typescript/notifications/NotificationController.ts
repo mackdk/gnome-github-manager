@@ -1,6 +1,6 @@
 import Gio from '@girs/gio-2.0';
-import { main as ShellUI } from '@gnome-shell/ui';
-import { Notification } from '@gnome-shell/ui/messageTray';
+import * as ShellUI from '@girs/gnome-shell/dist/ui/main';
+import { Notification } from '@girs/gnome-shell/dist/ui/messageTray';
 
 import { ApiError, GitHub, GitHubClient, GitHubClientFactory, HttpStatus } from '@github-manager/client';
 import { NotificationActionType, SettingsWrapper } from '@github-manager/settings';
@@ -25,12 +25,12 @@ export class NotificationController {
 
     private notifications: GitHub.Thread[];
 
-    public constructor(settings: SettingsWrapper, eventDispatcher: EventDispatcher, gitHubIcon: Gio.Icon) {
+    public constructor(name: string, settings: SettingsWrapper, dispatcher: EventDispatcher, gitHubIcon: Gio.Icon) {
         this.settings = settings;
-        this.eventDispatcher = eventDispatcher;
+        this.eventDispatcher = dispatcher;
 
         this.timer = new LimitedRetriableTimer(this.fetchNotifications.bind(this), this.settings.refreshInterval);
-        this.gitHubClient = GitHubClientFactory.newClient(this.settings.domain, this.settings.token);
+        this.gitHubClient = GitHubClientFactory.newClient(name, this.settings.domain, this.settings.token);
         this.notifications = [];
 
         this.notificationAdapter = new NotificationAdapter(
@@ -102,7 +102,7 @@ export class NotificationController {
         } catch (error) {
             if (error instanceof ApiError) {
                 // If we get not modified as response just proceed
-                if (error.statusCode === HttpStatus.NotModified) {
+                if (error.statusCode === HttpStatus.NotModified.valueOf()) {
                     return true;
                 }
 
@@ -136,9 +136,8 @@ export class NotificationController {
     private notify(notifications: Notification | Notification[]): void {
         const items: Notification[] = notifications instanceof Notification ? [notifications] : notifications;
 
-        items.forEach((notification) => {
+        items.forEach((notification: Notification) => {
             const source = notification.source;
-
             ShellUI.messageTray.add(source);
             source.showNotification(notification);
         });

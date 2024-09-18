@@ -12,6 +12,7 @@ const LOGGER: Logger = new Logger('utils::GUtils');
 
 interface BaseGObject<K> {
     metaInfo?: GObjectMetaInfo;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     new (...args: any[]): K;
 }
 

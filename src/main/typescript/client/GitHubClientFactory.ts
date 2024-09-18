@@ -1,5 +1,3 @@
-import { getCurrentExtension } from '@gnome-shell/misc/extensionUtils';
-
 import { Logger } from '@github-manager/utils';
 
 import { GitHubClient } from './GitHubClient';
@@ -8,8 +6,7 @@ import { Soup3HttpEngine } from './Soup3HttpEngine';
 
 const LOGGER: Logger = new Logger('client::GitHubClientFactory');
 
-export function newClient(domain: string, token: string): GitHubClient {
-    const extensionName = getCurrentExtension().metadata.name;
+export function newClient(extensionName: string, domain: string, token: string): GitHubClient {
     const soupVersion: string = imports.gi.versions.Soup;
     if (soupVersion === '3.0') {
         LOGGER.info('Using Soup3HttpEngine for GitHubClient. Soup version: {0}', soupVersion);

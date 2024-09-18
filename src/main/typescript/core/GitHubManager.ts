@@ -1,5 +1,4 @@
 import Gio from '@girs/gio-2.0';
-import { getCurrentExtension, getSettings } from '@gnome-shell/misc/extensionUtils';
 
 import { NotificationController } from '@github-manager/notifications';
 import { SettingsWrapper } from '@github-manager/settings';
@@ -20,16 +19,21 @@ export class GitHubManager implements Disposable {
 
     private readonly notificationController: NotificationController;
 
-    public constructor() {
+    public constructor(name: string, path: string, settings: Gio.Settings) {
         GitHubManager.LOGGER.trace('Building and wiring components');
 
-        this.githubIcon = Gio.icon_new_for_string(`${getCurrentExtension().path}/github.svg`);
+        this.githubIcon = Gio.icon_new_for_string(`${path}/github.svg`);
 
         this.eventDispatcher = new EventDispatcher();
-        this.settings = new SettingsWrapper(getSettings(), this.eventDispatcher);
+        this.settings = new SettingsWrapper(settings, this.eventDispatcher);
 
         this.widgetController = new WidgetController(this.settings, this.eventDispatcher, this.githubIcon);
-        this.notificationController = new NotificationController(this.settings, this.eventDispatcher, this.githubIcon);
+        this.notificationController = new NotificationController(
+            name,
+            this.settings,
+            this.eventDispatcher,
+            this.githubIcon
+        );
     }
 
     public start(): void {

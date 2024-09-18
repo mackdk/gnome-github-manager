@@ -1,6 +1,7 @@
+import { gettext as _ } from '@girs/gnome-shell/dist/extensions/extension';
+
 import { GitHub } from '@github-manager/client';
 import { Logger, lazy } from '@github-manager/utils';
-import { _ } from '@github-manager/utils/locale';
 
 import { NotificationAction } from './NotificationAction';
 

@@ -1,12 +1,13 @@
-import Clutter from '@girs/clutter-10';
+import Clutter from '@girs/clutter-13';
 import Gio from '@girs/gio-2.0';
+import { Button } from '@girs/gnome-shell/dist/ui/panelMenu';
 import GObject from '@girs/gobject-2.0';
-import St from '@girs/st-1.0';
+import St from '@girs/st-13';
 
 import { GObjectMetaInfo, registerGObject } from '@github-manager/utils/gnome';
 
 @registerGObject
-export class GitHubWidget extends St.BoxLayout {
+export class GitHubWidget extends Button {
     public static readonly metaInfo: GObjectMetaInfo = {
         GTypeName: 'GitHubWidget',
         Properties: {
@@ -52,13 +53,9 @@ export class GitHubWidget extends St.BoxLayout {
     private readonly label: St.Label;
 
     public constructor(defaultIcon: Gio.Icon, initialText: string = '') {
-        super({
-            styleClass: 'panel-button github-widget',
-            reactive: true,
-            canFocus: true,
-            trackHover: true,
-            visible: true,
-        });
+        super(0, 'GithubManagerButton', true);
+
+        this.styleClass = 'github-widget-button';
 
         this.icon = new St.Icon({
             styleClass: 'system-status-icon widget-icon',
@@ -72,7 +69,17 @@ export class GitHubWidget extends St.BoxLayout {
             yExpand: true,
         });
 
-        this.add_child(this.icon);
-        this.add_child(this.label);
+        const layout: St.BoxLayout = new St.BoxLayout({
+            styleClass: 'panel-button github-widget',
+            reactive: true,
+            canFocus: true,
+            trackHover: true,
+            visible: true,
+        });
+
+        layout.add_child(this.icon);
+        layout.add_child(this.label);
+
+        this.add_child(layout);
     }
 }
