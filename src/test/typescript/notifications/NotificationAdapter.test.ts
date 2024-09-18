@@ -7,7 +7,6 @@ import { assert } from 'chai';
 import * as GitHub from '@github-manager/client/GitHubApiTypes';
 import { NotificationAdapter } from '@github-manager/notifications/NotificationAdapter';
 import { NotificationMode } from '@github-manager/settings/SettingsTypes';
-import { disposeTranslationDomain, initializeTranslations } from '@github-manager/utils/locale';
 
 import '@test-suite/globals';
 
@@ -20,12 +19,6 @@ describe('NotificationAdapter', () => {
     before(() => {
         const scenarioJSON = readFileSync(testResource('notifications.json'), { encoding: 'utf-8' });
         threads = JSON.parse(scenarioJSON) as GitHub.Thread[];
-
-        initializeTranslations('testDomain');
-    });
-
-    after(() => {
-        disposeTranslationDomain();
     });
 
     describe('Notification Mode - NONE', () => {
