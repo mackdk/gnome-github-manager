@@ -1,7 +1,6 @@
 import { readFileSync } from 'fs';
 
-import { ExtensionMetadata } from '@gnome-shell/misc/extensionUtils';
-import commonjs from '@rollup/plugin-commonjs';
+import { ExtensionMetadata } from '@girs/gnome-shell/dist/types/extension-metadata';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import typescript, { RollupTypescriptOptions } from '@rollup/plugin-typescript';
 import { defineConfig } from 'rollup';
@@ -22,27 +21,37 @@ const resourcesPath = `${mainSrcPath}/resources`;
 const data: string = readFileSync(`${resourcesPath}/metadata.json`, 'utf-8');
 const metadata: ExtensionMetadata = JSON.parse(data) as ExtensionMetadata;
 
-const globals = {
-    // Dirty hack to make class that require Adwaita to work even in Gnome < 42
-    '@girs/adw-1': 'imports.gi.Adw',
-    '@girs/clutter-10': 'imports.gi.Clutter',
-    '@girs/gdk-4.0': 'imports.gi.Gdk',
-    '@girs/gdkpixbuf-2.0': 'imports.gi.GdkPixbuf',
-    '@girs/gio-2.0': 'imports.gi.Gio',
-    '@girs/glib-2.0': 'imports.gi.GLib',
-    '@girs/gobject-2.0': 'imports.gi.GObject',
-    '@girs/gtk-4.0': 'imports.gi.Gtk',
-    '@girs/soup-3.0': 'imports.gi.Soup',
-    '@girs/st-1.0': 'imports.gi.St',
-    '@gnome-shell/misc/extensionUtils': 'imports.misc.extensionUtils',
-    '@gnome-shell/ui': 'imports.ui',
-    '@gnome-shell/ui/panel': 'imports.ui.panel',
-    '@gnome-shell/ui/panelMenu': 'imports.ui.panelMenu',
-    '@gnome-shell/ui/messageTray': 'imports.ui.messageTray',
-    '@gettext': 'imports.gettext',
+const paths = {
+    '@girs/adw-1': 'gi://Adw',
+    '@girs/clutter-13': 'gi://Clutter',
+    '@girs/gdk-4.0': 'gi://Gdk',
+    '@girs/gdkpixbuf-2.0': 'gi://GdkPixbuf',
+    '@girs/gio-2.0': 'gi://Gio',
+    '@girs/glib-2.0': 'gi://GLib',
+    '@girs/gobject-2.0': 'gi://GObject',
+    '@girs/gtk-4.0': 'gi://Gtk',
+    '@girs/soup-3.0': 'gi://Soup?version=3.0',
+    '@girs/st-13': 'gi://St',
+    '@girs/gnome-shell/dist/extensions/extension': 'resource:///SHELL_RESOURCE_ROOT/extensions/extension.js',
+    '@girs/gnome-shell/dist/extensions/prefs': 'resource:///SHELL_RESOURCE_ROOT/extensions/prefs.js',
+    '@girs/gnome-shell/dist/ui/panel': 'resource:///SHELL_RESOURCE_ROOT/ui/panel.js',
+    '@girs/gnome-shell/dist/ui/panelMenu': 'resource:///SHELL_RESOURCE_ROOT/ui/panelMenu.js',
+    '@girs/gnome-shell/dist/ui/main': 'resource:///SHELL_RESOURCE_ROOT/ui/main.js',
+    '@girs/gnome-shell/dist/ui/messageTray': 'resource:///SHELL_RESOURCE_ROOT/ui/messageTray.js',
 };
 
-const external = Object.keys(globals);
+function isExternal(id: string): boolean {
+    return id.startsWith('gi://') || id.startsWith('resource://') || id.startsWith('@girs/');
+}
+
+function mapResourceRoot(paths: Record<string, string>, root: string): Record<string, string> {
+    return Object.fromEntries(
+        Object.entries(paths).map(([id, mapping]: [string, string]) => [
+            id,
+            mapping.replace('SHELL_RESOURCE_ROOT', root),
+        ])
+    );
+}
 
 const adapter = new CodeAdapter();
 
@@ -53,7 +62,6 @@ const typescriptPluginOptions: RollupTypescriptOptions = {
     cacheDir: cachePath,
     transformers: {
         before: [adapter.beforeCompilation.bind(adapter)],
-        after: [adapter.afterCompilation.bind(adapter)],
     },
 };
 
@@ -90,23 +98,14 @@ export default defineConfig([
         output: {
             sourcemap: false,
             file: `${distributionPath}/extension.js`,
-            format: 'iife',
+            format: 'esm',
             name: 'init',
-            banner: ['try {'].join('\n'),
-            footer: [
-                '}',
-                'catch(err) {',
-                "  logError(err, '[Github Manager Extension] [init] Unxpected error');",
-                '  throw err;',
-                '}',
-            ].join('\n'),
             exports: 'default',
-            globals,
+            paths: mapResourceRoot(paths, 'org/gnome/shell'),
             assetFileNames: '[name][extname]',
         },
-        external,
+        external: (id) => isExternal(id),
         plugins: [
-            commonjs(),
             nodeResolve({
                 preferBuiltins: false,
             }),
@@ -148,23 +147,16 @@ export default defineConfig([
         output: {
             sourcemap: false,
             file: `${distributionPath}/prefs.js`,
-            format: 'iife',
+            format: 'esm',
             exports: 'default',
             name: 'prefs',
-            globals,
-            banner: ["imports.gi.versions.Gtk = '4.0';"].join('\n'),
-            footer: [
-                'var init = prefs.init;',
-                'var buildPrefsWidget = prefs.buildPrefsWidget;',
-                'var fillPreferencesWindow = prefs.fillPreferencesWindow;',
-            ].join('\n'),
+            paths: mapResourceRoot(paths, 'org/gnome/Shell/Extensions/js'),
         },
         treeshake: {
             moduleSideEffects: 'no-external',
         },
-        external,
+        external: (id) => isExternal(id),
         plugins: [
-            commonjs(),
             nodeResolve({
                 preferBuiltins: false,
             }),
