@@ -1,4 +1,3 @@
-import Clutter from '@girs/clutter-13';
 import Gdk from '@girs/gdk-4.0';
 import Gio from '@girs/gio-2.0';
 import { Extension } from '@girs/gnome-shell/dist/extensions/extension';
@@ -61,7 +60,7 @@ export class WidgetController implements Disposable {
                         url = url.concat('/participating');
                     }
 
-                    Gtk.show_uri(null, url, Clutter.CURRENT_TIME);
+                    Gtk.show_uri(null, url, Gdk.CURRENT_TIME);
                 } catch (e) {
                     WidgetController.LOGGER.error('Cannot open uri', e);
                 }
