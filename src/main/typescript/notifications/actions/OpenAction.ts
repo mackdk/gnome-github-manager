@@ -1,4 +1,4 @@
-import Clutter from '@girs/clutter-13';
+import Gdk from '@girs/gdk-4.0';
 import { gettext as _ } from '@girs/gnome-shell/dist/extensions/extension';
 import Gtk from '@girs/gtk-4.0';
 
@@ -31,13 +31,13 @@ export class OpenAction implements NotificationAction {
         }
 
         // No specific notification selected, action on a digest notification
-        Gtk.show_uri(null, `https://${this.gitHubClient.domain}/notifications`, Clutter.CURRENT_TIME);
+        Gtk.show_uri(null, `https://${this.gitHubClient.domain}/notifications`, Gdk.CURRENT_TIME);
     }
 
     private openSingle(notification: GitHub.Thread): void {
         void Promise.resolve()
             .then(() => this.gitHubClient.getWebUrlForSubject(notification.subject))
-            .then((url) => Gtk.show_uri(null, url, Clutter.CURRENT_TIME))
+            .then((url) => Gtk.show_uri(null, url, Gdk.CURRENT_TIME))
             .then(() => this.eventDispatcher.emit('notificationRead', notification.id))
             .catch((error) => {
                 if (error instanceof ApiError) {
@@ -53,7 +53,7 @@ export class OpenAction implements NotificationAction {
                 }
 
                 // Fallback opening the notifications page
-                Gtk.show_uri(null, `https://${this.gitHubClient.domain}/notifications`, Clutter.CURRENT_TIME);
+                Gtk.show_uri(null, `https://${this.gitHubClient.domain}/notifications`, Gdk.CURRENT_TIME);
             });
     }
 }
