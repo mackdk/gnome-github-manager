@@ -18,7 +18,7 @@
     "skipLibCheck": true,
     "incremental": true,
     "paths": {
-      "@github-manager/*": ["main/typescript/*"]
+      "@github-manager/*": ["main/typescript/*"],
     }
   },
   "include": [

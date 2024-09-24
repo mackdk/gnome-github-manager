@@ -24,11 +24,11 @@ export class SettingsWrapper implements Disposable {
     }
 
     public get domain(): string {
-        return this.settings.get_string('domain') ?? 'github.com';
+        return this.settings.get_string('domain');
     }
 
     public get token(): string {
-        return this.settings.get_string('token') ?? '';
+        return this.settings.get_string('token');
     }
 
     public get hideNotificationCount(): boolean {

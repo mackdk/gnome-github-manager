@@ -1,60 +1,14 @@
 import Gio from '@girs/gio-2.0';
 import { gettext as _, ngettext } from '@girs/gnome-shell/dist/extensions/extension';
-import {
-    NotificationDestroyedReason,
-    Source,
-    Notification as UINotification,
-} from '@girs/gnome-shell/dist/ui/messageTray';
+import { Notification } from '@girs/gnome-shell/dist/ui/messageTray';
 
 import { GitHub } from '@github-manager/client';
 import { NotificationMode } from '@github-manager/settings';
 import { formatString } from '@github-manager/utils';
-import { registerGObject } from '@github-manager/utils/gnome';
 
+import { NotificationProvider } from './NotificationProvider';
+import * as NotificationProviderFactory from './NotificationProviderFactory';
 import { NotificationAction } from './actions/NotificationAction';
-
-@registerGObject
-class DigestSource extends Source {
-    private readonly icon: Gio.Icon;
-
-    public constructor(icon: Gio.Icon) {
-        super('Github Notifications', '');
-
-        this.icon = icon;
-    }
-
-    public getIcon(): Gio.Icon {
-        return this.icon;
-    }
-
-    public open(): void {
-        this.destroy(NotificationDestroyedReason.DISMISSED);
-    }
-}
-
-@registerGObject
-class ProjectSource extends Source {
-    private readonly avatarUrl: string;
-    private icon?: Gio.Icon;
-
-    public constructor(projectName: string, avatarUrl: string) {
-        super(projectName, '');
-
-        this.avatarUrl = avatarUrl;
-    }
-
-    public getIcon(): Gio.Icon {
-        if (this.icon === undefined) {
-            this.icon = Gio.icon_new_for_string(this.avatarUrl);
-        }
-
-        return this.icon;
-    }
-
-    public open(): void {
-        this.destroy(NotificationDestroyedReason.DISMISSED);
-    }
-}
 
 export class NotificationAdapter {
     private _notificationMode: NotificationMode;
@@ -66,6 +20,8 @@ export class NotificationAdapter {
     private _secondaryAction?: NotificationAction;
 
     private readonly digestIcon: Gio.Icon;
+
+    private readonly notificationProvider: NotificationProvider;
 
     public constructor(
         notificationMode: NotificationMode,
@@ -80,6 +36,7 @@ export class NotificationAdapter {
         this._secondaryAction = secondaryAction;
 
         this.digestIcon = digestIcon;
+        this.notificationProvider = NotificationProviderFactory.getDefault();
     }
 
     public get notificationMode(): NotificationMode {
@@ -114,7 +71,7 @@ export class NotificationAdapter {
         this._secondaryAction = value;
     }
 
-    public adaptNotifications(oldData: GitHub.Thread[], newData: GitHub.Thread[]): UINotification[] {
+    public adaptNotifications(oldData: GitHub.Thread[], newData: GitHub.Thread[]): Notification[] {
         switch (this._notificationMode) {
             case NotificationMode.NONE:
                 return [];
@@ -146,21 +103,17 @@ export class NotificationAdapter {
         return lastUpdatedAt === undefined || new Date(notification.updated_at) > lastUpdatedAt;
     }
 
-    private buildProjectNotification(data: GitHub.Thread): UINotification {
-        const notification = new UINotification(
-            new ProjectSource(data.repository.name, data.repository.owner.avatar_url),
-            data.repository.name,
-            data.subject.title
-        );
+    private buildProjectNotification(data: GitHub.Thread): Notification {
+        const notification = this.notificationProvider.newProjectNotification(data);
 
         this.setupCommonNotificationProperties(notification, data);
 
         return notification;
     }
 
-    private buildDigestNotification(notificationCount: number): UINotification {
-        const notification = new UINotification(
-            new DigestSource(this.digestIcon),
+    private buildDigestNotification(notificationCount: number): Notification {
+        const notification = this.notificationProvider.newDigestNotification(
+            this.digestIcon,
             _('Github Notifications'),
             formatString(
                 ngettext('You have one new notification.', 'You have {0} new notifications.', notificationCount),
@@ -173,8 +126,7 @@ export class NotificationAdapter {
         return notification;
     }
 
-    private setupCommonNotificationProperties(notification: UINotification, data?: GitHub.Thread): void {
-        notification.isTransient = false;
+    private setupCommonNotificationProperties(notification: Notification, data?: GitHub.Thread): void {
         if (this._activateAction !== undefined) {
             const action = this._activateAction;
             notification.connect('activated', () => action.execute(data));

@@ -1,8 +1,8 @@
-import Clutter from '@girs/clutter-13';
+import Clutter from '@girs/clutter-14';
 import Gio from '@girs/gio-2.0';
 import { Button } from '@girs/gnome-shell/dist/ui/panelMenu';
 import GObject from '@girs/gobject-2.0';
-import St from '@girs/st-13';
+import St from '@girs/st-14';
 
 import { GObjectMetaInfo, registerGObject } from '@github-manager/utils/gnome';
 
@@ -23,7 +23,7 @@ export class GitHubWidget extends Button {
     };
 
     public get text(): string {
-        return this.label.text ?? '';
+        return this.label.text;
     }
 
     public set text(value: string) {
