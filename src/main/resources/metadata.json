@@ -5,7 +5,8 @@
     "url": "https://github.com/mackdk/gnome-github-manager",
     "settings-schema": "org.gnome.shell.extensions.github.manager",
     "shell-version": [
-        "45"
+        "45",
+        "46"
     ],
     "gettext-domain": "github-manager@mackdk-on-github",
     "version": 1

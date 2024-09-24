@@ -1,6 +1,5 @@
 import Gio from '@girs/gio-2.0';
 import * as ShellUI from '@girs/gnome-shell/dist/ui/main';
-import { Notification } from '@girs/gnome-shell/dist/ui/messageTray';
 
 import { ApiError, GitHub, GitHubClient, GitHubClientFactory, HttpStatus } from '@github-manager/client';
 import { NotificationActionType, SettingsWrapper } from '@github-manager/settings';
@@ -130,16 +129,12 @@ export class NotificationController {
         this.notifications = data;
         void this.eventDispatcher.emit('updateNotificationCount', data.length);
 
-        this.notify(uiNotifications);
-    }
-
-    private notify(notifications: Notification | Notification[]): void {
-        const items: Notification[] = notifications instanceof Notification ? [notifications] : notifications;
-
-        items.forEach((notification: Notification) => {
-            const source = notification.source;
-            ShellUI.messageTray.add(source);
-            source.showNotification(notification);
+        uiNotifications.forEach((uiNotify) => {
+            const source = uiNotify.source;
+            if (source !== null) {
+                ShellUI.messageTray.add(source);
+                source.addNotification(uiNotify);
+            }
         });
     }
 

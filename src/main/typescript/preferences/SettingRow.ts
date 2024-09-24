@@ -10,7 +10,7 @@ import { GObjectMetaInfo, registerGObject } from '@github-manager/utils/gnome';
 
 import * as PreferencesController from './PreferencesController';
 
-export interface SettingRowConstructorProperties extends Adw.ActionRow.ConstructorProperties {
+export interface SettingRowConstructorProperties extends Adw.ActionRow.ConstructorProps {
     widgetType: string;
     widgetParameters: string;
     setting: string;
@@ -48,6 +48,7 @@ export class SettingRow extends Adw.ActionRow {
                 'prefix',
                 'Prefix widget',
                 'Widget at the beginning of the setting row',
+                // @ts-expect-error girs type is currently broken here
                 GObject.ParamFlags.READWRITE,
                 Gtk.Widget.$gtype
             ),
@@ -55,6 +56,7 @@ export class SettingRow extends Adw.ActionRow {
                 'suffix',
                 'Suffix widget',
                 'Widget at the end of the setting row',
+                // @ts-expect-error girs type is currently broken here
                 GObject.ParamFlags.READWRITE,
                 Gtk.Widget.$gtype
             ),

@@ -23,7 +23,7 @@ const metadata: ExtensionMetadata = JSON.parse(data) as ExtensionMetadata;
 
 const paths = {
     '@girs/adw-1': 'gi://Adw',
-    '@girs/clutter-13': 'gi://Clutter',
+    '@girs/clutter-14': 'gi://Clutter',
     '@girs/gdk-4.0': 'gi://Gdk',
     '@girs/gdkpixbuf-2.0': 'gi://GdkPixbuf',
     '@girs/gio-2.0': 'gi://Gio',
@@ -31,9 +31,10 @@ const paths = {
     '@girs/gobject-2.0': 'gi://GObject',
     '@girs/gtk-4.0': 'gi://Gtk',
     '@girs/soup-3.0': 'gi://Soup?version=3.0',
-    '@girs/st-13': 'gi://St',
+    '@girs/st-14': 'gi://St',
     '@girs/gnome-shell/dist/extensions/extension': 'resource:///SHELL_RESOURCE_ROOT/extensions/extension.js',
     '@girs/gnome-shell/dist/extensions/prefs': 'resource:///SHELL_RESOURCE_ROOT/extensions/prefs.js',
+    '@girs/gnome-shell/dist/misc/config': 'resource:///SHELL_RESOURCE_ROOT/misc/config.js',
     '@girs/gnome-shell/dist/ui/panel': 'resource:///SHELL_RESOURCE_ROOT/ui/panel.js',
     '@girs/gnome-shell/dist/ui/panelMenu': 'resource:///SHELL_RESOURCE_ROOT/ui/panelMenu.js',
     '@girs/gnome-shell/dist/ui/main': 'resource:///SHELL_RESOURCE_ROOT/ui/main.js',
@@ -99,7 +100,6 @@ export default defineConfig([
             sourcemap: false,
             file: `${distributionPath}/extension.js`,
             format: 'esm',
-            name: 'init',
             exports: 'default',
             paths: mapResourceRoot(paths, 'org/gnome/shell'),
             assetFileNames: '[name][extname]',

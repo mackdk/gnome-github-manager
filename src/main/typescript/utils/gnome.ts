@@ -10,9 +10,11 @@ export type GObjectMetaInfo = GObject.MetaInfo<
 
 const LOGGER: Logger = new Logger('utils::GUtils');
 
-interface BaseGObject<K> {
+interface BaseGObject<K extends GObject.Object> {
     metaInfo?: GObjectMetaInfo;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any --
+     * any is required here as a GObject can have any kind of constructor
+     */
     new (...args: any[]): K;
 }
 
@@ -28,9 +30,9 @@ export function registerGObject<K extends GObject.Object, T extends BaseGObject<
     // This would be bad because we would inherit the GObjectName too, which is supposed to be unique.
     if (target.metaInfo !== undefined && Object.prototype.hasOwnProperty.call(target, 'metaInfo')) {
         LOGGER.debug('Registering GObject {0} with metaInfo', typeof target);
-        return GObject.registerClass(target.metaInfo, target) as unknown as typeof target;
+        return GObject.registerClass(target.metaInfo, target);
     } else {
         LOGGER.debug('Registering GObject {0} as standalone', typeof target);
-        return GObject.registerClass(target) as unknown as typeof target;
+        return GObject.registerClass(target);
     }
 }
