@@ -8,7 +8,7 @@ import { SinonSpy, spy, stub } from 'sinon';
 import * as GitHub from '@github-manager/client/GitHubApiTypes';
 import { GitHubClient } from '@github-manager/client/GitHubClient';
 import { OpenAction } from '@github-manager/notifications/actions/OpenAction';
-import { EventDispatcher } from '@github-manager/utils/';
+import { EventDispatcher } from '@github-manager/utils/EventDispatcher';
 
 describe('Open Action', () => {
     let thread: GitHub.Thread;

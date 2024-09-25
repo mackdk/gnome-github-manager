@@ -7,7 +7,6 @@ import { NotificationMode } from '@github-manager/settings';
 import { formatString } from '@github-manager/utils';
 
 import { NotificationProvider } from './NotificationProvider';
-import * as NotificationProviderFactory from './NotificationProviderFactory';
 import { NotificationAction } from './actions/NotificationAction';
 
 export class NotificationAdapter {
@@ -25,6 +24,7 @@ export class NotificationAdapter {
 
     public constructor(
         notificationMode: NotificationMode,
+        notificationProvider: NotificationProvider,
         digestIcon: Gio.Icon,
         activateAction?: NotificationAction,
         primaryAction?: NotificationAction,
@@ -36,7 +36,7 @@ export class NotificationAdapter {
         this._secondaryAction = secondaryAction;
 
         this.digestIcon = digestIcon;
-        this.notificationProvider = NotificationProviderFactory.getDefault();
+        this.notificationProvider = notificationProvider;
     }
 
     public get notificationMode(): NotificationMode {

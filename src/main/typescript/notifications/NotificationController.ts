@@ -6,6 +6,7 @@ import { NotificationActionType, SettingsWrapper } from '@github-manager/setting
 import { EventDispatcher, LimitedRetriableTimer, Logger, lazy } from '@github-manager/utils';
 
 import { NotificationAdapter } from './NotificationAdapter';
+import * as NotificationProviderFactory from './NotificationProviderFactory';
 import { DismissAction, MarkAsReadAction, NotificationAction, OpenAction } from './actions/';
 
 export class NotificationController {
@@ -34,6 +35,7 @@ export class NotificationController {
 
         this.notificationAdapter = new NotificationAdapter(
             this.settings.notificationMode,
+            NotificationProviderFactory.getDefault(),
             gitHubIcon,
             this.getUserDefinedAction(this.settings.notificationActivateAction),
             this.getUserDefinedAction(this.settings.notificationPrimaryAction),
