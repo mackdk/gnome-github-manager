@@ -6,7 +6,8 @@
     "settings-schema": "org.gnome.shell.extensions.github.manager",
     "shell-version": [
         "45",
-        "46"
+        "46",
+        "47"
     ],
     "gettext-domain": "github-manager@mackdk-on-github",
     "version": 1
