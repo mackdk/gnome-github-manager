@@ -21,37 +21,37 @@ const resourcesPath = `${mainSrcPath}/resources`;
 const data: string = readFileSync(`${resourcesPath}/metadata.json`, 'utf-8');
 const metadata: ExtensionMetadata = JSON.parse(data) as ExtensionMetadata;
 
-const paths = {
-    '@girs/adw-1': 'gi://Adw',
-    '@girs/clutter-15': 'gi://Clutter',
-    '@girs/gdk-4.0': 'gi://Gdk',
-    '@girs/gdkpixbuf-2.0': 'gi://GdkPixbuf',
-    '@girs/gio-2.0': 'gi://Gio',
-    '@girs/glib-2.0': 'gi://GLib',
-    '@girs/gobject-2.0': 'gi://GObject',
-    '@girs/gtk-4.0': 'gi://Gtk',
-    '@girs/soup-3.0': 'gi://Soup?version=3.0',
-    '@girs/st-15': 'gi://St',
-    '@girs/gnome-shell/dist/extensions/extension': 'resource:///SHELL_RESOURCE_ROOT/extensions/extension.js',
-    '@girs/gnome-shell/dist/extensions/prefs': 'resource:///SHELL_RESOURCE_ROOT/extensions/prefs.js',
-    '@girs/gnome-shell/dist/misc/config': 'resource:///SHELL_RESOURCE_ROOT/misc/config.js',
-    '@girs/gnome-shell/dist/ui/panel': 'resource:///SHELL_RESOURCE_ROOT/ui/panel.js',
-    '@girs/gnome-shell/dist/ui/panelMenu': 'resource:///SHELL_RESOURCE_ROOT/ui/panelMenu.js',
-    '@girs/gnome-shell/dist/ui/main': 'resource:///SHELL_RESOURCE_ROOT/ui/main.js',
-    '@girs/gnome-shell/dist/ui/messageTray': 'resource:///SHELL_RESOURCE_ROOT/ui/messageTray.js',
-};
+const explicitMappings = new Map<string, string>(
+    Object.entries({
+        '@girs/adw-1': 'gi://Adw',
+        '@girs/clutter-15': 'gi://Clutter',
+        '@girs/gdk-4.0': 'gi://Gdk',
+        '@girs/gdkpixbuf-2.0': 'gi://GdkPixbuf',
+        '@girs/gio-2.0': 'gi://Gio',
+        '@girs/glib-2.0': 'gi://GLib',
+        '@girs/gobject-2.0': 'gi://GObject',
+        '@girs/gtk-4.0': 'gi://Gtk',
+        '@girs/soup-3.0': 'gi://Soup?version=3.0',
+        '@girs/st-15': 'gi://St',
+    })
+);
+
+function pathMapper(root: string, directMappings: Map<string, string>, id: string): string {
+    const direct = directMappings.get(id);
+    if (direct !== undefined) {
+        return direct;
+    }
+
+    if (id.startsWith('@girs/gnome-shell')) {
+        const path = id.substring(22);
+        return `resource:///${root}/${path}.js`;
+    }
+
+    throw new Error(`Unable to map path ${id}`);
+}
 
 function isExternal(id: string): boolean {
     return id.startsWith('gi://') || id.startsWith('resource://') || id.startsWith('@girs/');
-}
-
-function mapResourceRoot(paths: Record<string, string>, root: string): Record<string, string> {
-    return Object.fromEntries(
-        Object.entries(paths).map(([id, mapping]: [string, string]) => [
-            id,
-            mapping.replace('SHELL_RESOURCE_ROOT', root),
-        ])
-    );
 }
 
 const adapter = new CodeAdapter();
@@ -101,7 +101,7 @@ export default defineConfig([
             file: `${distributionPath}/extension.js`,
             format: 'esm',
             exports: 'default',
-            paths: mapResourceRoot(paths, 'org/gnome/shell'),
+            paths: (id) => pathMapper('org/gnome/shell', explicitMappings, id),
             assetFileNames: '[name][extname]',
         },
         external: (id) => isExternal(id),
@@ -150,7 +150,7 @@ export default defineConfig([
             format: 'esm',
             exports: 'default',
             name: 'prefs',
-            paths: mapResourceRoot(paths, 'org/gnome/Shell/Extensions/js'),
+            paths: (id) => pathMapper('org/gnome/Shell/Extensions/js', explicitMappings, id),
         },
         treeshake: {
             moduleSideEffects: 'no-external',
