@@ -1,8 +1,8 @@
-import Clutter from '@girs/clutter-14';
+import Clutter from '@girs/clutter-15';
 import Gio from '@girs/gio-2.0';
 import { Button } from '@girs/gnome-shell/dist/ui/panelMenu';
 import GObject from '@girs/gobject-2.0';
-import St from '@girs/st-14';
+import St from '@girs/st-15';
 
 import { GObjectMetaInfo, registerGObject } from '@github-manager/utils/gnome';
 
