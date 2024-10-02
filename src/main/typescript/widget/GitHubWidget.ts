@@ -53,7 +53,7 @@ export class GitHubWidget extends Button {
     private readonly label: St.Label;
 
     public constructor(defaultIcon: Gio.Icon, initialText: string = '') {
-        super(0, 'GithubManagerButton', true);
+        super(0.5, 'GithubManagerButton', true);
 
         this.styleClass = 'github-widget-button';
 
