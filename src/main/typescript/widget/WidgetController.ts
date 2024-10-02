@@ -1,3 +1,4 @@
+import Clutter from '@girs/clutter-15';
 import Gdk from '@girs/gdk-4.0';
 import Gio from '@girs/gio-2.0';
 import { Extension } from '@girs/gnome-shell/dist/extensions/extension';
@@ -22,7 +23,7 @@ export class WidgetController implements Disposable {
     public constructor(settings: SettingsWrapper, eventDispatcher: EventDispatcher, githubIcon: Gio.Icon) {
         this.settings = settings;
         this.widget = new GitHubWidget(githubIcon, '0');
-        this.buttonPressId = this.widget.connect('button-press-event', (_: this, event: Gdk.ButtonEvent) =>
+        this.buttonPressId = this.widget.connect('button-press-event', (_: this, event: Clutter.Event): boolean =>
             this.handleButtonPress(event)
         );
 
@@ -51,9 +52,9 @@ export class WidgetController implements Disposable {
         this.widget.text = text;
     }
 
-    private handleButtonPress(event: Gdk.ButtonEvent): void {
+    private handleButtonPress(event: Clutter.Event): boolean {
         switch (event.get_button()) {
-            case Gdk.BUTTON_PRIMARY:
+            case Clutter.BUTTON_PRIMARY:
                 try {
                     let url = `https://${this.settings.domain}/notifications`;
                     if (this.settings.showParticipatingOnly) {
@@ -65,10 +66,12 @@ export class WidgetController implements Disposable {
                     WidgetController.LOGGER.error('Cannot open uri', e);
                 }
                 break;
-            case Gdk.BUTTON_SECONDARY:
+            case Clutter.BUTTON_SECONDARY:
                 this.openPreferences();
                 break;
         }
+
+        return true;
     }
 
     private updateNotificationCount(notificationCount?: number): void {
