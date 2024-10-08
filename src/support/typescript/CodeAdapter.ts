@@ -4,37 +4,15 @@ import ts from 'typescript';
  * TypeScript Adapter used during the rollup process. It intercepts specific decorators to perform modification in the
  * resulting final JavaScript code. Currently it processes the following decorator:
  *
- * - @registerGObject: modifies the structure of the class in order to make it compatible with GNOME 41. In fact object
- *   constructor is in fact supported only from GJS 1.72, introduced in GNOME 42. In particular:
- *      1) The constructor is converted to an _init() method with the same parameters.
- *      2) Any reference to the super constructor is translated to super._init() with the same parameters.
- *
  * - @lazy: makes the field lazy by introducing a get accessor that initializes the property on the first use.
  */
 export class CodeAdapter {
-    private static readonly GOBJECT_ANNOTATION: string = '@registerGObject';
-
     private static readonly LAZY_ANNOTATION: string = '@lazy';
-
-    private gobjects: string[];
-
-    public constructor() {
-        this.gobjects = [];
-    }
 
     public beforeCompilation(context: ts.TransformationContext): ts.Transformer<ts.SourceFile> {
         return (sourceFile) => {
             const visitor = (node: ts.Node): ts.VisitResult<ts.Node> => {
-                if (ts.isClassDeclaration(node) && this.isDecorated(node, CodeAdapter.GOBJECT_ANNOTATION)) {
-                    // Intercept @registerGObject and store the class name for later processing
-                    const className = node.name?.text;
-                    if (className !== undefined) {
-                        console.log('Adapting GObject %s.', className);
-                        this.gobjects.push(className);
-                    }
-
-                    return node;
-                } else if (ts.isPropertyDeclaration(node) && this.isDecorated(node, CodeAdapter.LAZY_ANNOTATION)) {
+                if (ts.isPropertyDeclaration(node) && this.isDecorated(node, CodeAdapter.LAZY_ANNOTATION)) {
                     // Intercept @lazy
                     if (node.initializer === undefined) {
                         console.log('Field %s cannot be lazy: it has no initializer. Skipping.', node.name.getText());
