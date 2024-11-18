@@ -65,7 +65,7 @@ export class GitHubClientImpl implements GitHubClient {
     public async listThreads(showParticipatingOnly: boolean = false): Promise<GitHub.Thread[]> {
         const response = await this.doRequest(
             HttpMethod.GET,
-            `https://${this.baseUrl}/notifications?${showParticipatingOnly.toString()}`,
+            `https://${this.baseUrl}/notifications?participating=${showParticipatingOnly.toString()}`,
             [HttpStatus.Ok]
         );
 
