@@ -1,7 +1,7 @@
 {
     "fetch-all-threads": {
         "request": {
-            "url": "https://api.github.com/notifications?false",
+            "url": "https://api.github.com/notifications?participating=false",
             "method": "GET",
             "headers": {
                 "Authorization": "Bearer fake-token",
@@ -183,7 +183,7 @@
     },
     "fetch-threads-fails": {
         "request": {
-            "url": "https://api.github.com/notifications?false",
+            "url": "https://api.github.com/notifications?participating=false",
             "method": "GET",
             "headers": {
                 "Authorization": "Bearer fake-token",
