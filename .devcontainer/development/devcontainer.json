@@ -24,7 +24,8 @@
                 "dbaeumer.vscode-eslint",
                 "github.vscode-github-actions",
                 "mrorz.language-gettext",
-                "SonarSource.sonarlint-vscode"
+                "SonarSource.sonarlint-vscode",
+                "jq-syntax-highlighting.jq-syntax-highlighting"
             ]
         }
     }

@@ -66,30 +66,6 @@ const typescriptPluginOptions: RollupTypescriptOptions = {
     },
 };
 
-// prettier-ignore
-// JQ template to convert a property file to a json
-const jqPropertiesToJson =
-    // Start by splitting every line
-    'split("\\n")' +
-        // Discard empty lines
-        '| map(select(length > 0)) ' +
-        // Discards comments
-        '| map(select(startswith("#") | not)) ' +
-        // Split on equals to divide the key from value
-        '| map(split("=")) ' +
-        // map to the json object
-        '| map({' +
-            // convert property key to json field removing initial and final spaces
-            '(.[0] | gsub("(^\\\\s+|\\\\s+$)"; "")): ' +
-            // convert property value to json value, splitting comma separated values into an array and removing spaces
-            '.[1] | tostring | gsub("(^\\\\s+|\\\\s+$)"; "") | gsub("\\\\s+"; " ") | gsub(",\\\\s+"; ",") | split(",")' +
-          '}) ' +
-        // add the new entry
-        '| add';
-
-// JQ template to convert from package.json to extension-info.json adding the translators
-const jqPackageToExtensionInfo = '{("version"): .version, ("authors"): [.author, .contributors[]]} + {$translators}';
-
 export default defineConfig([
     {
         input: `${typescriptSourcesPath}/extension.ts`,
@@ -130,13 +106,24 @@ export default defineConfig([
                 // Generate extension-info.json
                 // prettier-ignore
                 'generate-extension-info': 'jq ' +
+                    // Translators are extract from the PO files
                     '--argjson translators "$(' +
-                        `sed -nr 's/.*(Project-Id-Version|Language-Team): ([^\\"]+).*$/\\2/p' src/main/po/*.po ` +
-                            '| paste -d "=" - - ' +
-                            `| jq -R -s '${jqPropertiesToJson}'` +
+                        'jq -Rscf ./src/support/jq/po-header-to-json.jq src/main/po/*.po' +
                     ')" ' +
+                    // Authors are extract from the git shortlog, considering only the commits after the fork
+                    '--argjson authors "$(' +
+                        'git shortlog -sn gnome-github-notifications..HEAD | jq -Rscf src/support/jq/shortlog-to-authors.jq' +
+                    ')" ' +
+                    // Original authors are extract from the git shortlog, considering only the commits BEFORE the fork
+                    '--argjson originalAuthors "$(' +
+                        'git shortlog -sn gnome-github-notifications | jq -Rscf src/support/jq/shortlog-to-authors.jq' +
+                    ')" ' +
+                    // Changelog data
+                    '--argjson changelog "$(yq eval -o json changelog.yaml)" ' +
+                    // Just to keep consistent indentation with other JSON files
                     '--indent 4 ' +
-                    `'${jqPackageToExtensionInfo}' ` +
+                    // Combine everything together
+                    '--from-file ./src/support/jq/package-to-extension-info.jq ' +
                     'package.json ' +
                     `> ${distributionPath}/extension-info.json`,
             }),
