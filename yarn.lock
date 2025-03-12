@@ -478,7 +478,7 @@
     "@girs/gmodule-2.0" "2.0.0-4.0.0-beta.36"
     "@girs/gobject-2.0" "2.84.4-4.0.0-beta.36"
 
-"@girs/gnomedesktop-4.0@4.0.0-4.0.0-beta.36", "@girs/gnomedesktop-4.0@^4.0.0-4.0.0-beta.34":
+"@girs/gnomedesktop-4.0@4.0.0-4.0.0-beta.36", "@girs/gnomedesktop-4.0@^4.0.0-4.0.0-beta.34", "@girs/gnomedesktop-4.0@^4.0.0-4.0.0-beta.36":
   version "4.0.0-4.0.0-beta.36"
   resolved "https://registry.yarnpkg.com/@girs/gnomedesktop-4.0/-/gnomedesktop-4.0-4.0.0-4.0.0-beta.36.tgz#1f80d353229f8d5b7ddf0ba5384cf432d0074ff5"
   integrity sha512-nLP86/2bNZaXn7gQcUZRD1NW42inm8DT/ojJE19K+ezS6f5tz6/eJlOma+WtXCK3/irEYpJMgF2R50eKnC4emA==
@@ -730,7 +730,7 @@
     "@girs/gmodule-2.0" "2.0.0-4.0.0-beta.36"
     "@girs/gobject-2.0" "2.84.4-4.0.0-beta.36"
 
-"@girs/st-16@16.0.0-4.0.0-beta.36", "@girs/st-16@16.0.0-4.0.0-beta36", "@girs/st-16@^16.0.0-4.0.0-beta.34":
+"@girs/st-16@16.0.0-4.0.0-beta.36", "@girs/st-16@^16.0.0-4.0.0-beta.34":
   version "16.0.0-4.0.0-beta.36"
   resolved "https://registry.yarnpkg.com/@girs/st-16/-/st-16-16.0.0-4.0.0-beta.36.tgz#4dc62dd31fa711a23c30506c8a13eb27cd00d72a"
   integrity sha512-CjdqjkavmVbUsTkADTQ0alQIa+7HIpJLZhxdExrgh7I2ORzUWhnLCql60VdU8qTI0aHHhs0BX/JQh1e4rkIJ/g==
