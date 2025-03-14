@@ -1,8 +1,9 @@
+import Adw from '@girs/adw-1';
 import Gdk from '@girs/gdk-4.0';
-import Pixbuf from '@girs/gdkpixbuf-2.0';
 import Gio from '@girs/gio-2.0';
 import { gettext as _ } from '@girs/gnome-shell/dist/extensions/prefs';
 import { ExtensionMetadata } from '@girs/gnome-shell/dist/types';
+import GnomeDesktop from '@girs/gnomedesktop-4.0';
 import Gtk from '@girs/gtk-4.0';
 
 import { Logger, formatString } from '@github-manager/utils';
@@ -19,10 +20,17 @@ interface DropDownParameters {
     items: string[];
 }
 
+interface ChangelogEntry {
+    released: string | null;
+    changes: string[];
+}
+
 interface ExtensionInfo {
     version: string;
     authors: string[];
+    originalAuthors: string[];
     translators: Record<string, string[]>;
+    changelog: Record<string, ChangelogEntry>;
 }
 
 export function createAndBindWidget(
@@ -139,45 +147,85 @@ function resetToDefault(dialog: Gtk.Window, settings: Gio.Settings): void {
 
 function about(dialog: Gtk.Window, metadata: ExtensionMetadata): void {
     try {
-        const githubIcon = Pixbuf.Pixbuf.new_from_file_at_scale(`${metadata.path}/github.svg`, -1, 128, true);
-        const paintableLogo = Gtk.Image.new_from_pixbuf(githubIcon).get_paintable();
+        const baseUrl = metadata.url;
+        if (baseUrl === undefined) {
+            throw new Error('Unable to identify the extension url');
+        }
 
         const extensionInfo = getAdditionalExtensionInfo(`${metadata.path}/extension-info.json`);
-        const translatorsMap = new Map<string, string[]>(Object.entries(extensionInfo.translators));
 
-        const aboutDialog = new Gtk.AboutDialog({
+        const iconTheme = Gtk.IconTheme.get_for_display(dialog.get_display());
+        const originalSearchPath = iconTheme.get_search_path();
+
+        // Adding the extension path to the icon theme directory, so that icons can be retrieved by name
+        iconTheme.add_search_path(metadata.path);
+
+        const aboutDialog = new Adw.AboutWindow({
             transientFor: dialog,
             modal: true,
-            authors: extensionInfo.authors,
-            programName: metadata.name,
-            version: formatString(_('Version {0} r{1}'), extensionInfo.version, metadata.version),
+            applicationName: metadata.name,
+            applicationIcon: 'gnome-github-manager',
+            developerName: 'Thomas Florio aka mackdk',
+            version: extensionInfo.version,
             comments: _(
                 'Integrate GitHub within the GNOME Desktop Environment.\n\n' +
                     'Based on GitHub Notifications by Alexandre Dufournet.'
             ),
-            translatorCredits: Array.from(translatorsMap.entries())
-                .map(([lang, translators]) => `${lang}:\n\t${translators.join('\n\t')}`)
-                .join('\n\n'),
             licenseType: Gtk.License.GPL_2_0,
-            website: metadata.url,
-            websiteLabel: _('Source code on GitHub'),
+            supportUrl: `${baseUrl}/discussions`,
+            issueUrl: `${baseUrl}/issues/new`,
+            copyright: '© 2022-2025 Thomas Florio',
+            website: baseUrl,
         });
 
-        if (paintableLogo !== null) {
-            aboutDialog.logo = paintableLogo;
-        }
+        aboutDialog.add_link(_('User Guide'), `${baseUrl}/wiki/User-guide`);
+        aboutDialog.add_credit_section(_('GitHub Manager contributors'), extensionInfo.authors);
+        aboutDialog.add_credit_section(_('GitHub Notifications contributors'), extensionInfo.originalAuthors);
 
-        aboutDialog.set_system_information(null);
+        // Add a section for each translated language
+        Object.entries(extensionInfo.translators).forEach(([languageCode, translators]: [string, string[]]): void => {
+            const language = getLocaleDisplayName(languageCode);
+            const sectionTitle = formatString(_('Translation to {0}'), language);
+            aboutDialog.add_credit_section(sectionTitle, translators);
+        });
 
-        const titleBar = aboutDialog.get_titlebar();
-        if (titleBar instanceof Gtk.HeaderBar) {
-            titleBar.get_title_widget()?.set_visible(true);
-        }
+        // Handle the changelog
+        const releaseNotes = Object.entries(extensionInfo.changelog)
+            .map(([version, entry]: [string, ChangelogEntry]): string => {
+                return (
+                    `<p>${getReleaseDescription(version, entry.released)}</p>` +
+                    `<ul>${getChangesAsListItems(entry.changes)}</ul>`
+                );
+            })
+            .join('');
+        const majorVersion = extensionInfo.version.substring(0, extensionInfo.version.indexOf('.'));
 
+        aboutDialog.set_release_notes(releaseNotes);
+        aboutDialog.set_release_notes_version(majorVersion);
+
+        aboutDialog.connect('close-request', () => {
+            // Cleanup the search path
+            iconTheme.set_search_path(originalSearchPath);
+            return false;
+        });
         aboutDialog.present();
     } catch (err) {
         LOGGER.error('Unable to open about dialog', err);
     }
+}
+
+function getReleaseDescription(version: string, releasedDate: string | null): string {
+    if (releasedDate === null) {
+        return formatString(_('Version {0} (development)'), version);
+    }
+
+    // Localize in the current locale
+    const formattedDate = new Date(releasedDate).toLocaleDateString(undefined, { dateStyle: 'long' });
+    return formatString(_('Version {0} released on {1}'), version, formattedDate);
+}
+
+function getChangesAsListItems(changes: string[]): string {
+    return changes.map((e) => `<li>${e}</li>`).join('');
 }
 
 function getAdditionalExtensionInfo(filename: string): ExtensionInfo {
@@ -191,4 +239,11 @@ function getAdditionalExtensionInfo(filename: string): ExtensionInfo {
 
 function openUrl(url: string, dialog: Gtk.Window): void {
     Gtk.show_uri(dialog, url, Gdk.CURRENT_TIME);
+}
+
+function getLocaleDisplayName(localeCode: string): string {
+    // Use Gnome utility to get the localized locale name
+    const result = GnomeDesktop.get_language_from_locale(localeCode, null);
+    // Remove the encoding part if present
+    return result.replace(/\[[^[\]]*\]$/, '').trim();
 }

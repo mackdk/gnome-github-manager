@@ -42,25 +42,34 @@ msgid ""
 "All the customizations made will be lost. This operation cannot be undone."
 msgstr ""
 
-msgid "Version {0} r{1}"
-msgstr ""
-
 msgid ""
 "Integrate GitHub within the GNOME Desktop Environment.\n"
 "\n"
 "Based on GitHub Notifications by Alexandre Dufournet."
 msgstr ""
 
-msgid "Source code on GitHub"
+msgid "User Guide"
+msgstr ""
+
+msgid "GitHub Manager contributors"
+msgstr ""
+
+msgid "GitHub Notifications contributors"
+msgstr ""
+
+msgid "Translation to {0}"
+msgstr ""
+
+msgid "Version {0} (development)"
+msgstr ""
+
+msgid "Version {0} released on {1}"
 msgstr ""
 
 msgid "Reset to default"
 msgstr ""
 
-msgid "Report an issue"
-msgstr ""
-
-msgid "User guide"
+msgid "Report an Issue"
 msgstr ""
 
 msgid "About GitHub Manager"

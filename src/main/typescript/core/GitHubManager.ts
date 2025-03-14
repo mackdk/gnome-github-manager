@@ -22,7 +22,7 @@ export class GitHubManager implements Disposable {
     public constructor(name: string, path: string, settings: Gio.Settings) {
         GitHubManager.LOGGER.trace('Building and wiring components');
 
-        this.githubIcon = Gio.icon_new_for_string(`${path}/github.svg`);
+        this.githubIcon = Gio.icon_new_for_string(`${path}/gnome-github-manager.svg`);
 
         this.eventDispatcher = new EventDispatcher();
         this.settings = new SettingsWrapper(settings, this.eventDispatcher);
