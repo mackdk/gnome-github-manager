@@ -11,11 +11,11 @@
         </section>
         <section>
             <item>
-                <attribute name="label" translatable="yes">Report an issue</attribute>
+                <attribute name="label" translatable="yes">Report an Issue</attribute>
                 <attribute name="action">actions.reportBug</attribute>
             </item>
             <item>
-                <attribute name="label" translatable="yes">User guide</attribute>
+                <attribute name="label" translatable="yes">User Guide</attribute>
                 <attribute name="action">actions.userGuide</attribute>
             </item>
         </section>

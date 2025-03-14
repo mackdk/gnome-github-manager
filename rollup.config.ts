@@ -30,6 +30,7 @@ const explicitMappings = new Map<string, string>(
         '@girs/gio-2.0': 'gi://Gio',
         '@girs/glib-2.0': 'gi://GLib',
         '@girs/gobject-2.0': 'gi://GObject',
+        '@girs/gnomedesktop-4.0': 'gi://GnomeDesktop?version=4.0',
         '@girs/gtk-4.0': 'gi://Gtk',
         '@girs/soup-3.0': 'gi://Soup?version=3.0',
         '@girs/st-16': 'gi://St',

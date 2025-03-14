@@ -49,6 +49,7 @@
   "dependencies": {
     "@girs/gjs": "4.0.0-beta.36",
     "@girs/gnome-shell": "48.0.4",
+    "@girs/gnomedesktop-4.0": "^4.0.0-4.0.0-beta.36",
     "@girs/soup-3.0": "3.6.5-4.0.0-beta.36"
   },
   "resolutions": {
