@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Italiano\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-30 20:45+0200\n"
+"PO-Revision-Date: 2025-03-14 12:13+0100\n"
 "Last-Translator: \n"
 "Language-Team: Thomas Florio\n"
 "Language: it\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.4\n"
 
 msgid "Github Notifications"
 msgstr "Notifiche di GitHub"
@@ -44,9 +44,6 @@ msgstr ""
 "Tutte le personalizzazioni verranno perse. Questa operazione non può essere "
 "annullata."
 
-msgid "Version {0} r{1}"
-msgstr "Versione {0} r{1}"
-
 msgid ""
 "Integrate GitHub within the GNOME Desktop Environment.\n"
 "\n"
@@ -56,17 +53,29 @@ msgstr ""
 "\n"
 "Basato su GitHub Notifications di Alexandre Dufournet."
 
-msgid "Source code on GitHub"
-msgstr "Codice sorgente su GitHub"
+msgid "User Guide"
+msgstr "Manuale Utente"
+
+msgid "GitHub Manager contributors"
+msgstr "Sviluppatori di GitHub Manager"
+
+msgid "GitHub Notifications contributors"
+msgstr "Sviluppatori di GitHub Notifications"
+
+msgid "Translation to {0}"
+msgstr "Traduzione in {0}"
+
+msgid "Version {0} (development)"
+msgstr "Versione {0} (ramo di sviluppo)"
+
+msgid "Version {0} released on {1}"
+msgstr "Versione {0} rilasciata il {1}"
 
 msgid "Reset to default"
 msgstr "Ripristina predefiniti"
 
-msgid "Report an issue"
+msgid "Report an Issue"
 msgstr "Segnala un problema"
-
-msgid "User guide"
-msgstr "Manuale utente"
 
 msgid "About GitHub Manager"
 msgstr "Informazioni su GitHub Manager"
@@ -161,3 +170,6 @@ msgstr "Pulsante secondario"
 
 msgid "Secondary action button, shown on the left."
 msgstr "L'azione secondaria, mostrata a sinistra."
+
+#~ msgid "Source code on GitHub"
+#~ msgstr "Codice sorgente su GitHub"
