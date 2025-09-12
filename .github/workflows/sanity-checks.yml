@@ -16,15 +16,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Code Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
       - name: Install translation tools
         run: sudo apt-get install -y make gettext
 
-      - name: Install NodeJS 18
-        uses: actions/setup-node@v3
+      - name: Install NodeJS 22
+        uses: actions/setup-node@v5
         with:
-          node-version: 18
+          node-version: 22
           cache: 'yarn'
 
       - name: Install the dependencies
@@ -38,15 +38,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Code Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
       - name: Install translation tools
         run: sudo apt-get install -y make gettext
 
-      - name: Install NodeJS 18
-        uses: actions/setup-node@v3
+      - name: Install NodeJS 22
+        uses: actions/setup-node@v5
         with:
-          node-version: 18
+          node-version: 22
           cache: 'yarn'
 
       - name: Install the dependencies
@@ -56,7 +56,7 @@ jobs:
         run: yarn package
 
       - name: Upload the distributable package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: extension-archive
           path: build/dist/**/*
@@ -66,13 +66,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Code Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
       - name: Install translation tools
         run: sudo apt-get install -y make gettext
 
       - name: Install NodeJS 18
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v5
         with:
           node-version: 18
           cache: 'yarn'
@@ -84,7 +84,7 @@ jobs:
         run: yarn test
 
       - name: Upload test coverage report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: build/test/lcov.info
@@ -95,18 +95,18 @@ jobs:
     needs: testing
     steps:
       - name: Code Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Download test coverage report
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: coverage-report
           path: build/test
 
       - name: Perform SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2.1.1
+        uses: SonarSource/sonarcloud-github-action@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
