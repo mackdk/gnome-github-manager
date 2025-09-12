@@ -5,7 +5,6 @@
     "arrowParens": "always",
     "singleQuote": true,
     "semi": true,
-    "parser": "typescript",
     "tabWidth": 4,
     "useTabs": false
 }
