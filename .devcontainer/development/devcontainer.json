@@ -1,0 +1,28 @@
+{
+    "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
+    "name": "Gnome GitHub Manager Development",
+    "build": {
+        "dockerfile": "Containerfile"
+    },
+    "remoteUser": "developer",
+    "postCreateCommand": "yarn install",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "editor.defaultFormatter": "esbenp.prettier-vscode",
+                "sonarlint.pathToNodeExecutable": "/usr/bin/node",
+                "sonarlint.connectedMode.project": {
+                    "connectionId": "mackdk",
+                    "projectKey": "mackdk_gnome-github-manager"
+                }
+            },
+            "extensions": [
+                "esbenp.prettier-vscode",
+                "dbaeumer.vscode-eslint",
+                "github.vscode-github-actions",
+                "mrorz.language-gettext",
+                "SonarSource.sonarlint-vscode"
+            ]
+        }
+    }
+}
