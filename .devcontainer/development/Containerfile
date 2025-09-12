@@ -1,0 +1,11 @@
+FROM registry.opensuse.org/opensuse/tumbleweed:latest
+
+RUN zypper -n install sudo vim gawk git openssh-clients bash-completion \
+        npm22 nodejs22 glib2-tools gettext-tools jq rsync zip
+
+RUN npm install --global yarn
+
+RUN useradd --create-home --shell /bin/bash developer
+RUN echo "developer ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+USER developer
