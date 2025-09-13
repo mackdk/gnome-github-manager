@@ -6,6 +6,9 @@
     },
     "remoteUser": "developer",
     "postCreateCommand": "yarn install",
+    "mounts": [
+        "source=${localEnv:HOME}/.local/share/gnome-shell/extensions/,target=/home/developer/.local/share/gnome-shell/extensions/,type=bind,consistency=cached"
+    ],
     "customizations": {
         "vscode": {
             "settings": {
