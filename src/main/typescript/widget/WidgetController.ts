@@ -1,4 +1,4 @@
-import Clutter from '@girs/clutter-15';
+import Clutter from '@girs/clutter-16';
 import Gdk from '@girs/gdk-4.0';
 import Gio from '@girs/gio-2.0';
 import { Extension } from '@girs/gnome-shell/dist/extensions/extension';

@@ -51,19 +51,19 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
-    "@girs/gjs": "4.0.0-beta.16",
-    "@girs/gnome-shell": "47.0.0-next.4",
-    "@girs/soup-3.0": "3.6.0-4.0.0-beta.16"
+    "@girs/gjs": "4.0.0-beta.36",
+    "@girs/gnome-shell": "48.0.4",
+    "@girs/soup-3.0": "3.6.5-4.0.0-beta.36"
   },
   "resolutions": {
-    "@girs/adw-1": "1.6.0-4.0.0-beta.16",
-    "@girs/clutter-15": "15.0.0-4.0.0-beta.16",
-    "@girs/gdk-4.0": "4.0.0-4.0.0-beta.16",
-    "@girs/gdkpixbuf-2.0": "2.0.0-4.0.0-beta.16",
-    "@girs/gio-2.0": "2.82.0-4.0.0-beta.16",
-    "@girs/glib-2.0": "2.82.0-4.0.0-beta.16",
-    "@girs/gobject-2.0": "2.82.0-4.0.0-beta.16",
-    "@girs/gtk-4.0": "4.15.5-4.0.0-beta.16",
-    "@girs/st-15": "15.0.0-4.0.0-beta.16"
+    "@girs/adw-1": "1.8.0-4.0.0-beta.36",
+    "@girs/clutter-16": "16.0.0-4.0.0-beta.36",
+    "@girs/gdk-4.0": "4.0.0-4.0.0-beta.36",
+    "@girs/gdkpixbuf-2.0": "2.0.0-4.0.0-beta.36",
+    "@girs/gio-2.0": "2.84.4-4.0.0-beta.36",
+    "@girs/glib-2.0": "2.84.4-4.0.0-beta.36",
+    "@girs/gobject-2.0": "2.84.4-4.0.0-beta.36",
+    "@girs/gtk-4.0": "4.19.1-4.0.0-beta.36",
+    "@girs/st-16": "16.0.0-4.0.0-beta.36"
   }
 }

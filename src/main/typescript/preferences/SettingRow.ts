@@ -48,7 +48,6 @@ export class SettingRow extends Adw.ActionRow {
                 'prefix',
                 'Prefix widget',
                 'Widget at the beginning of the setting row',
-                // @ts-expect-error girs type is currently broken here
                 GObject.ParamFlags.READWRITE,
                 Gtk.Widget.$gtype
             ),
@@ -56,7 +55,6 @@ export class SettingRow extends Adw.ActionRow {
                 'suffix',
                 'Suffix widget',
                 'Widget at the end of the setting row',
-                // @ts-expect-error girs type is currently broken here
                 GObject.ParamFlags.READWRITE,
                 Gtk.Widget.$gtype
             ),
