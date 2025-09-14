@@ -41,6 +41,10 @@ export class Source {
     public addNotification(notification: Notification) {}
 
     public destroy(reason: NotificationDestroyedReason) {}
+
+    public connect(sigName: 'destroy', callback: ($obj: Source, reason: NotificationDestroyedReason) => void): number {
+        return 0;
+    }
 }
 
 export class Notification {
