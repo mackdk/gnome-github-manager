@@ -90,6 +90,7 @@ export class LimitedRetriableTimer {
     private runTaskAndSchedule(): void {
         this.task()
             .then((outcome: boolean) => {
+                this.timerHandle = undefined;
                 this.computeCurrentInterval(outcome);
                 this.scheduleNextRun();
                 LimitedRetriableTimer.LOGGER.debug(
