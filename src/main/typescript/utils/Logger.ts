@@ -60,7 +60,7 @@ export class Logger {
                     }
                 });
         } catch (error) {
-            logError(error, `[${Logger.domainName}] Logger initialization error while loading configuration file`);
+            globalThis.console.log(`[${Logger.domainName}] Error while loading configuration file`, error);
         }
     }
 
@@ -177,13 +177,13 @@ export class Logger {
         const logMessage = `[${Logger.domainName}] ${this.loggerName} ${LogLevel[level]} ${message}`;
 
         if (err instanceof Error) {
-            logError(err, logMessage);
+            globalThis.console.log(logMessage, err);
         } else if (typeof err === 'string') {
-            log(`${logMessage} - ${err}`);
+            globalThis.console.log(`${logMessage} - ${err}`);
         } else if (err !== undefined) {
-            log(`${logMessage} - Additional object of type ${typeof err}: ${err?.toString() ?? '(n/a)'}`);
+            globalThis.console.log(`${logMessage} - Error of type ${typeof err}: ${err?.toString() ?? '(n/a)'}`);
         } else {
-            log(logMessage);
+            globalThis.console.log(logMessage);
         }
     }
 
