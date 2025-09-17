@@ -28,7 +28,7 @@ interface BaseGObject<K extends GObject.Object> {
 export function registerGObject<K extends GObject.Object, T extends BaseGObject<K>>(target: T): T {
     // Note that we use 'hasOwnProperty' because otherwise we would get inherited meta infos.
     // This would be bad because we would inherit the GObjectName too, which is supposed to be unique.
-    if (target.metaInfo !== undefined && Object.prototype.hasOwnProperty.call(target, 'metaInfo')) {
+    if (target.metaInfo !== undefined && Object.hasOwn(target, 'metaInfo')) {
         LOGGER.debug('Registering GObject {0} with metaInfo', typeof target);
         return GObject.registerClass(target.metaInfo, target);
     } else {

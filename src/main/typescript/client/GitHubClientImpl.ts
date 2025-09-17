@@ -13,13 +13,13 @@ export class GitHubClientImpl implements GitHubClient {
 
     private static readonly DEFAULT_API_POLL_INTERVAL: number = 60;
 
+    private readonly engine: HttpEngine;
+
     private _pollInterval: number;
 
     private _domain: string;
 
     private _token: string;
-
-    private engine: HttpEngine;
 
     public constructor(domain: string, token: string, engine: HttpEngine) {
         this._pollInterval = GitHubClientImpl.DEFAULT_API_POLL_INTERVAL;

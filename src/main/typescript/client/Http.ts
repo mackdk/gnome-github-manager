@@ -12,10 +12,10 @@ export enum HttpMethod {
 }
 
 export class HttpRequest {
-    private _url: string;
-    private _method: HttpMethod;
-    private _body: RequestBody | undefined;
+    private readonly _url: string;
+    private readonly _method: HttpMethod;
     private readonly _headers: Map<string, string>;
+    private _body: RequestBody | undefined;
 
     public constructor(method: HttpMethod, url: string, body?: RequestBody, headers?: Map<string, string>) {
         this._method = method;
