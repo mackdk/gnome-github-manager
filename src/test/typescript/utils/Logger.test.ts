@@ -8,15 +8,13 @@ import { LogLevel, Logger } from '@github-manager/utils/Logger';
 import '@test-suite/globals';
 
 describe('Logger', () => {
-    let logSpy: SinonSpy<[message: string], void>;
-    let logErrorSpy: SinonSpy<[e: unknown, message: string], void>;
+    let logSpy: SinonSpy<[message?: unknown, ...addtionalPamaraters: unknown[]], void>;
 
     const getUserDataDirStub: SinonStub<[], string> = stub(GLib, 'get_user_data_dir');
     const newForPathStub: SinonStub<[path: string], Gio.File> = stub(Gio.File, 'new_for_path');
 
     before(() => {
-        logSpy = spy(globalThis, 'log');
-        logErrorSpy = spy(globalThis, 'logError');
+        logSpy = spy(globalThis.console, 'log');
         Logger.domain = 'TestSuite';
     });
 
@@ -24,7 +22,6 @@ describe('Logger', () => {
         Logger.resetConfiguration();
 
         logSpy.resetHistory();
-        logErrorSpy.resetHistory();
 
         newForPathStub.reset();
         getUserDataDirStub.reset();
@@ -32,8 +29,6 @@ describe('Logger', () => {
 
     after(() => {
         logSpy.restore();
-        logErrorSpy.restore();
-
         newForPathStub.restore();
         getUserDataDirStub.restore();
     });
@@ -104,25 +99,22 @@ describe('Logger', () => {
 
         // Single error argument
         logger.warn('Log entry with an error', error);
-        assert.isTrue(logSpy.notCalled);
-        assert.isTrue(logErrorSpy.calledOnce);
-        assert.isTrue(logErrorSpy.calledWithExactly(error, '[TestSuite] Logger.test WARN Log entry with an error'));
+        assert.isTrue(logSpy.calledOnce);
+        assert.isTrue(logSpy.calledWithExactly('[TestSuite] Logger.test WARN Log entry with an error', error));
 
         // Error argument with other format arguments
         logger.error('Unable to get item #{0} due to {1}', 65, 'E_DUPLICATE_KEY', error);
-        assert.isTrue(logSpy.notCalled);
-        assert.isTrue(logErrorSpy.calledTwice);
+        assert.isTrue(logSpy.calledTwice);
         assert.isTrue(
-            logErrorSpy.calledWithExactly(
-                error,
-                '[TestSuite] Logger.test ERROR Unable to get item #65 due to E_DUPLICATE_KEY'
+            logSpy.calledWithExactly(
+                '[TestSuite] Logger.test ERROR Unable to get item #65 due to E_DUPLICATE_KEY',
+                error
             )
         );
 
         // Error argument as string
         logger.error('Unable to get item #{0} due to {1}', 65, 'E_DUPLICATE_KEY', 'Error text');
-        assert.isTrue(logSpy.calledOnce);
-        assert.isTrue(logErrorSpy.calledTwice);
+        assert.isTrue(logSpy.callCount === 3);
         assert.isTrue(
             logSpy.calledWithExactly(
                 '[TestSuite] Logger.test ERROR Unable to get item #65 due to E_DUPLICATE_KEY - Error text'
@@ -132,11 +124,10 @@ describe('Logger', () => {
         // Error argument as object
         const errorObject = { toString: () => 'Error in object' };
         logger.error('Unable to get item #{0} due to {1}', 65, 'E_DUPLICATE_KEY', errorObject);
-        assert.isTrue(logSpy.calledTwice);
-        assert.isTrue(logErrorSpy.calledTwice);
+        assert.isTrue(logSpy.callCount === 4);
         assert.isTrue(
             logSpy.calledWithExactly(
-                '[TestSuite] Logger.test ERROR Unable to get item #65 due to E_DUPLICATE_KEY - Additional object of type object: Error in object'
+                '[TestSuite] Logger.test ERROR Unable to get item #65 due to E_DUPLICATE_KEY - Error of type object: Error in object'
             )
         );
     });

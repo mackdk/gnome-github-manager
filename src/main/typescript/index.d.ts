@@ -11,7 +11,4 @@ declare global {
         };
     };
     /* eslint-enable no-var */
-
-    export function log(message: string): void;
-    export function logError(e: unknown, message: string): void;
 }
