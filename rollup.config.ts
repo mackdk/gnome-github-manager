@@ -24,7 +24,7 @@ const metadata: ExtensionMetadata = JSON.parse(data) as ExtensionMetadata;
 const explicitMappings = new Map<string, string>(
     Object.entries({
         '@girs/adw-1': 'gi://Adw',
-        '@girs/clutter-16': 'gi://Clutter',
+        '@girs/clutter-17': 'gi://Clutter',
         '@girs/gdk-4.0': 'gi://Gdk',
         '@girs/gdkpixbuf-2.0': 'gi://GdkPixbuf',
         '@girs/gio-2.0': 'gi://Gio',
@@ -33,7 +33,7 @@ const explicitMappings = new Map<string, string>(
         '@girs/gnomedesktop-4.0': 'gi://GnomeDesktop?version=4.0',
         '@girs/gtk-4.0': 'gi://Gtk',
         '@girs/soup-3.0': 'gi://Soup?version=3.0',
-        '@girs/st-16': 'gi://St',
+        '@girs/st-17': 'gi://St',
     })
 );
 
