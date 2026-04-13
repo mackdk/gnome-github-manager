@@ -1,4 +1,5 @@
-import { Extension, ExtensionMetadata } from '@girs/gnome-shell/dist/extensions/extension';
+import { Extension } from '@girs/gnome-shell/dist/extensions/extension';
+import { MetadataJson } from '@girs/gnome-shell/dist/types';
 
 import { GitHubManager } from '@github-manager/core';
 import { Logger, lazy } from '@github-manager/utils';
@@ -12,7 +13,7 @@ export default class GitHubManagerExtension extends Extension {
 
     private gitHubManager?: GitHubManager;
 
-    public constructor(metadata: ExtensionMetadata) {
+    public constructor(metadata: MetadataJson) {
         super(metadata);
 
         Logger.initialize(metadata.name);
@@ -25,7 +26,7 @@ export default class GitHubManagerExtension extends Extension {
         }
 
         try {
-            GitHubManagerExtension.LOGGER.debug('Inizializing extension at {0}', new Date().toISOString());
+            GitHubManagerExtension.LOGGER.debug('Initializing extension at {0}', new Date().toISOString());
             this.gitHubManager = new GitHubManager(this.metadata.name, this.path, this.getSettings());
             this.gitHubManager.start();
         } catch (err) {
