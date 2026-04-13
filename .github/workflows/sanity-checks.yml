@@ -71,10 +71,10 @@ jobs:
       - name: Install translation tools
         run: sudo apt-get install -y make gettext
 
-      - name: Install NodeJS 18
+      - name: Install NodeJS 22
         uses: actions/setup-node@v5
         with:
-          node-version: 18
+          node-version: 22
           cache: 'yarn'
 
       - name: Install the dependencies
