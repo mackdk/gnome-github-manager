@@ -1,6 +1,6 @@
 import Adw from '@girs/adw-1';
 import { ExtensionPreferences } from '@girs/gnome-shell/dist/extensions/prefs';
-import { ExtensionMetadata } from '@girs/gnome-shell/dist/types';
+import { MetadataJson } from '@girs/gnome-shell/dist/types';
 import GObject from '@girs/gobject-2.0';
 import Gtk from '@girs/gtk-4.0';
 
@@ -11,7 +11,7 @@ export default class GithubManagerPreferences extends ExtensionPreferences {
     @lazy
     private static readonly LOGGER: Logger = new Logger('GitHubManagerPreferences');
 
-    public constructor(metadata: ExtensionMetadata) {
+    public constructor(metadata: MetadataJson) {
         super(metadata);
 
         Logger.initialize(metadata.name);

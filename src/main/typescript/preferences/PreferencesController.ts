@@ -2,7 +2,7 @@ import Adw from '@girs/adw-1';
 import Gdk from '@girs/gdk-4.0';
 import Gio from '@girs/gio-2.0';
 import { gettext as _ } from '@girs/gnome-shell/dist/extensions/prefs';
-import { ExtensionMetadata } from '@girs/gnome-shell/dist/types';
+import { MetadataJson } from '@girs/gnome-shell/dist/types';
 import GnomeDesktop from '@girs/gnomedesktop-4.0';
 import Gtk from '@girs/gtk-4.0';
 
@@ -74,12 +74,12 @@ export function createAndBindWidget(
 
 export function buildActionGroupFor(
     dialog: Gtk.Window,
-    metadata: ExtensionMetadata,
+    metadata: MetadataJson,
     settings: Gio.Settings
 ): Gio.ActionGroup {
     const actionGroup = new Gio.SimpleActionGroup();
-    const baseUrl = metadata.url;
-    if (baseUrl === undefined) {
+    const baseUrl: unknown = metadata.url;
+    if (baseUrl === undefined || typeof baseUrl !== 'string') {
         throw new Error('Unable to identify the extension url');
     }
 
@@ -145,20 +145,18 @@ function resetToDefault(dialog: Gtk.Window, settings: Gio.Settings): void {
     confirmation.present();
 }
 
-function about(dialog: Gtk.Window, metadata: ExtensionMetadata): void {
+function about(dialog: Gtk.Window, metadata: MetadataJson): void {
     try {
-        const baseUrl = metadata.url;
-        if (baseUrl === undefined) {
-            throw new Error('Unable to identify the extension url');
-        }
+        const baseUrl = requireStringMetadata(metadata, 'url');
+        const path = requireStringMetadata(metadata, 'path');
 
-        const extensionInfo = getAdditionalExtensionInfo(`${metadata.path}/extension-info.json`);
+        const extensionInfo = getAdditionalExtensionInfo(`${path}/extension-info.json`);
 
         const iconTheme = Gtk.IconTheme.get_for_display(dialog.get_display());
         const originalSearchPath = iconTheme.get_search_path();
 
         // Adding the extension path to the icon theme directory, so that icons can be retrieved by name
-        iconTheme.add_search_path(metadata.path);
+        iconTheme.add_search_path(path);
 
         const aboutDialog = new Adw.AboutWindow({
             transientFor: dialog,
@@ -246,4 +244,13 @@ function getLocaleDisplayName(localeCode: string): string {
     const result = GnomeDesktop.get_language_from_locale(localeCode, null);
     // Remove the encoding part if present
     return result.replace(/\[[^[\]]*\]$/, '').trim();
+}
+
+function requireStringMetadata(metadata: MetadataJson, name: string): string {
+    const value: unknown = metadata[name];
+    if (value === undefined || typeof value !== 'string') {
+        throw new Error(`Unable to identify the extension ${name} in the extension metadata`);
+    }
+
+    return value;
 }
